@@ -19,7 +19,9 @@ public class Companion extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException{
         Parent parent = FXMLLoader.load(getClass().getClassLoader().getResource("exampleDND.fxml"));
-        primaryStage.setScene(new Scene(parent));
+        Scene scene = new Scene(parent);
+        scene.getStylesheets().add("example.css");
+        primaryStage.setScene(scene);
         primaryStage.show();
     }
 }
