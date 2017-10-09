@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="618.0" prefWidth="543.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.bsu.cs222.companionController">
+   <top>
+      <MenuBar prefHeight="14.0" prefWidth="477.0" BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <center>
+      <AnchorPane prefHeight="401.0" prefWidth="477.0" BorderPane.alignment="CENTER">
+         <children>
+            <TabPane fx:id="characterPane" layoutY="41.0" prefHeight="546.0" prefWidth="543.0" styleClass="test" tabClosingPolicy="UNAVAILABLE" visible="false">
+              <tabs>
+                <Tab text="Character Sheet">
+                     <content>
+                        <BorderPane prefHeight="200.0" prefWidth="200.0">
+                           <center>
+                              <TabPane prefHeight="200.0" prefWidth="200.0" side="LEFT" styleClass="other" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+                                <tabs>
+                                  <Tab text="Stats">
+                                    <content>
+                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                    </content>
+                                  </Tab>
+                                  <Tab text="Skills">
+                                    <content>
+                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: #00FF00;" />
+                                    </content>
+                                  </Tab>
+                                </tabs>
+                              </TabPane>
+                           </center>
+                        </BorderPane>
+                     </content>
+                </Tab>
+                <Tab text="Spell Sheet">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                  </content>
+                </Tab>
+              </tabs>
+            </TabPane>
+            <BorderPane fx:id="welcomePane" focusTraversable="true" prefHeight="588.0" prefWidth="543.0">
+               <top>
+                      <Label alignment="CENTER" prefHeight="120.0" prefWidth="477.0" text="Welcome to D&amp;D Companion" textAlignment="CENTER" wrapText="true" BorderPane.alignment="CENTER">
+                          <font>
+                              <Font size="36.0" />
+                          </font>
+                     <BorderPane.margin>
+                        <Insets top="50.0" />
+                     </BorderPane.margin>
+                      </Label>
+               </top>
+               <center>
+                  <AnchorPane prefHeight="270.0" prefWidth="477.0" BorderPane.alignment="CENTER">
+                     <children>
+                            <Button fx:id="playerButton" layoutX="371.0" layoutY="209.0" mnemonicParsing="false" onAction="#playerButtonPress" prefHeight="30.0" prefWidth="75.0" text="Player" />
+                            <Label alignment="CENTER" layoutX="44.0" layoutY="45.0" prefHeight="81.0" prefWidth="477.0" text="Are you the DM (Dungeon Master) or a Player?" textAlignment="CENTER" />
+                            <Button fx:id="DMButton" layoutX="105.0" layoutY="209.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="75.0" text="DM" />
+                     </children>
+                  </AnchorPane>
+               </center>
+            </BorderPane>
+         </children>
+      </AnchorPane>
+   </center>
+</BorderPane>

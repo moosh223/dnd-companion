@@ -15,14 +15,12 @@ public class companion extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException{
-        try {
-            Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("DND.fxml"));
-            primaryStage.setTitle("Dnd Companion");
-            primaryStage.setResizable(true);
-            primaryStage.setScene(new Scene(root));
-            primaryStage.show();
-        }catch (NullPointerException e){
-            e.printStackTrace();
-        }
+        Parent parent = FXMLLoader.load(getClass().getClassLoader().getResource("dnd.fxml"));
+        Scene scene=new Scene(parent);
+        scene.getStylesheets().add("tap.css");
+        primaryStage.setTitle("Dnd Companion");
+        primaryStage.setResizable(true);
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 }

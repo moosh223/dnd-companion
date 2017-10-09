@@ -6,13 +6,14 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 //import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 
 
 public class companionController {
 
     @FXML private Button playerButton;
     @FXML private Button DMButton;
-    @FXML private AnchorPane welcomePane;
+    @FXML private BorderPane welcomePane;
     @FXML private TabPane characterPane;
 
     @FXML
