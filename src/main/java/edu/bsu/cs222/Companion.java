@@ -18,7 +18,7 @@ public class Companion extends Application {
         Parent parent = FXMLLoader.load(getClass().getClassLoader().getResource("dnd.fxml"));
         Scene scene=new Scene(parent);
         scene.getStylesheets().add("tap.css");
-        primaryStage.setTitle("Dnd Companion");
+        primaryStage.setTitle("Dungeons & Dragons Companion");
         primaryStage.setResizable(true);
         primaryStage.setScene(scene);
         primaryStage.show();
