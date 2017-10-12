@@ -10,10 +10,9 @@ public class CompanionController {
 
     @FXML private BorderPane welcomePane;
     @FXML private TabPane characterPane;
-    @FXML private AnchorPane charTypePane;
-    @FXML private AnchorPane loadPane;
-    @FXML private AnchorPane namePane;
-    @FXML private AnchorPane classPane;
+    @FXML private BorderPane charTypePane;
+    @FXML private BorderPane loadPane;
+    @FXML private BorderPane namePane;
     @FXML private Label errorLabel;
     @FXML private TextField playerNameTextBox;
     @FXML private TextField characterNameTextBox;
@@ -56,7 +55,6 @@ public class CompanionController {
             String playerName = playerNameTextBox.getText();
             String CharacterName = characterNameTextBox.getText();
             namePane.setVisible(false);
-            classPane.setVisible(true);
         }
     }
 }
