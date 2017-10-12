@@ -6,7 +6,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 
 
-public class companionController {
+public class CompanionController {
 
     @FXML private BorderPane welcomePane;
     @FXML private TabPane characterPane;
