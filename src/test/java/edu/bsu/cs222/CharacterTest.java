@@ -4,7 +4,7 @@ import org.junit.Test;
 
 public class CharacterTest{
     int base_HP = 20;
-    int base_STR, base_DEX, base_INT, base_CONST, base_CHA, base_WIS = 10;
+    int base_STR, base_DEX, base_INT, base_CON, base_CHA, base_WIS = 10;
     PlayerCharacter char1 = new PlayerCharacter();
 
     @Test
@@ -49,13 +49,13 @@ public class CharacterTest{
     }
     @Test
     public void testCharCONST() {
-        int Constitution = char1.getCONST();
-        assert(Constitution == base_CONST);
+        int Constitution = char1.getCON();
+        assert(Constitution == base_CON);
 
         char1.setCONST(8);
-        Constitution = char1.getCONST();
-        assert(Constitution != base_CONST);
-        assert(Constitution == char1.getCONST());
+        Constitution = char1.getCON();
+        assert(Constitution != base_CON);
+        assert(Constitution == char1.getCON());
     }
     @Test
     public void testCharCHA() {

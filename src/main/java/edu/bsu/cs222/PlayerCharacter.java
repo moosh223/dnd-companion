@@ -1,62 +1,63 @@
 package edu.bsu.cs222;
 
 public class PlayerCharacter {
-    int Health = 20;
-    int Strength, Dexterity, Intellegince, Constitution, Charisma, Wisdom = 10;
+    int HP = 20;
+    int STR, DEX, INT, CON, CHA, WIS = 10;
+
+    public PlayerCharacter(){
+    }
 
     public int getHP() {
-        return Health;
+        return HP;
     }
 
     public void setHP(int HP) {
-        this.Health = HP;
+        this.HP = HP;
     }
 
     public int getSTR() {
-        return Strength;
+        return STR;
     }
 
     public void setSTR(int STR) {
-        this.Strength = STR;
+        this.STR = STR;
     }
 
     public int getDEX() {
-        return Dexterity;
+        return DEX;
     }
 
     public void setDEX(int DEX) {
-        this.Dexterity = DEX;
+        this.DEX = DEX;
     }
 
     public int getINT() {
-        return Intellegince;
+        return INT;
     }
 
     public void setINT(int INT) {
-        this.Intellegince = INT;
+        this.INT = INT;
     }
 
-    public int getCONST() {
-        return Constitution;
-    }
+    public int getCON() { return CON; }
 
-    public void setCONST(int CONST) {
-        this.Constitution = CONST;
+    public void setCONST(int CON) {
+        this.CON = CON;
     }
 
     public int getCHA() {
-        return Charisma;
+        return CHA;
     }
 
     public void setCHA(int CHA) {
-        this.Charisma = CHA;
+        this.CHA = CHA;
     }
 
     public int getWIS() {
-        return Wisdom;
+        return WIS;
     }
 
     public void setWIS(int WIS) {
-        this.Wisdom = WIS;
+        this.WIS = WIS;
     }
 }
