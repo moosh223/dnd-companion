@@ -54,5 +54,25 @@ public class XMLTest {
     }
 
     @Test
-    public void testGetStatsFromXML(){}
+    public void testGetStatsFromXML(){
+        int[] stats = new int[6];
+        try {
+            DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = builderFactory.newDocumentBuilder();
+            Document document = builder.parse(new File("src/test/resources/example.xml"));
+            Element root = document.getDocumentElement();
+            String[] statText = root.getElementsByTagName("stats").item(0).getTextContent().split(",");
+            for(int i = 0; i < 6; i++){
+                stats[i] = Integer.parseInt(statText[i]);
+            }
+        }catch(ParserConfigurationException x){
+            x.printStackTrace();
+        }catch(SAXException x){
+            x.printStackTrace();
+        }catch(IOException x){
+            x.printStackTrace();
+        }
+
+        Assert.assertEquals(stats[2],14);
+    }
 }
