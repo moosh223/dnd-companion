@@ -19,7 +19,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="618.0" prefWidth="543.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.bsu.cs222.CompanionController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="618.0" prefWidth="543.0" styleClass="background" stylesheets="@tap.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.bsu.cs222.CompanionController">
    <top>
       <MenuBar prefHeight="14.0" prefWidth="477.0" BorderPane.alignment="CENTER">
         <menus>
@@ -66,8 +66,8 @@
                     </rowConstraints>
                      <children>
                         <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="81.0" prefWidth="545.0" text="Are you the DM (Dungeon Master) or a Player?" textAlignment="CENTER" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" />
-                        <Button fx:id="dmButton" alignment="CENTER" mnemonicParsing="false" onAction="#dmButtonPress" prefHeight="30.0" prefWidth="75.0" text="DM" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
-                        <Button fx:id="playerButton" mnemonicParsing="false" onAction="#playerButtonPress" prefHeight="30.0" prefWidth="75.0" text="Player" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                        <Button fx:id="dmButton" alignment="CENTER" mnemonicParsing="false" onAction="#dmButtonPress" prefHeight="30.0" prefWidth="75.0" snapToPixel="false" text="DM" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
+                        <Button fx:id="playerButton" mnemonicParsing="false" onAction="#playerButtonPress" prefHeight="30.0" prefWidth="75.0" snapToPixel="false" text="Player" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
                </center>
