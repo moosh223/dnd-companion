@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 
@@ -19,16 +20,25 @@ public class companionController {
     @FXML private AnchorPane charTypePane;
     @FXML private AnchorPane loadPane;
     @FXML private AnchorPane namePane;
+    @FXML private AnchorPane racePane;
+    @FXML private AnchorPane languagePane;
     @FXML private AnchorPane classPane;
-    @FXML private AnchorPane statsPane;
     @FXML private Label nameErrorLabel;
-    @FXML private Label classErrorLabel;
-    @FXML private Label levelErrorLabel;
+    @FXML private Label raceErrorLabel;
+    @FXML private Label languageErrorLabel;
     @FXML private TextField playerNameTextBox;
     @FXML private TextField characterNameTextBox;
     @FXML private TextField raceTextBox;
-    @FXML private TextField classTextBox;
-    @FXML private TextField lvlTextBox;
+    @FXML private TextField ageTextBox;
+    @FXML private TextField heightTextBox;
+    @FXML private TextField speedTextBox;
+    @FXML private TextArea languageTextArea;
+    @FXML private ComboBox<String> firstAbilityModified;
+    @FXML private ComboBox<Integer> firstModifiedScore;
+    @FXML private ComboBox<String> secondAbilityModified;
+    @FXML private ComboBox<Integer> secondModifiedScore;
+    @FXML private ComboBox<String> alignmentBox;
+    @FXML private ComboBox<String> sizeBox;
 
     @FXML
     public void playerButtonPress(){
@@ -61,37 +71,50 @@ public class companionController {
 
     @FXML
     public void nameNextButtonPress(){
-        if (playerNameTextBox.getText().equals("") || characterNameTextBox.getText().equals("")){
+        if(playerNameTextBox.getText().equals("") || characterNameTextBox.getText().equals("")) {
             nameErrorLabel.setVisible(true);
         }
         else {
             String playerName = playerNameTextBox.getText();
             String characterName = characterNameTextBox.getText();
             namePane.setVisible(false);
-            classPane.setVisible(true);
+            racePane.setVisible(true);
         }
     }
 
     @FXML
-    public void classNextButtonPress(){
-        try {
-            if (raceTextBox.getText().equals("") || classTextBox.getText().equals("") || lvlTextBox.getText().equals("")) {
-                classErrorLabel.setVisible(true);
-                levelErrorLabel.setVisible(false);
-            } else if (1 > Integer.parseInt(lvlTextBox.getText()) || 20 < Integer.parseInt(lvlTextBox.getText())) {
-                levelErrorLabel.setVisible(true);
-                classErrorLabel.setVisible(false);
-            } else {
-                String race = raceTextBox.getText();
-                String charClass = classTextBox.getText();
-                int level = Integer.parseInt(lvlTextBox.getText());
-                classPane.setVisible(false);
-                statsPane.setVisible(true);
-            }
+    public void raceNextButtonPress(){
+        if (raceTextBox.getText().equals("") || firstAbilityModified.getValue().equals("") || firstModifiedScore.getValue()==null
+                || secondAbilityModified.getValue().equals("") || secondModifiedScore.getValue()==null || ageTextBox.getText().equals("")
+                || alignmentBox.getValue().equals("") || sizeBox.getValue().equals("") || heightTextBox.getText().equals("")
+                || speedTextBox.getText().equals("")) {
+            raceErrorLabel.setVisible(true);
         }
-        catch(NumberFormatException e){
-            levelErrorLabel.setVisible(true);
-            classErrorLabel.setVisible(false);
+        else{
+            String race = raceTextBox.getText();
+            String firstAbility = firstAbilityModified.getValue();
+            int firstAbilityValue = firstModifiedScore.getValue();
+            String secondAbility = secondAbilityModified.getValue();
+            int secondAbilityValue = secondModifiedScore.getValue();
+            String age = ageTextBox.getText();
+            String alignment = alignmentBox.getValue();
+            String size = sizeBox.getValue();
+            String height = heightTextBox.getText();
+            String speed = speedTextBox.getText();
+            racePane.setVisible(false);
+            languagePane.setVisible(true);
+        }
+    }
+
+    @FXML
+    public void languageNextButtonPress(){
+        if (languageTextArea.getText().equals("")) {
+            languageErrorLabel.setVisible(true);
+        }
+        else{
+            String languages = languageTextArea.getText();
+            languagePane.setVisible(false);
+            classPane.setVisible(true);
         }
     }
 
