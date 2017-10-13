@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.Integer?>
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.text.*?>
 <?import java.lang.*?>
@@ -7,12 +10,14 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -36,6 +41,7 @@
           <Menu mnemonicParsing="false" text="Help">
             <items>
               <MenuItem mnemonicParsing="false" text="About" />
+                  <MenuItem fx:id="playersHandbook" mnemonicParsing="false" onAction="#openPlayersHandbook" text="View Player's Handbook" />
             </items>
           </Menu>
         </menus>
@@ -206,6 +212,239 @@
                   </GridPane>
                </center>
             </BorderPane>
+                            <Button fx:id="playerButton" layoutX="371.0" layoutY="209.0" mnemonicParsing="false" onAction="#playerButtonPress" prefHeight="30.0" prefWidth="75.0" text="Player" />
+                            <Label alignment="CENTER" layoutX="44.0" layoutY="45.0" prefHeight="81.0" prefWidth="477.0" text="Are you the DM (Dungeon Master) or a Player?" textAlignment="CENTER" />
+                            <Button fx:id="dmButton" layoutX="105.0" layoutY="209.0" mnemonicParsing="false" onAction="#dmButtonPress" prefHeight="30.0" prefWidth="75.0" text="DM" />
+                     </children>
+                  </AnchorPane>
+               </center>
+            </BorderPane>
+            <AnchorPane fx:id="charTypePane" focusTraversable="true" prefHeight="590.0" prefWidth="543.0" visible="false">
+               <children>
+                  <Label layoutX="48.0" layoutY="113.0" prefHeight="144.0" prefWidth="447.0" text="Do you want to load a saved character, start a new character, or receive one from the DM?" textAlignment="CENTER" wrapText="true">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="loadButton" layoutX="48.0" layoutY="350.0" mnemonicParsing="false" onAction="#loadButtonPress" prefHeight="30.0" prefWidth="75.0" text="Load" />
+                  <Button fx:id="newButton" layoutX="239.0" layoutY="350.0" mnemonicParsing="false" onAction="#newButtonPress" prefHeight="30.0" prefWidth="75.0" text="New" />
+                  <Button fx:id="rcvButton" layoutX="430.0" layoutY="350.0" mnemonicParsing="false" onAction="#rcvButtonPress" prefHeight="30.0" prefWidth="75.0" text="RCV" />
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="loadPane" focusTraversable="true" prefHeight="590.0" prefWidth="543.0" visible="false">
+               <children>
+                  <Label layoutX="194.0" layoutY="54.0" text="Select character to load" textAlignment="CENTER" />
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="namePane" focusTraversable="true" prefHeight="590.0" prefWidth="543.0" visible="false">
+               <children>
+                  <TextField fx:id="playerNameTextBox" layoutX="85.0" layoutY="180.0" />
+                  <TextField fx:id="characterNameTextBox" layoutX="85.0" layoutY="295.0" />
+                  <Label layoutX="85.0" layoutY="144.0" text="What is your name?" />
+                  <Label layoutX="85.0" layoutY="254.0" text="What is your character's name?" />
+                  <Button fx:id="nameNextButton" layoutX="428.0" layoutY="520.0" mnemonicParsing="false" onAction="#nameNextButtonPress" prefHeight="30.0" prefWidth="75.0" text="Next" />
+                  <Label layoutX="279.0" layoutY="184.0" text="Help" textFill="#4800ff" underline="true">
+                     <tooltip>
+                        <Tooltip prefWidth="200.0" text="Enter the player's name." wrapText="true" />
+                     </tooltip>
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="279.0" layoutY="299.0" text="Help" textFill="#4800ff" underline="true">
+                     <tooltip>
+                        <Tooltip prefWidth="200.0" text="Enter your character's name. It can be anything you want so have fun with it." wrapText="true" />
+                     </tooltip>
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="124.0" layoutY="559.0" text="If you need help just hover your mouse over the blue help.">
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="nameErrorLabel" alignment="CENTER" layoutX="118.0" layoutY="33.0" text="ERROR: Please make sure all text boxes are filled." textAlignment="CENTER" textFill="RED" visible="false" />
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="racePane" focusTraversable="true" prefHeight="590.0" prefWidth="543.0" visible="false">
+               <children>
+                  <Label layoutX="117.0" layoutY="559.0" text="If you need help just hover your mouse over the blue help.">
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="raceTextBox" layoutX="24.0" layoutY="70.0" />
+                  <Label layoutX="27.0" layoutY="42.0" text="What is your character's race/subrace?" />
+                  <Label layoutX="26.0" layoutY="122.0" text="What is the first ability score modified by your race?" />
+                  <Label layoutX="24.0" layoutY="221.0" text="What is the second ability score modified by your race?" />
+                  <Label layoutX="224.0" layoutY="77.0" text="Help" textFill="#4800ff" underline="true">
+                     <tooltip>
+                        <Tooltip prefWidth="200.0" text="Enter your character's race here. More infomation about character races can be found in chapter 2 of the Player's Handbook." wrapText="true" />
+                     </tooltip>
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="272.0" layoutY="172.0" text="Help" textFill="#4800ff" underline="true">
+                     <tooltip>
+                        <Tooltip prefWidth="200.0" text="Your character's race will modify one or more of your ability scores. Please select the one modified by your selected race. More information can be found in the Player's Handbook in chapter 2." wrapText="true" />
+                     </tooltip>
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="raceNextButton" layoutX="397.0" layoutY="515.0" mnemonicParsing="false" onAction="#raceNextButtonPress" prefHeight="30.0" prefWidth="75.0" text="Next" />
+                   <ComboBox fx:id="firstAbilityModified" layoutX="24.0" layoutY="165.0" prefWidth="150.0">
+                       <items>
+                           <FXCollections fx:factory="observableArrayList">
+                               <String fx:value="Strength" />
+                               <String fx:value="Dexterity" />
+                               <String fx:value="Constitution" />
+                               <String fx:value="Intelligence" />
+                               <String fx:value="Wisdom" />
+                               <String fx:value="Charisma" />
+                               <String fx:value="None" />
+                           </FXCollections>
+                       </items>
+                   </ComboBox>
+                   <ComboBox fx:id="firstModifiedScore" layoutX="186.0" layoutY="165.0" prefHeight="31.0" prefWidth="77.0">
+                       <items>
+                           <FXCollections fx:factory="observableArrayList">
+                               <Integer fx:value="-3" />
+                               <Integer fx:value="-2" />
+                               <Integer fx:value="-1" />
+                               <Integer fx:value="0" />
+                               <Integer fx:value="1" />
+                               <Integer fx:value="2" />
+                               <Integer fx:value="3" />
+                           </FXCollections>
+                       </items>
+                   </ComboBox>
+                  <ComboBox fx:id="secondAbilityModified" layoutX="24.0" layoutY="249.0" prefWidth="150.0">
+                     <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Strength" />
+                            <String fx:value="Dexterity" />
+                            <String fx:value="Constitution" />
+                            <String fx:value="Intelligence" />
+                            <String fx:value="Wisdom" />
+                            <String fx:value="Charisma" />
+                            <String fx:value="None" />
+                        </FXCollections>
+                     </items>
+                  </ComboBox>
+                  <ComboBox fx:id="secondModifiedScore" layoutX="186.0" layoutY="249.0" prefHeight="31.0" prefWidth="77.0">
+                     <items>
+                        <FXCollections fx:factory="observableArrayList">
+                           <Integer fx:value="-3" />
+                           <Integer fx:value="-2" />
+                           <Integer fx:value="-1" />
+                           <Integer fx:value="0" />
+                           <Integer fx:value="1" />
+                           <Integer fx:value="2" />
+                           <Integer fx:value="3" />
+                        </FXCollections>
+                     </items>
+                  </ComboBox>
+                  <Label layoutX="272.0" layoutY="256.0" text="Help" textFill="#4800ff" underline="true">
+                     <tooltip>
+                        <Tooltip prefWidth="200.0" text="Your character's race will modify one or more of your ability scores. Please select the one modified by your selected race. More information can be found in the Player's Handbook in chapter 2." wrapText="true" />
+                     </tooltip>
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="24.0" layoutY="295.0" text="Age:" />
+                  <TextField fx:id="ageTextBox" layoutX="62.0" layoutY="290.0" prefHeight="31.0" prefWidth="69.0" />
+                  <Label layoutX="188.0" layoutY="295.0" text="Alignment:" />
+                   <ComboBox fx:id="alignmentBox" layoutX="272.0" layoutY="290.0" prefWidth="150.0">
+                       <items>
+                           <FXCollections fx:factory="observableArrayList">
+                               <String fx:value="Lawful Good(LG)" />
+                               <String fx:value="Lawful Neutral(LN)" />
+                               <String fx:value="Lawful Evil(LE)" />
+                               <String fx:value="Neutral Good(NG)" />
+                               <String fx:value="Neutral(N)" />
+                               <String fx:value="Neutral Evil(NE)" />
+                               <String fx:value="Chaotic Good(CG)" />
+                               <String fx:value="Chaotic Neutral(CN)" />
+                               <String fx:value="Chaotic Evil(CE)" />
+                           </FXCollections>
+                       </items>
+                   </ComboBox>
+                  <Label layoutX="24.0" layoutY="348.0" text="Size:" />
+                  <Label layoutX="142.0" layoutY="297.0" text="Help" textFill="#4800ff" underline="true">
+                     <tooltip>
+                        <Tooltip prefWidth="200.0" text="Your character's age can affect the personality of your character. Different races age at different rates so have fun with this. Refer to chapter 2 in the Player's Handbook for more about age." wrapText="true" />
+                     </tooltip>
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="438.0" layoutY="300.0" text="Help" textFill="#4800ff" underline="true">
+                     <tooltip>
+                        <Tooltip prefWidth="200.0" text="Your character's alignment greatly affects the way they act in different situations. Your race and class can affect your alignment. Refer to chapters 2 and 4 for more information about alignment. " wrapText="true" />
+                     </tooltip>
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                  </Label>
+                   <ComboBox fx:id="sizeBox" layoutX="67.0" layoutY="343.0" prefHeight="31.0" prefWidth="117.0">
+                       <items>
+                           <FXCollections fx:factory="observableArrayList">
+                               <String fx:value="Small" />
+                               <String fx:value="Medium" />
+                               <String fx:value="Large" />
+                           </FXCollections>
+                       </items>
+                   </ComboBox>
+                  <Label layoutX="199.0" layoutY="350.0" text="Help" textFill="#4800ff" underline="true">
+                     <tooltip>
+                        <Tooltip prefWidth="200.0" text="All races have a standard size of either small, medium, or large. Refer to your character's race in chapter 2 of the Player's Handbook to determine your size." wrapText="true" />
+                     </tooltip>
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="243.0" layoutY="348.0" text="Height:" />
+                  <TextField fx:id="heightTextBox" layoutX="304.0" layoutY="343.0" prefHeight="31.0" prefWidth="131.0" />
+                  <Label layoutX="451.0" layoutY="350.0" text="Help" textFill="#4800ff" underline="true">
+                     <tooltip>
+                        <Tooltip prefWidth="200.0" text="Enter your character's height. Refer to chapter 2 in the Player's Handbook to determine a suitable height for your character's race." wrapText="true" />
+                     </tooltip>
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="22.0" layoutY="399.0" text="Speed:" />
+                  <TextField fx:id="speedTextBox" layoutX="74.0" layoutY="394.0" prefHeight="31.0" prefWidth="99.0" />
+                  <Label layoutX="185.0" layoutY="401.0" text="Help" textFill="#4800ff" underline="true">
+                     <tooltip>
+                        <Tooltip prefWidth="200.0" text="Your character's speed determines how far they can move. Refer to chapter 2 in the Player's Handbook to determine your speed for your race. Chapters 8 &amp; 9 discribe speed in more detail." wrapText="true" />
+                     </tooltip>
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="raceErrorLabel" alignment="CENTER" layoutX="130.0" layoutY="14.0" text="ERROR: Please make sure all fields are filled in." textAlignment="CENTER" textFill="RED" visible="false" />
+               </children></AnchorPane>
+            <AnchorPane fx:id="languagePane" focusTraversable="true" prefHeight="590.0" prefWidth="543.0" visible="false">
+               <children>
+                  <TextArea fx:id="languageTextArea" layoutX="41.0" layoutY="55.0" prefHeight="457.0" prefWidth="445.0" />
+                  <Label layoutX="41.0" layoutY="34.0" text="List the languages your character speaks." />
+                  <Button fx:id="languageNextButton" layoutX="421.0" layoutY="534.0" mnemonicParsing="false" onAction="#languageNextButtonPress" prefHeight="30.0" prefWidth="70.0" text="Next" />
+                  <Label layoutX="324.0" layoutY="36.0" text="Help" textFill="#4800ff" underline="true">
+                     <tooltip>
+                        <Tooltip prefWidth="200.0" text="All character's speak common and their race's native language but you may be able to speak more if your DM allows it. Chapter 2 of the Player's Handbook will tell you what languages your race can speak." wrapText="true" />
+                     </tooltip>
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="languageErrorLabel" alignment="CENTER" layoutX="126.0" layoutY="14.0" text="ERROR: Please make sure all fields are filled in." textAlignment="CENTER" textFill="RED" visible="false" />
+               </children>
+            </AnchorPane>
          </children>
       </StackPane>
    </center>
