@@ -125,7 +125,8 @@ public class CompanionController {
             try {
                 File file = new File("Players_Handbook.pdf");
                 Desktop.getDesktop().open(file);
-            } catch (IOException e) {
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
