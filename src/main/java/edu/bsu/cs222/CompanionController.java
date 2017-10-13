@@ -17,10 +17,13 @@ public class CompanionController {
     @FXML private TextField playerNameTextBox;
     @FXML private TextField characterNameTextBox;
 
+
     @FXML
     public void playerButtonPress(){
         welcomePane.setVisible(false);
         charTypePane.setVisible(true);
+
+
     }
 
     @FXML
