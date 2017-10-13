@@ -1,10 +1,13 @@
 package edu.bsu.cs222;
 
 public class PlayerCharacter {
-    int HP = 20;
-    int STR, DEX, INT, CON, CHA, WIS = 10;
+    private int HP, STR, DEX, INT, CON, CHA, WIS;
+    private String playerName, characterName, race;
 
-    public PlayerCharacter(){
+
+    public PlayerCharacter(String playerName, String characterName) {
+        this.playerName = playerName;
+        this.characterName = characterName;
     }
 
     public int getHP() {
@@ -59,5 +62,9 @@ public class PlayerCharacter {
 
     public void setWIS(int WIS) {
         this.WIS = WIS;
+    }
+
+    public void setRace(String race) {
+        this.race = race;
     }
 }

@@ -40,6 +40,8 @@ public class CompanionController {
     @FXML private ComboBox<String> alignmentBox;
     @FXML private ComboBox<String> sizeBox;
 
+    private PlayerCharacter character;
+
     @FXML
     public void playerButtonPress(){
         welcomePane.setVisible(false);
@@ -75,8 +77,7 @@ public class CompanionController {
             nameErrorLabel.setVisible(true);
         }
         else {
-            String playerName = playerNameTextBox.getText();
-            String characterName = characterNameTextBox.getText();
+            character = new PlayerCharacter(playerNameTextBox.getText(), characterNameTextBox.getText());
             namePane.setVisible(false);
             racePane.setVisible(true);
         }
@@ -91,7 +92,7 @@ public class CompanionController {
             raceErrorLabel.setVisible(true);
         }
         else{
-            String race = raceTextBox.getText();
+            character.setRace(raceTextBox.getText());
             String firstAbility = firstAbilityModified.getValue();
             int firstAbilityValue = firstModifiedScore.getValue();
             String secondAbility = secondAbilityModified.getValue();

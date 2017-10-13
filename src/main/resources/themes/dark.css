@@ -24,6 +24,7 @@
     -fx-text-fill: #d8d8d8;
     -fx-background-insets: 0 0 0 0, 0, 1, 2;
     -fx-pref-width: 130;
+    -fx-pref-height: 40;
 }
 
 .button:hover {

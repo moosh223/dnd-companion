@@ -1,11 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<character>
-    <name>Character Name</name>
-    <race>Human</race>
-    <height>5'0"</height>
-    <weight>180lb</weight>
+<character owner="Josh Mooshian">
+    <name>Dra'll</name>
+    <race>Half-Orc</race>
+    <height>6'5"</height>
+    <weight>280lb</weight>
     <hp>20</hp>
-    <class>Fighter</class>
-    <level>1</level>
+    <class>Barbarian</class>
+    <exp>0</exp>
     <stats>13,12,14,18,15,16</stats>
+    <languages>Common, Orc, Dwarf</languages>
+    <equipment>
+        <item class="weapon">
+            <title>Orcish Great-Mace</title>
+            <damage>1d6</damage>
+            <type>Heavy Melee</type>
+        </item>
+        <item class="misc">
+            <title>Strange book</title>
+        </item>
+        <item class="consumable">
+            <title>Food Ration</title>
+            <quantity>30</quantity>
+        </item>
+    </equipment>
 </character>
