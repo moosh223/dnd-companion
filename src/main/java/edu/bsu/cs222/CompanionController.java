@@ -120,13 +120,15 @@ public class CompanionController {
 
     @FXML
     public void openPlayersHandbook(){
-        if (Desktop.isDesktopSupported()) {
-            try {
-                File file = new File("Players_Handbook.pdf");
-                Desktop.getDesktop().open(file);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        if(Desktop.isDesktopSupported()){
+            new Thread(() -> {
+                try {
+                    File file = new File("Players_Handbook.pdf");
+                    Desktop.getDesktop().open(file);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }).start();
         }
     }
 }
