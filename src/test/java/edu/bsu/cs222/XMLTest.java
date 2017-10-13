@@ -62,7 +62,7 @@ public class XMLTest {
         Element root = document.getDocumentElement();
         String originalName = root.getElementsByTagName("name").item(0).getTextContent();
         root.getElementsByTagName("name").item(0).setTextContent("New Character Name");
-        //parser.overwrite(document, path);
+        //parser.write(document, path);
         root = document.getDocumentElement();
         name = root.getElementsByTagName("name").item(0).getTextContent();
 

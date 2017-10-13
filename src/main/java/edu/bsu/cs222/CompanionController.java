@@ -20,7 +20,6 @@ public class CompanionController {
     @FXML private BorderPane charTypePane;
     @FXML private BorderPane loadPane;
     @FXML private BorderPane namePane;
-    @FXML private Label errorLabel;
     @FXML private AnchorPane racePane;
     @FXML private AnchorPane languagePane;
     @FXML private AnchorPane classPane;

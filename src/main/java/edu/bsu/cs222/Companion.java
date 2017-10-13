@@ -5,7 +5,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.io.IOException;
 
@@ -22,7 +21,7 @@ public class Companion extends Application {
         primaryStage.setTitle("Dungeons & Dragons Companion");
         primaryStage.getIcons().add(new Image("icon.png"));
         parent.getStylesheets().clear();
-        parent.getStylesheets().add("dark.css");
+        parent.getStylesheets().add("themes/dark.css");
         primaryStage.setResizable(true);
         primaryStage.setScene(scene);
         primaryStage.show();
