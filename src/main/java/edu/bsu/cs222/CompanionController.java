@@ -23,22 +23,37 @@ public class CompanionController {
     @FXML private AnchorPane racePane;
     @FXML private AnchorPane languagePane;
     @FXML private AnchorPane classPane;
+    @FXML private AnchorPane statPane;
     @FXML private Label nameErrorLabel;
     @FXML private Label raceErrorLabel;
     @FXML private Label languageErrorLabel;
+    @FXML private Label classErrorLabel;
+    @FXML private Label statErrorLabel;
     @FXML private TextField playerNameTextBox;
     @FXML private TextField characterNameTextBox;
     @FXML private TextField raceTextBox;
     @FXML private TextField ageTextBox;
     @FXML private TextField heightTextBox;
     @FXML private TextField speedTextBox;
+    @FXML private TextField classTextBox;
+    @FXML private TextField hpTextBox;
     @FXML private TextArea languageTextArea;
+    @FXML private TextField strTextBox;
+    @FXML private TextField dexTextBox;
+    @FXML private TextField conTextBox;
+    @FXML private TextField wisTextBox;
+    @FXML private TextField intTextBox;
+    @FXML private TextField chaTextBox;
     @FXML private ComboBox<String> firstAbilityModified;
     @FXML private ComboBox<Integer> firstModifiedScore;
     @FXML private ComboBox<String> secondAbilityModified;
     @FXML private ComboBox<Integer> secondModifiedScore;
     @FXML private ComboBox<String> alignmentBox;
     @FXML private ComboBox<String> sizeBox;
+    @FXML private ComboBox<String> primaryAbilityOne;
+    @FXML private ComboBox<String> primaryAbilityTwo;
+    @FXML private ComboBox<String> savingThrowOne;
+    @FXML private ComboBox<String> savingThrowTwo;
 
     private PlayerCharacter character;
 
@@ -117,6 +132,42 @@ public class CompanionController {
             String languages = languageTextArea.getText();
             languagePane.setVisible(false);
             classPane.setVisible(true);
+        }
+    }
+
+    @FXML
+    public void classNextButtonPress(){
+        if(classTextBox.getText().equals("") || hpTextBox.getText().equals("") || primaryAbilityOne.getValue().equals("")
+                || primaryAbilityTwo.getValue().equals("") || savingThrowOne.getValue().equals("") || savingThrowTwo.getValue().equals("")){
+            classErrorLabel.setVisible(true);
+        }
+        else{
+            String classType = classTextBox.getText();
+            String hp = hpTextBox.getText();
+            String primaryOne = primaryAbilityOne.getValue();
+            String primaryTwo = primaryAbilityTwo.getValue();
+            String saveThrowOne = savingThrowOne.getValue();
+            String saveThrowTwo = savingThrowTwo.getValue();
+            classPane.setVisible(false);
+            statPane.setVisible(true);
+        }
+    }
+
+    @FXML
+    public void statNextButtonPress(){
+        if (strTextBox.getText().equals("") || dexTextBox.getText().equals("") || wisTextBox.getText().equals("")
+                || intTextBox.getText().equals("") || conTextBox.getText().equals("") || chaTextBox.getText().equals("")){
+            statErrorLabel.setVisible(true);
+        }
+        else {
+            String str = strTextBox.getText();
+            String dex = dexTextBox.getText();
+            String wis = wisTextBox.getText();
+            String intel = intTextBox.getText();
+            String con = conTextBox.getText();
+            String cha = chaTextBox.getText();
+            statPane.setVisible(false);
+            characterPane.setVisible(true);
         }
     }
 
