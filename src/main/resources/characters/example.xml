@@ -2,16 +2,16 @@
 <character owner="Josh Mooshian">
     <name>Dra'll</name>
     <race>Half-Orc</race>
+    <class>Barbarian</class>
+    <stats>13,12,14,18,15,16</stats>
+    <hp>20</hp>
+    <exp>0</exp>
     <age>35</age>
     <alignment>Neutral</alignment>
     <size>Medium</size>
     <height>6'5"</height>
     <speed>30</speed>
-    <class>Barbarian</class>
     <weight>280lb</weight>
-    <hp>20</hp>
-    <exp>0</exp>
-    <stats>13,12,14,18,15,16</stats>
     <languages>Common, Orc, Dwarf</languages>
     <equipment>
         <item class="weapon">

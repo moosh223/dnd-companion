@@ -6,13 +6,11 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import java.io.File;
 import java.io.IOException;
 
 public class PlayerCharacter {
-    private String HP;
     private int[] stats = new int[6];
-    private String playerName, characterName, race, className;
+    private String playerName;
     private String filepath="src/main/resources/characters/";
     private XMLParser parser = new XMLParser();
     private Document xmlDoc;
@@ -21,85 +19,128 @@ public class PlayerCharacter {
 
     public PlayerCharacter(String playerName, String characterName) {
         this.playerName = playerName;
-        this.characterName = characterName;
         this.filepath += playerName.toLowerCase().replace(' ', '_') + "-"
                 + characterName.toLowerCase().replace(' ','_')+".xml";
-        try{linkToDocument();}catch(Exception e){e.printStackTrace();}
+        try{
+            linkToDocument();
+            setCharacterName(characterName);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
+
+
 
     private void linkToDocument() throws IOException, SAXException, ParserConfigurationException{
         try {
             xmlDoc = parser.buildDocumentStream(filepath);
+            root = xmlDoc.getDocumentElement();
         }catch(IOException e){
             System.err.println("File doesn't Exist! Creating...");
             xmlDoc = parser.buildNewDocument();
             createRootElement();
-            setCharacterName(characterName);
+            buildXML();
         }
     }
-
-    public String getHP() {
-        return HP;
-    }
-
-    public void setHP(String hp) {
-        root.appendChild(xmlDoc.createElement("hp")).setTextContent(hp);
-        updateDoc();
-    }
-
     public void setNumStats(int[] stats){this.stats = stats;}
     public void setStat(int statPos, int statValue){stats[statPos] = statValue;}
 
-    public int[] getStats(){return stats;}
+    public int[] getNumStats(){return stats;}
 
+    private void buildXML() {
+        root.appendChild(xmlDoc.createElement("name"));
+        root.appendChild(xmlDoc.createElement("race"));
+        root.appendChild(xmlDoc.createElement("class"));
+        root.appendChild(xmlDoc.createElement("stats"));
+        root.appendChild(xmlDoc.createElement("hp"));
+        root.appendChild(xmlDoc.createElement("exp"));
+        root.appendChild(xmlDoc.createElement("age"));
+        root.appendChild(xmlDoc.createElement("alignment"));
+        root.appendChild(xmlDoc.createElement("size"));
+        root.appendChild(xmlDoc.createElement("height"));
+        root.appendChild(xmlDoc.createElement("speed"));
+        root.appendChild(xmlDoc.createElement("languages"));
+    }
+    private void setCharacterName(String name){
+        root.getElementsByTagName("name").item(0).setTextContent(name);
+        updateDoc();
+    }
     public void setRace(String race){
-        root.appendChild(xmlDoc.createElement("race")).setTextContent(race);
+        root.getElementsByTagName("race").item(0).setTextContent(race);
         updateDoc();
     }
-
+    public void setClassName(String className){
+        root.getElementsByTagName("class").item(0).setTextContent(className);
+        updateDoc();
+    }
     public void setStats(String stats){
-        root.appendChild(xmlDoc.createElement("stats")).setTextContent(stats);
+        root.getElementsByTagName("stats").item(0).setTextContent(stats);
         updateDoc();
     }
-    public void setCharacterName(String name){
-        root.appendChild(xmlDoc.createElement("name")).setTextContent(name);
-        updateDoc();
-    }
-    public void setClass(String className){
-        root.appendChild(xmlDoc.createElement("class")).setTextContent(className);
+    public void setHP(String hp) {
+        root.getElementsByTagName("hp").item(0).setTextContent(hp);
         updateDoc();
     }
     public void setAge(String age){
-        root.appendChild(xmlDoc.createElement("age")).setTextContent(age);
-        updateDoc();
-    }
-    public void setHeight(String height){
-        root.appendChild(xmlDoc.createElement("height")).setTextContent(height);
+        root.getElementsByTagName("age").item(0).setTextContent(age);
         updateDoc();
     }
     public void setAlignment(String alignment){
-        root.appendChild(xmlDoc.createElement("alignment")).setTextContent(alignment);
-        updateDoc();
-    }
-    public void setSpeed(String speed){
-        root.appendChild(xmlDoc.createElement("speed")).setTextContent(speed);
+        root.getElementsByTagName("alignment").item(0).setTextContent(alignment);
         updateDoc();
     }
     public void setSize(String size){
-        root.appendChild(xmlDoc.createElement("size")).setTextContent(size);
+        root.getElementsByTagName("size").item(0).setTextContent(size);
+        updateDoc();
+    }
+    public void setHeight(String height){
+        root.getElementsByTagName("height").item(0).setTextContent(height);
+        updateDoc();
+    }
+    public void setSpeed(String speed){
+        root.getElementsByTagName("speed").item(0).setTextContent(speed);
         updateDoc();
     }
     public void setLanguages(String languages){
-        root.appendChild(xmlDoc.createElement("languages")).setTextContent(languages);
+        root.getElementsByTagName("languages").item(0).setTextContent(languages);
         updateDoc();
     }
 
-    public String getSize(){
-        return xmlDoc.getDocumentElement().getElementsByTagName("size").item(0).getTextContent();
-    }
-
     public String getPlayerName() {
-        return playerName;
+        return root.getAttribute("owner");
+    }
+    public String getCharacterName(){
+        return root.getElementsByTagName("name").item(0).getTextContent();
+    }
+    public String getRace(){
+        return root.getElementsByTagName("race").item(0).getTextContent();
+    }
+    public String getClassName(){
+        return root.getElementsByTagName("class").item(0).getTextContent();
+    }
+    public String getStats(){
+        return root.getElementsByTagName("stats").item(0).getTextContent();
+    }
+    public String getHP() {
+        return root.getElementsByTagName("hp").item(0).getTextContent();
+    }
+    public String getAge(){
+        return root.getElementsByTagName("age").item(0).getTextContent();
+    }
+    public String getAlignment(){
+        return root.getElementsByTagName("alignment").item(0).getTextContent();
+    }
+    public String getSize(){
+        return root.getElementsByTagName("size").item(0).getTextContent();
+    }
+    public String getHeight(){
+       return root.getElementsByTagName("height").item(0).getTextContent();
+    }
+    public String getSpeed(){
+        return root.getElementsByTagName("speed").item(0).getTextContent();
+    }
+    public String getLanguages(){
+        return root.getElementsByTagName("languages").item(0).getTextContent();
     }
 
     private void createRootElement() {
@@ -114,5 +155,9 @@ public class PlayerCharacter {
         }catch(TransformerException te){
             te.printStackTrace();
         }
+    }
+
+    public Element getRoot() {
+        return root;
     }
 }

@@ -130,12 +130,12 @@ public class CompanionController {
         }
         else{
             String[] languages = languageTextArea.getText().split("\n");
-            String languageTag = null;
+            StringBuilder languageTag= new StringBuilder();
             for(int i=0; i< languages.length-1;i++){
-                languageTag+=languages[i]+", ";
+                languageTag.append(languages[i]).append(",");
             }
-            languageTag+=languages[languages.length-1];
-            character.setLanguages(languageTag);
+            languageTag.append(languages[languages.length - 1]);
+            character.setLanguages(languageTag.toString().replace("null"," ").trim());
             languagePane.setVisible(false);
             classPane.setVisible(true);
         }
@@ -148,7 +148,7 @@ public class CompanionController {
             classErrorLabel.setVisible(true);
         }
         else{
-            character.setClass(classTextBox.getText());
+            character.setClassName(classTextBox.getText());
             character.setHP(hpTextBox.getText());
             String primaryOne = primaryAbilityOne.getValue();
             String primaryTwo = primaryAbilityTwo.getValue();
