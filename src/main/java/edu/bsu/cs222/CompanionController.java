@@ -113,11 +113,11 @@ public class CompanionController {
             int firstAbilityValue = firstModifiedScore.getValue();
             String secondAbility = secondAbilityModified.getValue();
             int secondAbilityValue = secondModifiedScore.getValue();
-            String age = ageTextBox.getText();
-            String alignment = alignmentBox.getValue();
-            String size = sizeBox.getValue();
-            String height = heightTextBox.getText();
-            String speed = speedTextBox.getText();
+            character.setAge(ageTextBox.getText());
+            character.setAlignment(alignmentBox.getValue());
+            character.setSize(sizeBox.getValue());
+            character.setHeight(heightTextBox.getText());
+            character.setSpeed(speedTextBox.getText());
             racePane.setVisible(false);
             languagePane.setVisible(true);
         }
@@ -129,7 +129,13 @@ public class CompanionController {
             languageErrorLabel.setVisible(true);
         }
         else{
-            String languages = languageTextArea.getText();
+            String[] languages = languageTextArea.getText().split("\n");
+            String languageTag = null;
+            for(int i=0; i< languages.length-1;i++){
+                languageTag+=languages[i]+", ";
+            }
+            languageTag+=languages[languages.length-1];
+            character.setLanguages(languageTag);
             languagePane.setVisible(false);
             classPane.setVisible(true);
         }
@@ -143,7 +149,7 @@ public class CompanionController {
         }
         else{
             character.setClass(classTextBox.getText());
-            character.setHP(Integer.parseInt(hpTextBox.getText()));
+            character.setHP(hpTextBox.getText());
             String primaryOne = primaryAbilityOne.getValue();
             String primaryTwo = primaryAbilityTwo.getValue();
             String saveThrowOne = savingThrowOne.getValue();
@@ -160,13 +166,9 @@ public class CompanionController {
             statErrorLabel.setVisible(true);
         }
         else {
-            int[] stats = new int[6];
-            stats[0] = Integer.parseInt(strTextBox.getText());
-            stats[1] = Integer.parseInt(dexTextBox.getText());
-            stats[2] = Integer.parseInt(conTextBox.getText());
-            stats[3] = Integer.parseInt(intTextBox.getText());
-            stats[4] = Integer.parseInt(wisTextBox.getText());
-            stats[5] = Integer.parseInt(chaTextBox.getText());
+            String stats = String.format("%s,%s,%s,%s,%s,%s",
+                    strTextBox.getText(),dexTextBox.getText(),conTextBox.getText(),
+                    intTextBox.getText(),wisTextBox.getText(),chaTextBox.getText());
             character.setStats(stats);
             statPane.setVisible(false);
             characterPane.setVisible(true);

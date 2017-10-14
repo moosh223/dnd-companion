@@ -9,10 +9,10 @@ public class CharacterTest{
 
     @Test
     public void testCharHP() {
-        char1.setHP(30);
-        int Health = char1.getHP();
+        char1.setHP("30");
+        int Health = Integer.parseInt(char1.getHP());
         assert(Health != base_HP);
-        assert(Health == char1.getHP());
+        assert(Health == Integer.parseInt(char1.getHP()));
     }
     @Test
     public void testCharSTR() {
