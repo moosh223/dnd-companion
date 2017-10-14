@@ -1,5 +1,5 @@
 .toptab .tab-header-area{
-    -fx-padding:0 0 0 26
+    -fx-padding:0 0 0 25;
 }
 .sidetab .tab-header-area{
     -fx-padding:25 0 0 0;

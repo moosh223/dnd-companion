@@ -35,4 +35,10 @@ public class XMLParser {
         StreamResult result = new StreamResult(new File(filepath));
         transformer.transform(source, result);
     }
+
+    public Document buildNewDocument() throws ParserConfigurationException,SAXException,IOException{
+        DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = builderFactory.newDocumentBuilder();
+        return builder.newDocument();
+    }
 }

@@ -142,8 +142,8 @@ public class CompanionController {
             classErrorLabel.setVisible(true);
         }
         else{
-            String classType = classTextBox.getText();
-            String hp = hpTextBox.getText();
+            character.setClass(classTextBox.getText());
+            character.setHP(Integer.parseInt(hpTextBox.getText()));
             String primaryOne = primaryAbilityOne.getValue();
             String primaryTwo = primaryAbilityTwo.getValue();
             String saveThrowOne = savingThrowOne.getValue();
@@ -160,12 +160,14 @@ public class CompanionController {
             statErrorLabel.setVisible(true);
         }
         else {
-            String str = strTextBox.getText();
-            String dex = dexTextBox.getText();
-            String wis = wisTextBox.getText();
-            String intel = intTextBox.getText();
-            String con = conTextBox.getText();
-            String cha = chaTextBox.getText();
+            int[] stats = new int[6];
+            stats[0] = Integer.parseInt(strTextBox.getText());
+            stats[1] = Integer.parseInt(dexTextBox.getText());
+            stats[2] = Integer.parseInt(conTextBox.getText());
+            stats[3] = Integer.parseInt(intTextBox.getText());
+            stats[4] = Integer.parseInt(wisTextBox.getText());
+            stats[5] = Integer.parseInt(chaTextBox.getText());
+            character.setStats(stats);
             statPane.setVisible(false);
             characterPane.setVisible(true);
         }
