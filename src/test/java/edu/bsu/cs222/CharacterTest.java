@@ -5,7 +5,7 @@ import org.junit.Test;
 public class CharacterTest{
     int base_HP = 20;
     int base_STR, base_DEX, base_INT, base_CON, base_CHA, base_WIS = 10;
-    PlayerCharacter char1 = new PlayerCharacter();
+    PlayerCharacter char1 = new PlayerCharacter("Example","Character Name");
 
     @Test
     public void testCharHP() {

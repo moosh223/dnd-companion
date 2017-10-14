@@ -27,7 +27,7 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="618.0" prefWidth="543.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.bsu.cs222.CompanionController">
    <top>
-      <MenuBar prefHeight="14.0" prefWidth="477.0" BorderPane.alignment="CENTER">
+      <MenuBar prefHeight="14.0" prefWidth="477.0" styleClass="menu" BorderPane.alignment="CENTER">
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
@@ -97,13 +97,13 @@
                   </HBox>
                </center>
             </BorderPane>
-            <TabPane fx:id="characterPane" prefHeight="590.0" prefWidth="543.0" styleClass="test" tabClosingPolicy="UNAVAILABLE" visible="false">
+            <TabPane fx:id="characterPane" prefHeight="590.0" prefWidth="543.0" styleClass="toptab" tabClosingPolicy="UNAVAILABLE" visible="false">
                <tabs>
                   <Tab text="Character Sheet">
                      <content>
                         <BorderPane prefHeight="200.0" prefWidth="200.0">
                            <center>
-                              <TabPane prefHeight="200.0" prefWidth="200.0" side="LEFT" styleClass="other" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+                              <TabPane prefHeight="200.0" prefWidth="200.0" side="LEFT" styleClass="sidetab" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
                                  <tabs>
                                     <Tab text="Stats">
                                        <content>

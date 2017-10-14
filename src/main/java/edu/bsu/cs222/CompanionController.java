@@ -77,7 +77,8 @@ public class CompanionController {
             nameErrorLabel.setVisible(true);
         }
         else {
-            character = new PlayerCharacter(playerNameTextBox.getText(), characterNameTextBox.getText());
+            character = new PlayerCharacter(
+                    playerNameTextBox.getText(), characterNameTextBox.getText());
             namePane.setVisible(false);
             racePane.setVisible(true);
         }
@@ -126,8 +127,8 @@ public class CompanionController {
                 try {
                     File file = new File("Players_Handbook.pdf");
                     Desktop.getDesktop().open(file);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }).start();
         }

@@ -1,7 +1,7 @@
-.test .tab-header-area{
+.toptab .tab-header-area{
     -fx-padding:0 0 0 26
 }
-.other .tab-header-area{
+.sidetab .tab-header-area{
     -fx-padding:25 0 0 0;
 }
 
@@ -11,6 +11,10 @@
 
 .label{
     -fx-text-fill: #e2e2e2;
+}
+
+.menu .label{
+    -fx-text-fill: #000000;
 }
 
 .button {

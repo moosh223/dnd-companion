@@ -3,11 +3,15 @@ package edu.bsu.cs222;
 public class PlayerCharacter {
     private int HP, STR, DEX, INT, CON, CHA, WIS;
     private String playerName, characterName, race;
+    private String filepath="characters/";
 
 
     public PlayerCharacter(String playerName, String characterName) {
         this.playerName = playerName;
         this.characterName = characterName;
+        this.filepath += playerName.toLowerCase().replace(' ', '_') + "-"
+                + characterName.toLowerCase().replace(' ','_');
+        System.out.println(filepath);
     }
 
     public int getHP() {
