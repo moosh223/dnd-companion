@@ -6,6 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 <?import java.lang.*?>
+
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="618.0" prefWidth="543.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.bsu.cs222.CompanionController">
    <top>
       <MenuBar prefHeight="14.0" prefWidth="477.0" styleClass="menu" BorderPane.alignment="CENTER">
@@ -238,13 +239,13 @@
                    <ComboBox fx:id="firstModifiedScore" layoutX="186.0" layoutY="165.0" prefHeight="31.0" prefWidth="77.0">
                        <items>
                            <FXCollections fx:factory="observableArrayList">
-                               <Integer fx:value="-3" />
-                               <Integer fx:value="-2" />
-                               <Integer fx:value="-1" />
-                               <Integer fx:value="0" />
-                               <Integer fx:value="1" />
-                               <Integer fx:value="2" />
-                               <Integer fx:value="3" />
+                               <String fx:value="-3" />
+                               <String fx:value="-2" />
+                               <String fx:value="-1" />
+                               <String fx:value="0" />
+                               <String fx:value="1" />
+                               <String fx:value="2" />
+                               <String fx:value="3" />
                            </FXCollections>
                        </items>
                    </ComboBox>
@@ -264,17 +265,17 @@
                   <ComboBox fx:id="secondModifiedScore" layoutX="186.0" layoutY="249.0" prefHeight="31.0" prefWidth="77.0">
                      <items>
                         <FXCollections fx:factory="observableArrayList">
-                           <Integer fx:value="-3" />
-                           <Integer fx:value="-2" />
-                           <Integer fx:value="-1" />
-                           <Integer fx:value="0" />
-                           <Integer fx:value="1" />
-                           <Integer fx:value="2" />
-                           <Integer fx:value="3" />
+                           <String fx:value="-3" />
+                           <String fx:value="-2" />
+                           <String fx:value="-1" />
+                           <String fx:value="0" />
+                           <String fx:value="1" />
+                           <String fx:value="2" />
+                           <String fx:value="3" />
                         </FXCollections>
                      </items>
                   </ComboBox>
-                  <Label layoutX="272.0" layoutY="256.0" text="Help" textFill="#4800ff" underline="true">
+                      <Label layoutX="272.0" layoutY="256.0" text="Help" textFill="#4800ff" underline="true">
                      <tooltip>
                         <Tooltip prefWidth="200.0" text="Your character's race will modify one or more of your ability scores. Please select the one modified by your selected race. More information can be found in the Player's Handbook in chapter 2." wrapText="true" />
                      </tooltip>
@@ -358,7 +359,7 @@
                </children></AnchorPane>
             <AnchorPane fx:id="languagePane" focusTraversable="true" prefHeight="590.0" prefWidth="543.0" visible="false">
                <children>
-                  <TextArea fx:id="languageTextArea" layoutX="41.0" layoutY="55.0" prefHeight="457.0" prefWidth="445.0" />
+                  <TextArea fx:id="languageTextBox" layoutX="41.0" layoutY="55.0" prefHeight="457.0" prefWidth="445.0" />
                   <Label layoutX="41.0" layoutY="34.0" text="List the languages your character speaks." />
                   <Button layoutX="421.0" layoutY="534.0" mnemonicParsing="false" onAction="#languageNextButtonPress" prefHeight="30.0" prefWidth="70.0" text="Next" />
                   <Label layoutX="324.0" layoutY="36.0" text="Help" textFill="#4800ff" underline="true">
