@@ -150,7 +150,6 @@ public class CompanionController {
             statErrorLabel.setVisible(true);
         }
         else {
-
             buildCharacter();
             statPane.setVisible(false);
             characterPane.setVisible(true);
@@ -165,11 +164,19 @@ public class CompanionController {
 
 
     private boolean pageFilled(){
+        return testPageComboBoxes() && testPageTextFields();
+    }
+
+    private boolean testPageTextFields(){
         for(TextField field: pageTextFields){
             if(field.getText().equals("")){
                 return false;
             }
         }
+        return true;
+    }
+
+    private boolean testPageComboBoxes(){
         for(ComboBox box: pageComboBoxes){
             try{
                 box.getValue().equals(null);
