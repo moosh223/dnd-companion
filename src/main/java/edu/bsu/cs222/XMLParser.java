@@ -41,4 +41,26 @@ public class XMLParser {
         DocumentBuilder builder = builderFactory.newDocumentBuilder();
         return builder.newDocument();
     }
+
+    public int[] parseStats(String stats) {
+        if(stats.equals("")){
+            return new int[]{0,0,0,0,0,0};
+        }else {
+            int[] statList = new int[6];
+            String[] statText = stats.split(",");
+            for (int i = 0; i < 6; i++) {
+                statList[i] = Integer.parseInt(statText[i]);
+            }
+            return statList;
+        }
+    }
+
+    public String writeStats(int[] stats) {
+        StringBuilder statString= new StringBuilder();
+        for(int i=0;i<5;i++){
+            statString.append(stats[i]).append(",");
+        }
+        statString.append(stats[5]);
+        return statString.toString();
+    }
 }
