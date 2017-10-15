@@ -12,6 +12,20 @@ public class PlayerCharacter {
     private String filepath="src/main/resources/characters/";
     private XMLParser parser = new XMLParser();
     private Document xmlDoc;
+    private enum TagType{
+        name,
+        race,
+        className,
+        stats,
+        hp,
+        exp,
+        age,
+        alignment,
+        size,
+        height,
+        speed,
+        languages,
+    }
 
     public PlayerCharacter(String playerName, String characterName) {
         this.filepath += playerName.toLowerCase().replace(' ', '_') + "-"
@@ -33,18 +47,9 @@ public class PlayerCharacter {
         }
     }
     private void buildXML() {
-        getRoot().appendChild(xmlDoc.createElement("name"));
-        getRoot().appendChild(xmlDoc.createElement("race"));
-        getRoot().appendChild(xmlDoc.createElement("class"));
-        getRoot().appendChild(xmlDoc.createElement("stats"));
-        getRoot().appendChild(xmlDoc.createElement("hp"));
-        getRoot().appendChild(xmlDoc.createElement("exp"));
-        getRoot().appendChild(xmlDoc.createElement("age"));
-        getRoot().appendChild(xmlDoc.createElement("alignment"));
-        getRoot().appendChild(xmlDoc.createElement("size"));
-        getRoot().appendChild(xmlDoc.createElement("height"));
-        getRoot().appendChild(xmlDoc.createElement("speed"));
-        getRoot().appendChild(xmlDoc.createElement("languages"));
+        for(TagType tag: TagType.values()) {
+            getRoot().appendChild(xmlDoc.createElement(tag.toString()));
+        }
     }
 
     public void setPlayerName(String playerName){
