@@ -57,15 +57,6 @@ public class CompanionController {
     @FXML private ComboBox<String> savingThrowOne;
     @FXML private ComboBox<String> savingThrowTwo;
 
-    @FXML private TextArea strDisplay;
-    @FXML private TextArea dexDisplay;
-    @FXML private TextArea conDisplay;
-    @FXML private TextArea intDisplay;
-    @FXML private TextArea wisDisplay;
-    @FXML private TextArea chaDisplay;
-
-    private PlayerCharacter character;
-    private List<TextArea> textDisplayList;
     private List<TextField> pageTextFields = new ArrayList<>();
     private List<ComboBox> pageComboBoxes = new ArrayList<>();
 
@@ -188,7 +179,7 @@ public class CompanionController {
     }
 
     private void buildCharacter() {
-        character = new PlayerCharacter(playerNameTextBox.getText(),characterNameTextBox.getText());
+        PlayerCharacter character = new PlayerCharacter(playerNameTextBox.getText(), characterNameTextBox.getText());
         character.setPlayerName(playerNameTextBox.getText());
         character.setCharacterName(characterNameTextBox.getText());
         character.setEXP("0");
