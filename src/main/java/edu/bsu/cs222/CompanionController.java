@@ -11,7 +11,9 @@ import javafx.scene.layout.BorderPane;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class CompanionController {
 
@@ -37,7 +39,7 @@ public class CompanionController {
     @FXML private TextField speedTextBox;
     @FXML private TextField classTextBox;
     @FXML private TextField hpTextBox;
-    @FXML private TextArea languageTextArea;
+    @FXML private TextArea languageTextBox;
     @FXML private TextField strTextBox;
     @FXML private TextField dexTextBox;
     @FXML private TextField conTextBox;
@@ -45,9 +47,9 @@ public class CompanionController {
     @FXML private TextField intTextBox;
     @FXML private TextField chaTextBox;
     @FXML private ComboBox<String> firstAbilityModified;
-    @FXML private ComboBox<Integer> firstModifiedScore;
+    @FXML private ComboBox<String> firstModifiedScore;
     @FXML private ComboBox<String> secondAbilityModified;
-    @FXML private ComboBox<Integer> secondModifiedScore;
+    @FXML private ComboBox<String> secondModifiedScore;
     @FXML private ComboBox<String> alignmentBox;
     @FXML private ComboBox<String> sizeBox;
     @FXML private ComboBox<String> primaryAbilityOne;
@@ -55,7 +57,18 @@ public class CompanionController {
     @FXML private ComboBox<String> savingThrowOne;
     @FXML private ComboBox<String> savingThrowTwo;
 
+    @FXML private TextArea strDisplay;
+    @FXML private TextArea dexDisplay;
+    @FXML private TextArea conDisplay;
+    @FXML private TextArea intDisplay;
+    @FXML private TextArea wisDisplay;
+    @FXML private TextArea chaDisplay;
+
     private PlayerCharacter character;
+    private List<TextArea> textDisplayList;
+    private List<TextField> pageTextFields = new ArrayList<>();
+    private List<ComboBox> pageComboBoxes = new ArrayList<>();
+
 
     @FXML
     public void playerButtonPress(){
@@ -67,7 +80,6 @@ public class CompanionController {
     public void dmButtonPress(){
         welcomePane.setVisible(false);
     }
-
     @FXML
     public void loadButtonPress(){
         charTypePane.setVisible(false);
@@ -76,8 +88,73 @@ public class CompanionController {
 
     @FXML
     public void newButtonPress(){
+        pageTextFields.addAll(Arrays.asList(playerNameTextBox,characterNameTextBox));
         charTypePane.setVisible(false);
         namePane.setVisible(true);
+    }
+    @FXML
+    public void nameNextButtonPress(){
+        if(!pageFilled()) {
+            nameErrorLabel.setVisible(true);
+        }
+        else {
+            pageTextFields.addAll(
+                    Arrays.asList(raceTextBox, ageTextBox, heightTextBox, speedTextBox));
+            pageComboBoxes.addAll(
+                    Arrays.asList(firstAbilityModified,firstModifiedScore,
+                            secondAbilityModified,secondModifiedScore,alignmentBox,sizeBox));
+            namePane.setVisible(false);
+            racePane.setVisible(true);
+        }
+    }
+    @FXML
+    public void raceNextButtonPress(){
+        if(!pageFilled()){
+            raceErrorLabel.setVisible(true);
+        }
+        else{
+            racePane.setVisible(false);
+            languagePane.setVisible(true);
+        }
+    }
+    @FXML
+    public void languageNextButtonPress(){
+        if (!pageFilled() || languageTextBox.getText().equals("")) {
+            languageErrorLabel.setVisible(true);
+        }
+        else{
+            pageTextFields.addAll(
+                    Arrays.asList(classTextBox, hpTextBox));
+            pageComboBoxes.addAll(
+                    Arrays.asList(savingThrowOne,savingThrowTwo,primaryAbilityOne,primaryAbilityTwo));
+            languagePane.setVisible(false);
+            classPane.setVisible(true);
+        }
+    }
+    @FXML
+    public void classNextButtonPress(){
+        if(!pageFilled()){
+            classErrorLabel.setVisible(true);
+        }
+        else{
+            pageTextFields.addAll(
+                    Arrays.asList(strTextBox, dexTextBox,conTextBox,
+                            intTextBox,wisTextBox,chaTextBox));
+            classPane.setVisible(false);
+            statPane.setVisible(true);
+        }
+    }
+    @FXML
+    public void statNextButtonPress(){
+        if (!pageFilled()){
+            statErrorLabel.setVisible(true);
+        }
+        else {
+
+            buildCharacter();
+            statPane.setVisible(false);
+            characterPane.setVisible(true);
+        }
     }
 
     @FXML
@@ -86,93 +163,58 @@ public class CompanionController {
         characterPane.setVisible(true);
     }
 
-    @FXML
-    public void nameNextButtonPress(){
-        if(playerNameTextBox.getText().equals("") || characterNameTextBox.getText().equals("")) {
-            nameErrorLabel.setVisible(true);
-        }
-        else {
-            character = new PlayerCharacter(
-                    playerNameTextBox.getText(), characterNameTextBox.getText());
-            namePane.setVisible(false);
-            racePane.setVisible(true);
-        }
-    }
 
-    @FXML
-    public void raceNextButtonPress(){
-        if (raceTextBox.getText().equals("") || firstAbilityModified.getValue().equals("") || firstModifiedScore.getValue()==null
-                || secondAbilityModified.getValue().equals("") || secondModifiedScore.getValue()==null || ageTextBox.getText().equals("")
-                || alignmentBox.getValue().equals("") || sizeBox.getValue().equals("") || heightTextBox.getText().equals("")
-                || speedTextBox.getText().equals("")) {
-            raceErrorLabel.setVisible(true);
-        }
-        else{
-            character.setRace(raceTextBox.getText());
-            String firstAbility = firstAbilityModified.getValue();
-            int firstAbilityValue = firstModifiedScore.getValue();
-            String secondAbility = secondAbilityModified.getValue();
-            int secondAbilityValue = secondModifiedScore.getValue();
-            character.setAge(ageTextBox.getText());
-            character.setAlignment(alignmentBox.getValue());
-            character.setSize(sizeBox.getValue());
-            character.setHeight(heightTextBox.getText());
-            character.setSpeed(speedTextBox.getText());
-            racePane.setVisible(false);
-            languagePane.setVisible(true);
-        }
-    }
-
-    @FXML
-    public void languageNextButtonPress(){
-        if (languageTextArea.getText().equals("")) {
-            languageErrorLabel.setVisible(true);
-        }
-        else{
-            String[] languages = languageTextArea.getText().split("\n");
-            StringBuilder languageTag= new StringBuilder();
-            for(int i=0; i< languages.length-1;i++){
-                languageTag.append(languages[i]).append(",");
+    private boolean pageFilled(){
+        for(TextField field: pageTextFields){
+            if(field.getText().equals("")){
+                return false;
             }
-            languageTag.append(languages[languages.length - 1]);
-            character.setLanguages(languageTag.toString().replace("null"," ").trim());
-            languagePane.setVisible(false);
-            classPane.setVisible(true);
         }
+        for(ComboBox box: pageComboBoxes){
+            try{
+                box.getValue().equals(null);
+            }catch(NullPointerException npe){
+                return false;
+            }
+        }
+        return true;
     }
 
-    @FXML
-    public void classNextButtonPress(){
-        if(classTextBox.getText().equals("") || hpTextBox.getText().equals("") || primaryAbilityOne.getValue().equals("")
-                || primaryAbilityTwo.getValue().equals("") || savingThrowOne.getValue().equals("") || savingThrowTwo.getValue().equals("")){
-            classErrorLabel.setVisible(true);
-        }
-        else{
-            character.setClassName(classTextBox.getText());
-            character.setHP(hpTextBox.getText());
-            String primaryOne = primaryAbilityOne.getValue();
-            String primaryTwo = primaryAbilityTwo.getValue();
-            String saveThrowOne = savingThrowOne.getValue();
-            String saveThrowTwo = savingThrowTwo.getValue();
-            classPane.setVisible(false);
-            statPane.setVisible(true);
-        }
+    private void buildCharacter() {
+        character = new PlayerCharacter(playerNameTextBox.getText(),characterNameTextBox.getText());
+        character.setPlayerName(playerNameTextBox.getText());
+        character.setCharacterName(characterNameTextBox.getText());
+        character.setEXP("0");
+        character.setRace(raceTextBox.getText());
+        String firstAbility = firstAbilityModified.getValue();
+        String firstAbilityValue = firstModifiedScore.getValue();
+        String secondAbility = secondAbilityModified.getValue();
+        String secondAbilityValue = secondModifiedScore.getValue();
+        character.setAge(ageTextBox.getText());
+        character.setAlignment(alignmentBox.getValue());
+        character.setSize(sizeBox.getValue());
+        character.setHeight(heightTextBox.getText());
+        character.setSpeed(speedTextBox.getText());
+        character.setLanguages(parseLanguages());
+        character.setClassName(classTextBox.getText());
+        character.setHP(hpTextBox.getText());
+        String primaryOne = primaryAbilityOne.getValue();
+        String primaryTwo = primaryAbilityTwo.getValue();
+        String saveThrowOne = savingThrowOne.getValue();
+        String saveThrowTwo = savingThrowTwo.getValue();
+        character.setStats(String.format("%s,%s,%s,%s,%s,%s",
+                strTextBox.getText(),dexTextBox.getText(),conTextBox.getText(),
+                intTextBox.getText(),wisTextBox.getText(),chaTextBox.getText()));
     }
 
-    @FXML
-    public void statNextButtonPress(){
-        if (strTextBox.getText().equals("") || dexTextBox.getText().equals("") || wisTextBox.getText().equals("")
-                || intTextBox.getText().equals("") || conTextBox.getText().equals("") || chaTextBox.getText().equals("")){
-            statErrorLabel.setVisible(true);
+    private String parseLanguages() {
+        String[] languages = languageTextBox.getText().split("\n");
+        StringBuilder languageTag= new StringBuilder();
+        for(int i=0; i< languages.length-1;i++){
+            languageTag.append(languages[i]).append(",");
         }
-        else {
-            String stats = String.format("%s,%s,%s,%s,%s,%s",
-                    strTextBox.getText(),dexTextBox.getText(),conTextBox.getText(),
-                    intTextBox.getText(),wisTextBox.getText(),chaTextBox.getText());
-            character.setStats(stats);
-            statPane.setVisible(false);
-            characterPane.setVisible(true);
-        }
+        languageTag.append(languages[languages.length - 1]);
+        return languageTag.toString().replace("null"," ").trim();
     }
 
     @FXML

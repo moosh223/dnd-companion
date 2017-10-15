@@ -432,7 +432,7 @@
                           </FXCollections>
                       </items>
                   </ComboBox>
-                  <Label fx:id="classErrorLabel" alignment="CENTER" layoutX="119.0" layoutY="21.0" text="ERROR: Please make sure all fields are filled in." textAlignment="CENTER" textFill="RED" />
+                  <Label fx:id="classErrorLabel" alignment="CENTER" layoutX="119.0" layoutY="21.0" text="ERROR: Please make sure all fields are filled in." textAlignment="CENTER" textFill="RED" visible="false" />
                   <Label layoutX="251.0" layoutY="132.0" text="Help" textFill="#4800ff" underline="true">
                      <tooltip>
                         <Tooltip prefWidth="200.0" text="Your character's class determines your abilities. More information can be found in chapter 3 of the Player's Handbook." wrapText="true" />
