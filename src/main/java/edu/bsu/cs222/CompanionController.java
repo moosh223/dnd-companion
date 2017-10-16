@@ -59,6 +59,7 @@ public class CompanionController {
 
     private List<TextField> pageTextFields = new ArrayList<>();
     private List<ComboBox> pageComboBoxes = new ArrayList<>();
+    private PlayerCharacter character;
 
 
     @FXML
@@ -179,15 +180,11 @@ public class CompanionController {
     }
 
     private void buildCharacter() {
-        PlayerCharacter character = new PlayerCharacter(playerNameTextBox.getText(), characterNameTextBox.getText());
+        character = new PlayerCharacter(playerNameTextBox.getText(), characterNameTextBox.getText());
         character.setPlayerName(playerNameTextBox.getText());
         character.setCharacterName(characterNameTextBox.getText());
         character.setEXP("0");
         character.setRace(raceTextBox.getText());
-        String firstAbility = firstAbilityModified.getValue();
-        String firstAbilityValue = firstModifiedScore.getValue();
-        String secondAbility = secondAbilityModified.getValue();
-        String secondAbilityValue = secondModifiedScore.getValue();
         character.setAge(ageTextBox.getText());
         character.setAlignment(alignmentBox.getValue());
         character.setSize(sizeBox.getValue());
@@ -203,6 +200,8 @@ public class CompanionController {
         character.setStats(String.format("%s,%s,%s,%s,%s,%s",
                 strTextBox.getText(),dexTextBox.getText(),conTextBox.getText(),
                 intTextBox.getText(),wisTextBox.getText(),chaTextBox.getText()));
+        parseAbilityModifiers(firstAbilityModified.getValue(),firstModifiedScore.getValue());
+        parseAbilityModifiers(secondAbilityModified.getValue(),secondModifiedScore.getValue());
     }
 
     private String parseLanguages() {
@@ -213,6 +212,33 @@ public class CompanionController {
         }
         languageTag.append(languages[languages.length - 1]);
         return languageTag.toString().replace("null"," ").trim();
+    }
+
+    private enum StatName{
+        Strength(0),
+        Dexterity(1),
+        Constitution(2),
+        Intelligence(3),
+        Wisdom(4),
+        Charisma(5);
+
+        private int stat;
+        StatName(int stat) {
+            this.stat = stat;
+        }
+        private int getValue(){
+            return stat;
+        }
+    }
+    private void parseAbilityModifiers(String ability, String score){
+        for(StatName statName: StatName.values()){
+            if(ability.equals(statName.toString())){
+                character.setStat(statName.getValue(),character.getStats()[statName.getValue()]
+                        +Integer.parseInt(score));
+            }else if(ability.equals("None")){
+                return;
+            }
+        }
     }
 
     @FXML

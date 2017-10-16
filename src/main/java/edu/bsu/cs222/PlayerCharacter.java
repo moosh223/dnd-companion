@@ -65,7 +65,7 @@ public class PlayerCharacter {
         updateDoc();
     }
     public void setClassName(String className){
-        getRoot().getElementsByTagName("class").item(0).setTextContent(className);
+        getRoot().getElementsByTagName("className").item(0).setTextContent(className);
         updateDoc();
     }
     public void setStats(String stats){
