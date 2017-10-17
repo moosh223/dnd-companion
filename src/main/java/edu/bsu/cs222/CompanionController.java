@@ -1,5 +1,7 @@
 package edu.bsu.cs222;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
@@ -78,7 +80,7 @@ public class CompanionController {
     @FXML private ComboBox<String> primaryAbilityTwo;
     @FXML private ComboBox<String> savingThrowOne;
     @FXML private ComboBox<String> savingThrowTwo;
-
+    @FXML private ListView<String> characterLoadList;
     private List<TextField> pageTextFields = new ArrayList<>();
     private List<ComboBox> pageComboBoxes = new ArrayList<>();
     private PlayerCharacter character;
@@ -98,6 +100,32 @@ public class CompanionController {
     public void loadButtonPress(){
         charTypePane.setVisible(false);
         loadPane.setVisible(true);
+        populateLoadTable();
+    }
+
+    @FXML
+    public void loadSelectedCharacter(){
+        character = new PlayerCharacter(characterLoadList.getSelectionModel().getSelectedItem()+".xml");
+        updateCharacterView();
+        loadPane.setVisible(false);
+        characterPane.setVisible(true);
+    }
+
+    private void populateLoadTable() {
+        ObservableList<String> fileList= FXCollections.observableArrayList(getFileList());
+        characterLoadList.getItems().addAll(fileList);
+    }
+
+    private ArrayList<String> getFileList() {
+        File folder = new File("src/main/resources/characters");
+        File[] fileList = folder.listFiles();
+        ArrayList<String> fileNames = new ArrayList<>();
+        assert fileList != null;
+        for(File file: fileList){
+            System.out.println(file.getName());
+            fileNames.add(file.getName().replace(".xml",""));
+        }
+        return fileNames;
     }
 
     @FXML
@@ -164,8 +192,8 @@ public class CompanionController {
             statErrorLabel.setVisible(true);
         }
         else {
-            buildCharacter();
-            enterValues();
+            buildNewCharacter();
+            updateCharacterView();
             statPane.setVisible(false);
             characterPane.setVisible(true);
         }
@@ -202,7 +230,7 @@ public class CompanionController {
         return true;
     }
 
-    private void buildCharacter() {
+    private void buildNewCharacter() {
         character = new PlayerCharacter(playerNameTextBox.getText(), characterNameTextBox.getText());
         character.setPlayerName(playerNameTextBox.getText());
         character.setCharacterName(characterNameTextBox.getText());
@@ -227,7 +255,7 @@ public class CompanionController {
         parseAbilityModifiers(secondAbilityModified.getValue(),secondModifiedScore.getValue());
     }
 
-    private void enterValues(){
+    private void updateCharacterView(){
         displayCharName.setText(character.getCharacterName());
         displayRace.setText(character.getRace());
         displayClass.setText(character.getClassName());

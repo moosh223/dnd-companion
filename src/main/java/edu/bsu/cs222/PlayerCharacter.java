@@ -15,9 +15,10 @@ public class PlayerCharacter {
     private enum TagType{
         name,
         race,
-        className,
+        classname,
         stats,
-        hp,
+        maxhp,
+        currenthp,
         exp,
         age,
         alignment,
@@ -25,6 +26,7 @@ public class PlayerCharacter {
         height,
         speed,
         languages,
+
     }
 
     public PlayerCharacter(String playerName, String characterName) {
@@ -37,9 +39,19 @@ public class PlayerCharacter {
         }
     }
 
+    public PlayerCharacter(String filepath) {
+        this.filepath += filepath;
+        try{
+            linkToDocument();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
     private void linkToDocument() throws IOException, SAXException, ParserConfigurationException{
         try {
             xmlDoc = parser.buildDocumentStream(filepath);
+            System.out.println("Doc link successful");
         }catch(IOException e){
             xmlDoc = parser.buildNewDocument();
             createRootElement();
@@ -65,7 +77,7 @@ public class PlayerCharacter {
         updateDoc();
     }
     public void setClassName(String className){
-        getRoot().getElementsByTagName("className").item(0).setTextContent(className);
+        getRoot().getElementsByTagName("classname").item(0).setTextContent(className);
         updateDoc();
     }
     public void setStats(String stats){
@@ -127,7 +139,7 @@ public class PlayerCharacter {
         return getRoot().getElementsByTagName("race").item(0).getTextContent();
     }
     public String getClassName(){
-        return getRoot().getElementsByTagName("class").item(0).getTextContent();
+        return getRoot().getElementsByTagName("classname").item(0).getTextContent();
     }
     public int[] getStats(){
         String stats = getRoot().getElementsByTagName("stats").item(0).getTextContent();
@@ -159,7 +171,7 @@ public class PlayerCharacter {
         return getRoot().getElementsByTagName("exp").item(0).getTextContent();
     }
     public String getCurrentHp(){
-        return getRoot().getElementsByTagName("languages").item(0).getTextContent();
+        return getRoot().getElementsByTagName("currenthp").item(0).getTextContent();
     }
 
     private void createRootElement() {

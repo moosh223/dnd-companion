@@ -9,10 +9,10 @@ public class CharacterTest{
     @Test
     public void testCharHP() {
         char1.setMaxHp("25");
-        int Health = Integer.parseInt(char1.getHP());
+        int Health = Integer.parseInt(char1.getMaxHP());
         int base_HP = 20;
         Assert.assertNotEquals(Health, base_HP);
-        Assert.assertEquals(Health, Integer.parseInt(char1.getHP()));
+        Assert.assertEquals(Health, Integer.parseInt(char1.getMaxHP()));
     }
     @Test
     public void testCharSTR() {
