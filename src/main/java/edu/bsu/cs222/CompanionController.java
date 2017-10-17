@@ -244,6 +244,7 @@ public class CompanionController {
         character.setLanguages(parseLanguages());
         character.setClassName(classTextBox.getText());
         character.setMaxHp(hpTextBox.getText());
+        character.setCurrentHp(hpTextBox.getText());
         String primaryOne = primaryAbilityOne.getValue();
         String primaryTwo = primaryAbilityTwo.getValue();
         String saveThrowOne = savingThrowOne.getValue();
@@ -266,6 +267,18 @@ public class CompanionController {
         displayHeight.setText(character.getHeight());
         displayMaxHp.setText(character.getMaxHP());
         displayCurrentHp.setText(character.getCurrentHp());
+        displayStr.setText(String.valueOf(character.getStats()[0]));
+        displayStrMod.setText(String.valueOf((int)Math.floor((character.getStats()[0]-10)/2.0)));
+        displayDex.setText(String.valueOf(character.getStats()[1]));
+        displayDexMod.setText(String.valueOf((int)Math.floor((character.getStats()[1]-10)/2.0)));
+        displayCon.setText(String.valueOf(character.getStats()[2]));
+        displayConMod.setText(String.valueOf((int)Math.floor((character.getStats()[2]-10)/2.0)));
+        displayInt.setText(String.valueOf(character.getStats()[3]));
+        displayIntMod.setText(String.valueOf((int)Math.floor((character.getStats()[3]-10)/2.0)));
+        displayWis.setText(String.valueOf(character.getStats()[4]));
+        displayWisMod.setText(String.valueOf((int)Math.floor((character.getStats()[4]-10)/2.0)));
+        displayCha.setText(String.valueOf(character.getStats()[5]));
+        displayChaMod.setText(String.valueOf((int)Math.floor((character.getStats()[5]-10)/2.0)));
     }
 
     private String parseLanguages() {

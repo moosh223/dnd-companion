@@ -26,7 +26,6 @@ public class PlayerCharacter {
         height,
         speed,
         languages,
-
     }
 
     public PlayerCharacter(String playerName, String characterName) {
@@ -51,7 +50,6 @@ public class PlayerCharacter {
     private void linkToDocument() throws IOException, SAXException, ParserConfigurationException{
         try {
             xmlDoc = parser.buildDocumentStream(filepath);
-            System.out.println("Doc link successful");
         }catch(IOException e){
             xmlDoc = parser.buildNewDocument();
             createRootElement();
