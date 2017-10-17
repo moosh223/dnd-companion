@@ -17,7 +17,8 @@ public class PlayerCharacter {
         race,
         className,
         stats,
-        hp,
+        maxhp,
+        currenthp,
         exp,
         age,
         alignment,
@@ -127,16 +128,14 @@ public class PlayerCharacter {
         return getRoot().getElementsByTagName("race").item(0).getTextContent();
     }
     public String getClassName(){
-        return getRoot().getElementsByTagName("class").item(0).getTextContent();
+        return getRoot().getElementsByTagName("className").item(0).getTextContent();
     }
     public int[] getStats(){
         String stats = getRoot().getElementsByTagName("stats").item(0).getTextContent();
         return parser.parseStats(stats);
 
     }
-    public String getMaxHP() {
-        return getRoot().getElementsByTagName("maxhp").item(0).getTextContent();
-    }
+    public String getMaxHP() { return getRoot().getElementsByTagName("maxhp").item(0).getTextContent(); }
     public String getAge(){
         return getRoot().getElementsByTagName("age").item(0).getTextContent();
     }
@@ -159,7 +158,7 @@ public class PlayerCharacter {
         return getRoot().getElementsByTagName("exp").item(0).getTextContent();
     }
     public String getCurrentHp(){
-        return getRoot().getElementsByTagName("languages").item(0).getTextContent();
+        return getRoot().getElementsByTagName("currenthp").item(0).getTextContent();
     }
 
     private void createRootElement() {
