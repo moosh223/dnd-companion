@@ -31,6 +31,12 @@ public class CompanionController {
     @FXML private Label languageErrorLabel;
     @FXML private Label classErrorLabel;
     @FXML private Label statErrorLabel;
+    @FXML private Label displayStrMod;
+    @FXML private Label displayDexMod;
+    @FXML private Label displayConMod;
+    @FXML private Label displayIntMod;
+    @FXML private Label displayWisMod;
+    @FXML private Label displayChaMod;
     @FXML private TextField playerNameTextBox;
     @FXML private TextField characterNameTextBox;
     @FXML private TextField raceTextBox;
@@ -46,6 +52,22 @@ public class CompanionController {
     @FXML private TextField wisTextBox;
     @FXML private TextField intTextBox;
     @FXML private TextField chaTextBox;
+    @FXML private TextField displayCharName;
+    @FXML private TextField displayRace;
+    @FXML private TextField displayClass;
+    @FXML private TextField displayAlignment;
+    @FXML private TextField displayExp;
+    @FXML private TextField displayAge;
+    @FXML private TextField displaySize;
+    @FXML private TextField displayHeight;
+    @FXML private TextField displayMaxHp;
+    @FXML private TextField displayCurrentHp;
+    @FXML private TextField displayStr;
+    @FXML private TextField displayDex;
+    @FXML private TextField displayCon;
+    @FXML private TextField displayInt;
+    @FXML private TextField displayWis;
+    @FXML private TextField displayCha;
     @FXML private ComboBox<String> firstAbilityModified;
     @FXML private ComboBox<String> firstModifiedScore;
     @FXML private ComboBox<String> secondAbilityModified;
@@ -143,6 +165,7 @@ public class CompanionController {
         }
         else {
             buildCharacter();
+            enterValues();
             statPane.setVisible(false);
             characterPane.setVisible(true);
         }
@@ -192,7 +215,7 @@ public class CompanionController {
         character.setSpeed(speedTextBox.getText());
         character.setLanguages(parseLanguages());
         character.setClassName(classTextBox.getText());
-        character.setHP(hpTextBox.getText());
+        character.setMaxHp(hpTextBox.getText());
         String primaryOne = primaryAbilityOne.getValue();
         String primaryTwo = primaryAbilityTwo.getValue();
         String saveThrowOne = savingThrowOne.getValue();
@@ -202,6 +225,19 @@ public class CompanionController {
                 intTextBox.getText(),wisTextBox.getText(),chaTextBox.getText()));
         parseAbilityModifiers(firstAbilityModified.getValue(),firstModifiedScore.getValue());
         parseAbilityModifiers(secondAbilityModified.getValue(),secondModifiedScore.getValue());
+    }
+
+    private void enterValues(){
+        displayCharName.setText(character.getCharacterName());
+        displayRace.setText(character.getRace());
+        displayClass.setText(character.getClassName());
+        displayAlignment.setText(character.getAlignment());
+        displayExp.setText(character.getEXP());
+        displayAge.setText(character.getAge());
+        displaySize.setText(character.getSize());
+        displayHeight.setText(character.getHeight());
+        displayMaxHp.setText(character.getMaxHP());
+        displayCurrentHp.setText(character.getCurrentHp());
     }
 
     private String parseLanguages() {

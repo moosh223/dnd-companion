@@ -77,8 +77,12 @@ public class PlayerCharacter {
         stats[statPos] = statValue;
         setStats(parser.writeStats(stats));
     }
-    public void setHP(String hp) {
-        getRoot().getElementsByTagName("hp").item(0).setTextContent(hp);
+    public void setMaxHp(String maxHp) {
+        getRoot().getElementsByTagName("maxhp").item(0).setTextContent(maxHp);
+        updateDoc();
+    }
+    public void setCurrentHp(String currentHp) {
+        getRoot().getElementsByTagName("currenthp").item(0).setTextContent(currentHp);
         updateDoc();
     }
     public void setEXP(String exp) {
@@ -130,8 +134,8 @@ public class PlayerCharacter {
         return parser.parseStats(stats);
 
     }
-    public String getHP() {
-        return getRoot().getElementsByTagName("hp").item(0).getTextContent();
+    public String getMaxHP() {
+        return getRoot().getElementsByTagName("maxhp").item(0).getTextContent();
     }
     public String getAge(){
         return getRoot().getElementsByTagName("age").item(0).getTextContent();
@@ -149,6 +153,12 @@ public class PlayerCharacter {
         return getRoot().getElementsByTagName("speed").item(0).getTextContent();
     }
     public String getLanguages(){
+        return getRoot().getElementsByTagName("languages").item(0).getTextContent();
+    }
+    public String getEXP(){
+        return getRoot().getElementsByTagName("exp").item(0).getTextContent();
+    }
+    public String getCurrentHp(){
         return getRoot().getElementsByTagName("languages").item(0).getTextContent();
     }
 
