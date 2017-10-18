@@ -11,8 +11,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -117,12 +116,11 @@ public class CompanionController {
     }
 
     private ArrayList<String> getFileList() {
-        File folder = new File("src/main/resources/characters");
+        File folder = new File("assets/characters");
         File[] fileList = folder.listFiles();
         ArrayList<String> fileNames = new ArrayList<>();
         assert fileList != null;
         for(File file: fileList){
-            System.out.println(file.getName());
             fileNames.add(file.getName().replace(".xml",""));
         }
         return fileNames;

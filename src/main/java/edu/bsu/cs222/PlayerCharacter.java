@@ -9,7 +9,7 @@ import javax.xml.transform.TransformerException;
 import java.io.IOException;
 
 public class PlayerCharacter {
-    private String filepath="src/main/resources/characters/";
+    private String filepath="assets/characters/";
     private XMLParser parser = new XMLParser();
     private Document xmlDoc;
     private enum TagType{

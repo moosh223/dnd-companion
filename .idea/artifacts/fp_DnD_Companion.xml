@@ -15,6 +15,7 @@
       <element id="archive" name="fp_DnD_Companion.jar">
         <element id="module-output" name="fp-DnD-Companion" />
       </element>
+      <element id="dir-copy" path="$PROJECT_DIR$/assets" />
     </root>
   </artifact>
 </component>
