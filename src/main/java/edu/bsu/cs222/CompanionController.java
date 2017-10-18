@@ -321,9 +321,9 @@ public class CompanionController {
         if(Desktop.isDesktopSupported()){
             new Thread(() -> {
                 try {
-                    File file = new File("Players_Handbook.pdf");
+                    File file = new File(getClass().getClassLoader().getResource("Players_Handbook.pdf").getFile());
                     Desktop.getDesktop().open(file);
-                } catch (IOException e) {
+                } catch (IOException | NullPointerException e) {
                     e.printStackTrace();
                 }
             }).start();
