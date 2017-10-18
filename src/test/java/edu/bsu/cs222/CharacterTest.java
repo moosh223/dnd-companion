@@ -1,80 +1,71 @@
 package edu.bsu.cs222;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 public class CharacterTest{
-    int base_HP = 20;
-    int base_STR, base_DEX, base_INT, base_CON, base_CHA, base_WIS = 10;
-    PlayerCharacter char1 = new PlayerCharacter();
+    private PlayerCharacter char1 = new PlayerCharacter("Example","Character Name");
 
     @Test
     public void testCharHP() {
-        int Health = char1.getHP();
-        assert(Health == base_HP);
-
-        char1.setHP(30);
-        Health = char1.getHP();
-        assert(Health != base_HP);
-        assert(Health == char1.getHP());
+        char1.setMaxHp("25");
+        int Health = Integer.parseInt(char1.getMaxHP());
+        int base_HP = 20;
+        Assert.assertNotEquals(Health, base_HP);
+        Assert.assertEquals(Health, Integer.parseInt(char1.getMaxHP()));
     }
     @Test
     public void testCharSTR() {
-        int Strength = char1.getSTR();
-        assert(Strength == base_STR);
-
-        char1.setSTR(12);
-        Strength = char1.getSTR();
+        char1.setStat(0, 12);
+        int Strength = char1.getStats()[0];
+        int base_STR = 23;
         assert(Strength != base_STR);
-        assert(Strength == char1.getSTR());
+        assert(Strength == char1.getStats()[0]);
     }
     @Test
     public void testCharDEX() {
-        int Dexterity = char1.getDEX();
-        assert(Dexterity == base_DEX);
-
-        char1.setDEX(14);
-        Dexterity = char1.getDEX();
+        char1.setStat(1, 14);
+        int Dexterity = char1.getStats()[1];
+        int base_DEX = 15;
         assert(Dexterity != base_DEX);
-        assert(Dexterity == char1.getDEX());
+        assert(Dexterity == char1.getStats()[1]);
+    }
+    @Test
+    public void testCharCON() {
+        char1.setStat(2, 8);
+        int Constitution = char1.getStats()[2];
+        int base_CON = 14;
+        assert(Constitution != base_CON);
+        assert(Constitution == char1.getStats()[2]);
     }
     @Test
     public void testCharINT() {
-        int Intelligence = char1.getINT();
-        assert(Intelligence == base_INT);
-
-        char1.setINT(13);
-        Intelligence = char1.getINT();
+        char1.setStat(3, 13);
+        int Intelligence = char1.getStats()[3];
+        int base_INT = 14;
         assert(Intelligence != base_INT);
-        assert(Intelligence == char1.getINT());
-    }
-    @Test
-    public void testCharCONST() {
-        int Constitution = char1.getCON();
-        assert(Constitution == base_CON);
-
-        char1.setCONST(8);
-        Constitution = char1.getCON();
-        assert(Constitution != base_CON);
-        assert(Constitution == char1.getCON());
-    }
-    @Test
-    public void testCharCHA() {
-        int Charisma = char1.getCHA();
-        assert(Charisma == base_CHA);
-
-        char1.setCHA(3);
-        Charisma = char1.getCHA();
-        assert(Charisma != base_CHA);
-        assert(Charisma == char1.getCHA());
+        assert(Intelligence == char1.getStats()[3]);
     }
     @Test
     public void testCharWIS() {
-        int Wisdom = char1.getWIS();
-        assert(Wisdom == base_WIS);
-
-        char1.setWIS(15);
-        Wisdom = char1.getWIS();
+        char1.setStat(4, 15);
+        int Wisdom = char1.getStats()[4];
+        int base_WIS = 10;
         assert(Wisdom != base_WIS);
-        assert(Wisdom == char1.getWIS());
+        assert(Wisdom == char1.getStats()[4]);
+    }
+    @Test
+    public void testCharCHA() {
+        char1.setStat(5, 3);
+        int Charisma = char1.getStats()[5];
+        int base_CHA = 12;
+        assert(Charisma != base_CHA);
+        assert(Charisma == char1.getStats()[5]);
+    }
+
+    @Test
+    public void testRetrieveName(){
+        char1.setCharacterName("Character Name");
+        Assert.assertEquals(char1.getCharacterName(),"Character Name");
     }
 }

@@ -1,0 +1,21 @@
+<component name="ArtifactManager">
+  <artifact type="javafx" name="fp-DnD-Companion">
+    <output-path>$PROJECT_DIR$/out/artifacts/fp_DnD_Companion</output-path>
+    <properties id="javafx-properties">
+      <options>
+        <option name="appClass" value="edu.bsu.cs222.Companion" />
+        <option name="description" value="" />
+        <option name="htmlPlaceholderId" value="" />
+        <option name="title" value="test" />
+        <option name="vendor" value="test vendor" />
+        <option name="version" value="0.0.1" />
+      </options>
+    </properties>
+    <root id="root">
+      <element id="archive" name="fp_DnD_Companion.jar">
+        <element id="module-output" name="fp-DnD-Companion" />
+      </element>
+      <element id="dir-copy" path="$PROJECT_DIR$/assets" />
+    </root>
+  </artifact>
+</component>

@@ -19,11 +19,11 @@ import java.io.File;
 import java.io.IOException;
 
 public class XMLTest {
-    String path = "src/test/resources/example.xml";
+    private String path = "src/test/resources/example.xml";
 
     @Test
     public void testXMLRetrieval() throws IOException, SAXException, ParserConfigurationException {
-        String doctype = null;
+        String doctype;
         XMLParser parser = new XMLParser();
         Document document = parser.buildDocumentStream(path);
         doctype = document.getDocumentElement().getNodeName();
@@ -32,7 +32,7 @@ public class XMLTest {
 
     @Test
     public void testGetNameFromXML() throws IOException, SAXException, ParserConfigurationException {
-        String name = null;
+        String name;
         XMLParser parser = new XMLParser();
         Document document = parser.buildDocumentStream(path);
         Element root = document.getDocumentElement();
@@ -56,16 +56,32 @@ public class XMLTest {
 
     @Test
     public void testXMLNameChange() throws IOException, SAXException, ParserConfigurationException, TransformerException {
-        String name = null;
+        String name;
         XMLParser parser = new XMLParser();
         Document document = parser.buildDocumentStream(path);
         Element root = document.getDocumentElement();
         String originalName = root.getElementsByTagName("name").item(0).getTextContent();
         root.getElementsByTagName("name").item(0).setTextContent("New Character Name");
-        //parser.overwrite(document, path);
         root = document.getDocumentElement();
         name = root.getElementsByTagName("name").item(0).getTextContent();
 
         Assert.assertNotEquals(name, originalName);
+    }
+
+    @Test
+    public void testNewXML() throws IOException, ParserConfigurationException, TransformerException{
+        XMLParser parser = new XMLParser();
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+
+        Document document = builder.newDocument();
+
+        Element root = document.createElement("character");
+        document.appendChild(root);
+
+        root.appendChild(document.createElement("name"));
+
+        parser.write(document, "src/test/resources/newTest.xml");
+        Assert.assertNotNull(document);
     }
 }

@@ -1,0 +1,36 @@
+.toptab .tab-header-area{
+    -fx-padding:0 0 0 25;
+}
+.sidetab .tab-header-area{
+    -fx-padding:25 0 0 0;
+}
+
+.background{
+    -fx-background-color: #1d1d1d;
+}
+
+.label{
+    -fx-text-fill: #e2e2e2;
+}
+
+.menu .label{
+    -fx-text-fill: #000000;
+}
+
+.button {
+    -fx-padding: 5 22 5 22;
+    -fx-border-color: #e2e2e2;
+    -fx-border-width: 2;
+    -fx-background-radius: 0;
+    -fx-background-color: #1d1d1d;
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-size: 11pt;
+    -fx-text-fill: #d8d8d8;
+    -fx-background-insets: 0 0 0 0, 0, 1, 2;
+    -fx-pref-width: 130;
+    -fx-pref-height: 40;
+}
+
+.button:hover {
+    -fx-background-color: #3a3a3a;
+}
