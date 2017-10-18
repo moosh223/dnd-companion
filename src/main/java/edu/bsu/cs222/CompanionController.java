@@ -295,7 +295,7 @@ public class CompanionController {
         character.setStats(String.format("%s,%s,%s,%s,%s,%s",
                 displayStr.getText(),displayDex.getText(),displayCon.getText(),
                 displayInt.getText(),displayWis.getText(),displayCha.getText()));
-
+        updateCharacterView();
     }
 
     private String parseLanguages() {
