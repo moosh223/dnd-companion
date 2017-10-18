@@ -281,6 +281,23 @@ public class CompanionController {
         displayChaMod.setText(String.valueOf((int)Math.floor((character.getStats()[5]-10)/2.0)));
     }
 
+    private void updateCharacterXML(){
+        character.setCharacterName(displayCharName.getText());
+        character.setRace(displayRace.getText());
+        character.setClassName(displayClass.getText());
+        character.setAlignment(displayAlignment.getText());
+        character.setEXP(displayExp.getText());
+        character.setAge(displayAge.getText());
+        character.setSize(displaySize.getText());
+        character.setHeight(displayHeight.getText());
+        character.setMaxHp(displayMaxHp.getText());
+        character.setCurrentHp(displayCurrentHp.getText());
+        character.setStats(String.format("%s,%s,%s,%s,%s,%s",
+                displayStr.getText(),displayDex.getText(),displayCon.getText(),
+                displayInt.getText(),displayWis.getText(),displayCha.getText()));
+
+    }
+
     private String parseLanguages() {
         String[] languages = languageTextBox.getText().split("\n");
         StringBuilder languageTag= new StringBuilder();
