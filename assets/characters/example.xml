@@ -1,16 +1,16 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <character owner="Josh Mooshian">
-    <name>Dra'll</name>
-    <race>Half-Orc</race>
-    <classname>Barbarian</classname>
-    <stats>13,12,14,18,15,16</stats>
+    <name>Fido</name>
+    <race>Good Boy</race>
+    <classname>Pupper</classname>
+    <stats>13,12,14,20,15,16</stats>
     <maxhp>20</maxhp>
-    <currenthp>20</currenthp>
+    <currenthp>24</currenthp>
     <exp>0</exp>
-    <age>35</age>
-    <alignment>Neutral</alignment>
-    <size>Medium</size>
-    <height>6'5"</height>
+    <age>7</age>
+    <alignment>Good</alignment>
+    <size>Smol</size>
+    <height>1'4"</height>
     <speed>30</speed>
     <weight>280lb</weight>
     <languages>Common, Orc, Dwarf</languages>

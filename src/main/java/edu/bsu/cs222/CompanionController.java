@@ -82,8 +82,8 @@ public class CompanionController {
     @FXML private ListView<String> characterLoadList;
     private List<TextField> pageTextFields = new ArrayList<>();
     private List<ComboBox> pageComboBoxes = new ArrayList<>();
+    private List<TextField> displayFields = new ArrayList<>();
     private PlayerCharacter character;
-
 
     @FXML
     public void playerButtonPress(){
@@ -103,11 +103,26 @@ public class CompanionController {
     }
 
     @FXML
-    public void loadSelectedCharacter(){
-        character = new PlayerCharacter(characterLoadList.getSelectionModel().getSelectedItem()+".xml");
+    public void loadSelectedCharacter() {
+        character = new PlayerCharacter(characterLoadList.getSelectionModel().getSelectedItem() + ".xml");
         updateCharacterView();
+        addFocusListeners();
         loadPane.setVisible(false);
         characterPane.setVisible(true);
+
+    }
+
+    private void addFocusListeners() {
+        displayFields.addAll(Arrays.asList(
+                displayCharName, displayRace,displayClass,displayAlignment,displayExp,displayAge,displaySize,
+                displayHeight,displayMaxHp,displayCurrentHp,displayStr,displayDex,displayCon,displayInt,displayWis,displayCha));
+        for(TextField field: displayFields){
+            field.focusedProperty().addListener((obs, oldVal, newVal) -> {
+                if (!newVal) {
+                    updateCharacterXML();
+                }
+            });
+        }
     }
 
     private void populateLoadTable() {
@@ -279,6 +294,7 @@ public class CompanionController {
         displayChaMod.setText(String.valueOf((int)Math.floor((character.getStats()[5]-10)/2.0)));
     }
 
+    @FXML
     private void updateCharacterXML(){
         character.setCharacterName(displayCharName.getText());
         character.setRace(displayRace.getText());
@@ -340,7 +356,7 @@ public class CompanionController {
                 try {
                     File file = new File(getClass().getClassLoader().getResource("Players_Handbook.pdf").getFile());
                     Desktop.getDesktop().open(file);
-                } catch (IOException | NullPointerException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }).start();
