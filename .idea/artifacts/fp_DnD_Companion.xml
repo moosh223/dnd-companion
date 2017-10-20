@@ -3,9 +3,13 @@
     <output-path>$PROJECT_DIR$/out/artifacts/fp_DnD_Companion</output-path>
     <properties id="javafx-properties">
       <options>
+        <option name="alias" value="" />
         <option name="appClass" value="edu.bsu.cs222.Companion" />
         <option name="description" value="" />
+        <option name="enabledSigning" value="true" />
         <option name="htmlPlaceholderId" value="" />
+        <option name="keystore" value="" />
+        <option name="nativeBundle" value="exe" />
         <option name="title" value="test" />
         <option name="vendor" value="test vendor" />
         <option name="version" value="0.0.1" />
@@ -14,8 +18,12 @@
     <root id="root">
       <element id="archive" name="fp_DnD_Companion.jar">
         <element id="module-output" name="fp-DnD-Companion" />
+        <element id="library" level="project" name="Maven: junit:junit:4.12" />
+        <element id="library" level="project" name="Maven: org.hamcrest:hamcrest-core:1.3" />
       </element>
-      <element id="dir-copy" path="$PROJECT_DIR$/assets" />
+      <element id="directory" name="assets">
+        <element id="dir-copy" path="$PROJECT_DIR$/out/artifacts/fp_DnD_Companion/assets" />
+      </element>
     </root>
   </artifact>
 </component>

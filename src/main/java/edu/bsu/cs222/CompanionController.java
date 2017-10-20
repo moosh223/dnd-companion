@@ -92,9 +92,7 @@ public class CompanionController {
     }
 
     @FXML
-    public void dmButtonPress(){
-        welcomePane.setVisible(false);
-    }
+    public void dmButtonPress(){}
     @FXML
     public void loadButtonPress(){
         charTypePane.setVisible(false);
@@ -214,8 +212,10 @@ public class CompanionController {
 
     @FXML
     public void rcvButtonPress(){
+       /*
         charTypePane.setVisible(false);
         characterPane.setVisible(true);
+       */
     }
 
 
@@ -354,7 +354,7 @@ public class CompanionController {
         if(Desktop.isDesktopSupported()){
             new Thread(() -> {
                 try {
-                    File file = new File(getClass().getClassLoader().getResource("Players_Handbook.pdf").getFile());
+                    File file = new File("assets/Players_Handbook.pdf");
                     Desktop.getDesktop().open(file);
                 } catch (IOException e) {
                     e.printStackTrace();
