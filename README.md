@@ -7,14 +7,22 @@ The philosophy behind this application is non-intrusive assistance and features 
 
 # Dungeon Master Features:
   *Create information and stat sheets for NPCs individual campaigns
+  
   *Journal space to write location and item descriptions related to a campaign
+  
   *Monster workspace for encounters
+  
   *Combat system to allow players to keep track of combat and turn order based on initiative rolls
 
 # Player  Features:
   *~~Create a character sheet that can store vital character statistic information~~ DONE
+  
   *Provide a worskspace for weapon and spell damage
+  
   *Allow players to track their equipment inventories
+  
   *Journal for players to keep campaign notes
+  
   *Various ease-of-use utilities such as a dice roller, a system for keeping track of leveling and HP
+  
   *Ability to send character sheet data to a campaign's DM in real time 
