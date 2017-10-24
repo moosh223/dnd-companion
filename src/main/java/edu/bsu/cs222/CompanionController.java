@@ -1,14 +1,14 @@
 package edu.bsu.cs222;
 
+import com.sun.javafx.stage.StageHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 
 import java.awt.*;
 import java.io.*;
@@ -16,74 +16,57 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CompanionController {
+public class CompanionController extends FXMLElements{
 
-    @FXML private BorderPane welcomePane;
-    @FXML private TabPane characterPane;
-    @FXML private BorderPane charTypePane;
-    @FXML private BorderPane loadPane;
-    @FXML private BorderPane namePane;
-    @FXML private AnchorPane racePane;
-    @FXML private AnchorPane languagePane;
-    @FXML private AnchorPane classPane;
-    @FXML private AnchorPane statPane;
-    @FXML private Label nameErrorLabel;
-    @FXML private Label raceErrorLabel;
-    @FXML private Label languageErrorLabel;
-    @FXML private Label classErrorLabel;
-    @FXML private Label statErrorLabel;
-    @FXML private Label displayStrMod;
-    @FXML private Label displayDexMod;
-    @FXML private Label displayConMod;
-    @FXML private Label displayIntMod;
-    @FXML private Label displayWisMod;
-    @FXML private Label displayChaMod;
-    @FXML private TextField playerNameTextBox;
-    @FXML private TextField characterNameTextBox;
-    @FXML private TextField raceTextBox;
-    @FXML private TextField ageTextBox;
-    @FXML private TextField heightTextBox;
-    @FXML private TextField speedTextBox;
-    @FXML private TextField classTextBox;
-    @FXML private TextField hpTextBox;
-    @FXML private TextArea languageTextBox;
-    @FXML private TextField strTextBox;
-    @FXML private TextField dexTextBox;
-    @FXML private TextField conTextBox;
-    @FXML private TextField wisTextBox;
-    @FXML private TextField intTextBox;
-    @FXML private TextField chaTextBox;
-    @FXML private TextField displayCharName;
-    @FXML private TextField displayRace;
-    @FXML private TextField displayClass;
-    @FXML private TextField displayAlignment;
-    @FXML private TextField displayExp;
-    @FXML private TextField displayAge;
-    @FXML private TextField displaySize;
-    @FXML private TextField displayHeight;
-    @FXML private TextField displayMaxHp;
-    @FXML private TextField displayCurrentHp;
-    @FXML private TextField displayStr;
-    @FXML private TextField displayDex;
-    @FXML private TextField displayCon;
-    @FXML private TextField displayInt;
-    @FXML private TextField displayWis;
-    @FXML private TextField displayCha;
-    @FXML private ComboBox<String> firstAbilityModified;
-    @FXML private ComboBox<String> firstModifiedScore;
-    @FXML private ComboBox<String> secondAbilityModified;
-    @FXML private ComboBox<String> secondModifiedScore;
-    @FXML private ComboBox<String> alignmentBox;
-    @FXML private ComboBox<String> sizeBox;
-    @FXML private ComboBox<String> primaryAbilityOne;
-    @FXML private ComboBox<String> primaryAbilityTwo;
-    @FXML private ComboBox<String> savingThrowOne;
-    @FXML private ComboBox<String> savingThrowTwo;
-    @FXML private ListView<String> characterLoadList;
+
     private List<TextField> pageTextFields = new ArrayList<>();
     private List<ComboBox> pageComboBoxes = new ArrayList<>();
     private List<TextField> displayFields = new ArrayList<>();
     private PlayerCharacter character;
+
+    public void initialize(){
+        addDisplayFocusListeners();
+        createTabListener();
+    }
+
+    private void createTabListener() {
+        characterPane.getSelectionModel().selectedItemProperty()
+                .addListener((obs, oldTab, newTab) -> {
+                    if(newTab == newTabButton) {
+                        characterPane.getSelectionModel().select(oldTab);
+                        createNewTab();
+                    }
+                });
+    }
+
+    private void createNewTab() {
+        Tab newTab = new Tab();
+        newTab.setText("TestTab");
+        characterPane.getTabs().remove(newTabButton);
+        characterPane.getTabs().addAll(newTab,newTabButton);
+        System.out.println(characterPane.getTabs().size());
+    }
+
+    @FXML
+    public void closeProgram(){
+        System.exit(0);
+    }
+
+    @FXML
+    public void setDiceRollerVisible(){
+        Stage stage;
+        if(diceRollerButton.isSelected()){
+            stage = new Stage();
+            Scene scene = new Scene(new AnchorPane());
+            stage.setOnCloseRequest((event) ->
+                    diceRollerButton.selectedProperty().setValue(false));
+            stage.setScene(scene);
+            stage.show();
+            return;
+        }
+            stage = StageHelper.getStages().get(StageHelper.getStages().size()-1);
+            stage.close();
+    }
 
     @FXML
     public void playerButtonPress(){
@@ -104,13 +87,13 @@ public class CompanionController {
     public void loadSelectedCharacter() {
         character = new PlayerCharacter(characterLoadList.getSelectionModel().getSelectedItem() + ".xml");
         updateCharacterView();
-        addFocusListeners();
         loadPane.setVisible(false);
         characterPane.setVisible(true);
 
     }
 
-    private void addFocusListeners() {
+
+    private void addDisplayFocusListeners() {
         displayFields.addAll(Arrays.asList(
                 displayCharName, displayRace,displayClass,displayAlignment,displayExp,displayAge,displaySize,
                 displayHeight,displayMaxHp,displayCurrentHp,displayStr,displayDex,displayCon,displayInt,displayWis,displayCha));
@@ -205,6 +188,7 @@ public class CompanionController {
         else {
             buildNewCharacter();
             updateCharacterView();
+            addDisplayFocusListeners();
             statPane.setVisible(false);
             characterPane.setVisible(true);
         }
