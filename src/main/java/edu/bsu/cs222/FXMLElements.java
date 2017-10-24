@@ -6,9 +6,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 
 public class FXMLElements {
+    //ViewPanes
     @FXML public BorderPane welcomePane;
     @FXML public TabPane characterPane;
-    @FXML public Tab newTabButton;
     @FXML public BorderPane charTypePane;
     @FXML public BorderPane loadPane;
     @FXML public BorderPane namePane;
@@ -16,17 +16,41 @@ public class FXMLElements {
     @FXML public AnchorPane languagePane;
     @FXML public AnchorPane classPane;
     @FXML public AnchorPane statPane;
+    
+    //ErrorLabels
     @FXML public Label nameErrorLabel;
     @FXML public Label raceErrorLabel;
     @FXML public Label languageErrorLabel;
     @FXML public Label classErrorLabel;
     @FXML public Label statErrorLabel;
+    //Modifier Labels
     @FXML public Label displayStrMod;
     @FXML public Label displayDexMod;
     @FXML public Label displayConMod;
     @FXML public Label displayIntMod;
     @FXML public Label displayWisMod;
     @FXML public Label displayChaMod;
+    //Skill Labels
+    @FXML public Label displayAcrobaticsMod;
+    @FXML public Label displayAnimalHandlingMod;
+    @FXML public Label displayArcanaMod;
+    @FXML public Label displayAthleticsMod;
+    @FXML public Label displayDeceptionMod;
+    @FXML public Label displayHistoryMod;
+    @FXML public Label displayInsightMod;
+    @FXML public Label displayIntimidationMod;
+    @FXML public Label displayInvestigationMod;
+    @FXML public Label displayMedicineMod;
+    @FXML public Label displayNatureMod;
+    @FXML public Label displayPerceptionMod;
+    @FXML public Label displayPerformanceMod;
+    @FXML public Label displayPersuasionMod;
+    @FXML public Label displayReligionMod;
+    @FXML public Label displaySleightOfHandMod;
+    @FXML public Label displayStealthMod;
+    @FXML public Label displaySurvivalMod;
+
+    //Character Creator Fields
     @FXML public TextField playerNameTextBox;
     @FXML public TextField characterNameTextBox;
     @FXML public TextField raceTextBox;
@@ -68,6 +92,9 @@ public class FXMLElements {
     @FXML public ComboBox<String> primaryAbilityTwo;
     @FXML public ComboBox<String> savingThrowOne;
     @FXML public ComboBox<String> savingThrowTwo;
+    
+    //Miscellaneous Elements
     @FXML public ListView<String> characterLoadList;
     @FXML public CheckBox diceRollerButton;
+    @FXML public Tab newTabButton;
 }

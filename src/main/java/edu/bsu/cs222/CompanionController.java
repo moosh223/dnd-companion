@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -22,11 +23,64 @@ public class CompanionController extends FXMLElements{
     private List<TextField> pageTextFields = new ArrayList<>();
     private List<ComboBox> pageComboBoxes = new ArrayList<>();
     private List<TextField> displayFields = new ArrayList<>();
+    private List<Label> skillList = new ArrayList<>();
     private PlayerCharacter character;
+
+    private enum StatName{
+        Strength(0),
+        Dexterity(1),
+        Constitution(2),
+        Intelligence(3),
+        Wisdom(4),
+        Charisma(5);
+
+        private int stat;
+        StatName(int stat) {
+            this.stat = stat;
+        }
+        private int getValue(){
+            return stat;
+        }
+    }
+
+    private enum SkillName{
+        Acrobatics("Dex"),
+        Animal_Handling("Wis"),
+        Arcana("Int"),
+        Athletics("Str"),
+        Deception("Cha"),
+        History("Int"),
+        Insight("Wis"),
+        Intimidation("Cha"),
+        Investigation("Int"),
+        Medicine("Wis"),
+        Nature("Int"),
+        Perception("Wis"),
+        Performance("Cha"),
+        Persuasion("Cha"),
+        Religion("Int"),
+        Sleight_of_Hand("Dex"),
+        Stealth("Dex"),
+        Survival("Wis");
+        
+        private String stat;
+        SkillName(String stat) {
+            this.stat = stat;
+        }
+        private String getValue(){
+            return stat;
+        }
+    }
 
     public void initialize(){
         addDisplayFocusListeners();
         createTabListener();
+        createSkillList();
+    }
+
+    private void createSkillList() {
+        for(SkillName skillName:SkillName.values()){
+        }
     }
 
     private void createTabListener() {
@@ -253,6 +307,10 @@ public class CompanionController extends FXMLElements{
         parseAbilityModifiers(secondAbilityModified.getValue(),secondModifiedScore.getValue());
     }
 
+    private int updateAbilityModifers(){
+        return 0;
+    }
+
     private void updateCharacterView(){
         displayCharName.setText(character.getCharacterName());
         displayRace.setText(character.getRace());
@@ -306,22 +364,7 @@ public class CompanionController extends FXMLElements{
         return languageTag.toString().replace("null"," ").trim();
     }
 
-    private enum StatName{
-        Strength(0),
-        Dexterity(1),
-        Constitution(2),
-        Intelligence(3),
-        Wisdom(4),
-        Charisma(5);
 
-        private int stat;
-        StatName(int stat) {
-            this.stat = stat;
-        }
-        private int getValue(){
-            return stat;
-        }
-    }
     private void parseAbilityModifiers(String ability, String score){
         for(StatName statName: StatName.values()){
             if(ability.equals(statName.toString())){
