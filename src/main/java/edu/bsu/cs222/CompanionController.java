@@ -14,6 +14,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
+import javax.xml.soap.Text;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -91,6 +92,7 @@ public class CompanionController{
     @FXML public TextField wisTextBox;
     @FXML public TextField intTextBox;
     @FXML public TextField chaTextBox;
+
     @FXML public TextField displayCharName;
     @FXML public TextField displayRace;
     @FXML public TextField displayClass;
@@ -108,6 +110,7 @@ public class CompanionController{
     @FXML public TextField displayWis;
     @FXML public TextField displayCha;
     private List<TextField> creatorTextFields = new ArrayList<>();
+
     //Combo Boxes for Character Creator
     @FXML public ComboBox<String> firstAbilityModified;
     @FXML public ComboBox<String> firstModifiedScore;
@@ -197,6 +200,15 @@ public class CompanionController{
                 }
             });
         }
+    }
+
+    private void createDisplayAction(){
+        for(TextField field: displayFields){
+            field.setOnAction((event) -> {
+                updateCharacterXML();
+            });
+        }
+
     }
 
     private void createNewTab() {
