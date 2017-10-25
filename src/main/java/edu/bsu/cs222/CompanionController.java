@@ -4,11 +4,14 @@ import com.sun.javafx.stage.StageHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.awt.*;
@@ -17,13 +20,115 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CompanionController extends FXMLElements{
+public class CompanionController{
 
+    //ViewPanes
+    @FXML public BorderPane welcomePane;
+    @FXML public TabPane characterPane;
+    @FXML public BorderPane charTypePane;
+    @FXML public BorderPane loadPane;
+    @FXML public BorderPane namePane;
+    @FXML public AnchorPane racePane;
+    @FXML public AnchorPane languagePane;
+    @FXML public AnchorPane classPane;
+    @FXML public AnchorPane statPane;
 
-    private List<TextField> pageTextFields = new ArrayList<>();
-    private List<ComboBox> pageComboBoxes = new ArrayList<>();
+    //ErrorLabels
+    @FXML public Label nameErrorLabel;
+    @FXML public Label raceErrorLabel;
+    @FXML public Label languageErrorLabel;
+    @FXML public Label classErrorLabel;
+    @FXML public Label statErrorLabel;
+
+    //Modifier Labels
+    @FXML public Label displayStrMod;
+    @FXML public Label displayDexMod;
+    @FXML public Label displayConMod;
+    @FXML public Label displayIntMod;
+    @FXML public Label displayWisMod;
+    @FXML public Label displayChaMod;
+
+    //Skill Labels
+    @FXML public Label displayAcrobaticsMod;
+    @FXML public Label displayAnimalHandlingMod;
+    @FXML public Label displayArcanaMod;
+    @FXML public Label displayAthleticsMod;
+    @FXML public Label displayDeceptionMod;
+    @FXML public Label displayHistoryMod;
+    @FXML public Label displayInsightMod;
+    @FXML public Label displayIntimidationMod;
+    @FXML public Label displayInvestigationMod;
+    @FXML public Label displayMedicineMod;
+    @FXML public Label displayNatureMod;
+    @FXML public Label displayPerceptionMod;
+    @FXML public Label displayPerformanceMod;
+    @FXML public Label displayPersuasionMod;
+    @FXML public Label displayReligionMod;
+    @FXML public Label displaySleightOfHandMod;
+    @FXML public Label displayStealthMod;
+    @FXML public Label displaySurvivalMod;
+    private List<Label> strSkills = new ArrayList<>();
+    private List<Label> dexSkills = new ArrayList<>();
+    private List<Label> conSkills = new ArrayList<>();
+    private List<Label> intSkills = new ArrayList<>();
+    private List<Label> wisSkills = new ArrayList<>();
+    private List<Label> chaSkills = new ArrayList<>();
+    private List<List<Label>> skillList = new ArrayList<>();
+
+    //Text Fields for Character Creator
+    @FXML public TextField playerNameTextBox;
+    @FXML public TextField characterNameTextBox;
+    @FXML public TextField raceTextBox;
+    @FXML public TextField ageTextBox;
+    @FXML public TextField heightTextBox;
+    @FXML public TextField speedTextBox;
+    @FXML public TextField classTextBox;
+    @FXML public TextField hpTextBox;
+    @FXML public TextArea languageTextBox;
+    @FXML public TextField strTextBox;
+    @FXML public TextField dexTextBox;
+    @FXML public TextField conTextBox;
+    @FXML public TextField wisTextBox;
+    @FXML public TextField intTextBox;
+    @FXML public TextField chaTextBox;
+    @FXML public TextField displayCharName;
+    @FXML public TextField displayRace;
+    @FXML public TextField displayClass;
+    @FXML public TextField displayAlignment;
+    @FXML public TextField displayExp;
+    @FXML public TextField displayAge;
+    @FXML public TextField displaySize;
+    @FXML public TextField displayHeight;
+    @FXML public TextField displayMaxHp;
+    @FXML public TextField displayCurrentHp;
+    @FXML public TextField displayStr;
+    @FXML public TextField displayDex;
+    @FXML public TextField displayCon;
+    @FXML public TextField displayInt;
+    @FXML public TextField displayWis;
+    @FXML public TextField displayCha;
+    private List<TextField> creatorTextFields = new ArrayList<>();
+    //Combo Boxes for Character Creator
+    @FXML public ComboBox<String> firstAbilityModified;
+    @FXML public ComboBox<String> firstModifiedScore;
+    @FXML public ComboBox<String> secondAbilityModified;
+    @FXML public ComboBox<String> secondModifiedScore;
+    @FXML public ComboBox<String> alignmentBox;
+    @FXML public ComboBox<String> sizeBox;
+    @FXML public ComboBox<String> primaryAbilityOne;
+    @FXML public ComboBox<String> primaryAbilityTwo;
+    @FXML public ComboBox<String> savingThrowOne;
+    @FXML public ComboBox<String> savingThrowTwo;
+    private List<ComboBox> creatorComboBoxes = new ArrayList<>();
+
+    //Miscellaneous Elements
+    @FXML public ListView<String> characterLoadList;
+    @FXML public ContextMenu tabContextMenu;
+    @FXML public CheckBox diceRollerButton;
+    @FXML public Tab characterSheetTab;
+    @FXML public Tab newTabButton;
+
     private List<TextField> displayFields = new ArrayList<>();
-    private List<Label> skillList = new ArrayList<>();
     private PlayerCharacter character;
 
     private enum StatName{
@@ -43,47 +148,34 @@ public class CompanionController extends FXMLElements{
         }
     }
 
-    private enum SkillName{
-        Acrobatics("Dex"),
-        Animal_Handling("Wis"),
-        Arcana("Int"),
-        Athletics("Str"),
-        Deception("Cha"),
-        History("Int"),
-        Insight("Wis"),
-        Intimidation("Cha"),
-        Investigation("Int"),
-        Medicine("Wis"),
-        Nature("Int"),
-        Perception("Wis"),
-        Performance("Cha"),
-        Persuasion("Cha"),
-        Religion("Int"),
-        Sleight_of_Hand("Dex"),
-        Stealth("Dex"),
-        Survival("Wis");
-        
-        private String stat;
-        SkillName(String stat) {
-            this.stat = stat;
-        }
-        private String getValue(){
-            return stat;
-        }
-    }
-
     public void initialize(){
         addDisplayFocusListeners();
-        createTabListener();
-        createSkillList();
+        addNewTabListener();
     }
 
-    private void createSkillList() {
-        for(SkillName skillName:SkillName.values()){
+    private void createSkillLists() {
+        strSkills.add(displayAthleticsMod);
+        dexSkills.addAll(Arrays.asList(displayAcrobaticsMod, displaySleightOfHandMod,displayStealthMod));
+        intSkills.addAll(Arrays.asList(displayArcanaMod, displayHistoryMod, displayInvestigationMod,displayNatureMod,displayReligionMod));
+        wisSkills.addAll(Arrays.asList(displayAnimalHandlingMod, displayInsightMod,displayMedicineMod,displayPerceptionMod,displaySurvivalMod));
+        chaSkills.addAll(Arrays.asList(displayDeceptionMod,displayIntimidationMod,displayPerformanceMod, displayPersuasionMod));
+        skillList.addAll(Arrays.asList(strSkills,dexSkills,conSkills,intSkills,wisSkills,chaSkills));
+
+    }
+
+    private void updateSkillModifiers(){
+        for(List<Label> skill: skillList){
+            setSkillModifiers(skill,character.getStats()[skillList.indexOf(skill)]);
         }
     }
 
-    private void createTabListener() {
+    private void setSkillModifiers(List<Label> skillList, int stat){
+        for(Label skill : skillList){
+            skill.setText(getModifier(stat));
+        }
+    }
+
+    private void addNewTabListener() {
         characterPane.getSelectionModel().selectedItemProperty()
                 .addListener((obs, oldTab, newTab) -> {
                     if(newTab == newTabButton) {
@@ -93,17 +185,38 @@ public class CompanionController extends FXMLElements{
                 });
     }
 
+    private void addDisplayFocusListeners() {
+        displayFields.addAll(Arrays.asList(
+                displayCharName, displayRace,displayClass,displayAlignment,displayExp,
+                displayAge,displaySize, displayHeight,displayMaxHp,displayCurrentHp,
+                displayStr,displayDex,displayCon,displayInt,displayWis,displayCha));
+        for(TextField field: displayFields){
+            field.focusedProperty().addListener((obs, oldVal, newVal) -> {
+                if (!newVal) {
+                    updateCharacterXML();
+                }
+            });
+        }
+    }
+
     private void createNewTab() {
-        Tab newTab = new Tab();
-        newTab.setText("TestTab");
+        Tab newTab = new Tab("New Tab");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("CharacterTab.fxml"));
+            newTab.setContent(loader.load());
+        }catch (IOException e){}
         characterPane.getTabs().remove(newTabButton);
         characterPane.getTabs().addAll(newTab,newTabButton);
-        System.out.println(characterPane.getTabs().size());
     }
 
     @FXML
     public void closeProgram(){
         System.exit(0);
+    }
+
+    @FXML
+    public void tabCloseAction(){
+        System.out.println();
     }
 
     @FXML
@@ -131,7 +244,7 @@ public class CompanionController extends FXMLElements{
     @FXML
     public void dmButtonPress(){}
     @FXML
-    public void loadButtonPress(){
+    public void loadButtonAction(){
         charTypePane.setVisible(false);
         loadPane.setVisible(true);
         populateLoadTable();
@@ -140,28 +253,15 @@ public class CompanionController extends FXMLElements{
     @FXML
     public void loadSelectedCharacter() {
         character = new PlayerCharacter(characterLoadList.getSelectionModel().getSelectedItem() + ".xml");
+        createSkillLists();
         updateCharacterView();
         loadPane.setVisible(false);
         characterPane.setVisible(true);
 
     }
 
-
-    private void addDisplayFocusListeners() {
-        displayFields.addAll(Arrays.asList(
-                displayCharName, displayRace,displayClass,displayAlignment,displayExp,displayAge,displaySize,
-                displayHeight,displayMaxHp,displayCurrentHp,displayStr,displayDex,displayCon,displayInt,displayWis,displayCha));
-        for(TextField field: displayFields){
-            field.focusedProperty().addListener((obs, oldVal, newVal) -> {
-                if (!newVal) {
-                    updateCharacterXML();
-                }
-            });
-        }
-    }
-
     private void populateLoadTable() {
-        ObservableList<String> fileList= FXCollections.observableArrayList(getFileList());
+        ObservableList<String> fileList = FXCollections.observableArrayList(getFileList());
         characterLoadList.getItems().addAll(fileList);
     }
 
@@ -178,19 +278,19 @@ public class CompanionController extends FXMLElements{
 
     @FXML
     public void newButtonPress(){
-        pageTextFields.addAll(Arrays.asList(playerNameTextBox,characterNameTextBox));
+        creatorTextFields.addAll(Arrays.asList(playerNameTextBox,characterNameTextBox));
         charTypePane.setVisible(false);
         namePane.setVisible(true);
     }
     @FXML
     public void nameNextButtonPress(){
-        if(!pageFilled()) {
+        if(!isPageFilled()) {
             nameErrorLabel.setVisible(true);
         }
         else {
-            pageTextFields.addAll(
+            creatorTextFields.addAll(
                     Arrays.asList(raceTextBox, ageTextBox, heightTextBox, speedTextBox));
-            pageComboBoxes.addAll(
+            creatorComboBoxes.addAll(
                     Arrays.asList(firstAbilityModified,firstModifiedScore,
                             secondAbilityModified,secondModifiedScore,alignmentBox,sizeBox));
             namePane.setVisible(false);
@@ -199,7 +299,7 @@ public class CompanionController extends FXMLElements{
     }
     @FXML
     public void raceNextButtonPress(){
-        if(!pageFilled()){
+        if(!isPageFilled()){
             raceErrorLabel.setVisible(true);
         }
         else{
@@ -209,13 +309,13 @@ public class CompanionController extends FXMLElements{
     }
     @FXML
     public void languageNextButtonPress(){
-        if (!pageFilled() || languageTextBox.getText().equals("")) {
+        if (!isPageFilled() || languageTextBox.getText().equals("")) {
             languageErrorLabel.setVisible(true);
         }
         else{
-            pageTextFields.addAll(
+            creatorTextFields.addAll(
                     Arrays.asList(classTextBox, hpTextBox));
-            pageComboBoxes.addAll(
+            creatorComboBoxes.addAll(
                     Arrays.asList(savingThrowOne,savingThrowTwo,primaryAbilityOne,primaryAbilityTwo));
             languagePane.setVisible(false);
             classPane.setVisible(true);
@@ -223,11 +323,11 @@ public class CompanionController extends FXMLElements{
     }
     @FXML
     public void classNextButtonPress(){
-        if(!pageFilled()){
+        if(!isPageFilled()){
             classErrorLabel.setVisible(true);
         }
         else{
-            pageTextFields.addAll(
+            creatorTextFields.addAll(
                     Arrays.asList(strTextBox, dexTextBox,conTextBox,
                             intTextBox,wisTextBox,chaTextBox));
             classPane.setVisible(false);
@@ -236,7 +336,7 @@ public class CompanionController extends FXMLElements{
     }
     @FXML
     public void statNextButtonPress(){
-        if (!pageFilled()){
+        if (!isPageFilled()){
             statErrorLabel.setVisible(true);
         }
         else {
@@ -257,12 +357,12 @@ public class CompanionController extends FXMLElements{
     }
 
 
-    private boolean pageFilled(){
-        return testPageComboBoxes() && testPageTextFields();
+    private boolean isPageFilled(){
+        return isComboBoxFilled() && isTextFieldFilled();
     }
 
-    private boolean testPageTextFields(){
-        for(TextField field: pageTextFields){
+    private boolean isTextFieldFilled(){
+        for(TextField field: creatorTextFields){
             if(field.getText().equals("")){
                 return false;
             }
@@ -270,8 +370,8 @@ public class CompanionController extends FXMLElements{
         return true;
     }
 
-    private boolean testPageComboBoxes(){
-        for(ComboBox box: pageComboBoxes){
+    private boolean isComboBoxFilled(){
+        for(ComboBox box: creatorComboBoxes){
             try{
                 box.getValue().equals(null);
             }catch(NullPointerException npe){
@@ -307,10 +407,6 @@ public class CompanionController extends FXMLElements{
         parseAbilityModifiers(secondAbilityModified.getValue(),secondModifiedScore.getValue());
     }
 
-    private int updateAbilityModifers(){
-        return 0;
-    }
-
     private void updateCharacterView(){
         displayCharName.setText(character.getCharacterName());
         displayRace.setText(character.getRace());
@@ -323,19 +419,24 @@ public class CompanionController extends FXMLElements{
         displayMaxHp.setText(character.getMaxHP());
         displayCurrentHp.setText(character.getCurrentHp());
         displayStr.setText(String.valueOf(character.getStats()[0]));
-        displayStrMod.setText(String.valueOf((int)Math.floor((character.getStats()[0]-10)/2.0)));
+        displayStrMod.setText(getModifier(character.getStats()[0]));
         displayDex.setText(String.valueOf(character.getStats()[1]));
-        displayDexMod.setText(String.valueOf((int)Math.floor((character.getStats()[1]-10)/2.0)));
+        displayDexMod.setText(getModifier(character.getStats()[1]));
         displayCon.setText(String.valueOf(character.getStats()[2]));
-        displayConMod.setText(String.valueOf((int)Math.floor((character.getStats()[2]-10)/2.0)));
+        displayConMod.setText(getModifier(character.getStats()[2]));
         displayInt.setText(String.valueOf(character.getStats()[3]));
-        displayIntMod.setText(String.valueOf((int)Math.floor((character.getStats()[3]-10)/2.0)));
+        displayIntMod.setText(getModifier(character.getStats()[3]));
         displayWis.setText(String.valueOf(character.getStats()[4]));
-        displayWisMod.setText(String.valueOf((int)Math.floor((character.getStats()[4]-10)/2.0)));
+        displayWisMod.setText(getModifier(character.getStats()[4]));
         displayCha.setText(String.valueOf(character.getStats()[5]));
-        displayChaMod.setText(String.valueOf((int)Math.floor((character.getStats()[5]-10)/2.0)));
+        displayChaMod.setText(getModifier(character.getStats()[5]));
+        updateSkillModifiers();
+
     }
 
+    private String getModifier(int stat){
+        return String.valueOf((int)Math.floor((stat-10)/2.0));
+    }
     @FXML
     private void updateCharacterXML(){
         character.setCharacterName(displayCharName.getText());

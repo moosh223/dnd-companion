@@ -41,12 +41,19 @@
             </items>
           </Menu>
         </menus>
+         <contextMenu>
+            <ContextMenu fx:id="tabContextMenu">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#tabCloseAction" text="Close Tab" />
+              </items>
+            </ContextMenu>
+         </contextMenu>
       </MenuBar>
    </top>
    <center>
       <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <BorderPane fx:id="welcomePane" focusTraversable="true" prefHeight="588.0" prefWidth="543.0" visible="false">
+            <BorderPane fx:id="welcomePane" focusTraversable="true" prefHeight="588.0" prefWidth="543.0">
                <top>
                   <Label alignment="CENTER" prefHeight="120.0" prefWidth="477.0" text="Welcome to D&amp;D Companion" textAlignment="CENTER" wrapText="true" BorderPane.alignment="CENTER">
                      <font>
@@ -85,16 +92,16 @@
                <center>
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#loadButtonPress" text="Load" />
+                        <Button mnemonicParsing="false" onAction="#loadButtonAction" text="Load" />
                         <Button mnemonicParsing="false" onAction="#newButtonPress" text="New" />
                         <Button mnemonicParsing="false" onAction="#rcvButtonPress" text="RCV" />
                      </children>
                   </HBox>
                </center>
             </BorderPane>
-            <TabPane fx:id="characterPane" onKeyTyped="#updateCharacterXML" prefHeight="590.0" prefWidth="543.0" styleClass="toptab" tabClosingPolicy="UNAVAILABLE">
+            <TabPane fx:id="characterPane" prefHeight="590.0" prefWidth="543.0" styleClass="toptab" visible="false">
                <tabs>
-                  <Tab text="Character Sheet">
+                  <Tab fx:id="characterSheetTab" closable="false" text="Character Sheet">
                      <content>
                         <BorderPane prefHeight="200.0" prefWidth="200.0">
                            <center>
@@ -382,92 +389,92 @@
                                                             <Insets left="15.0" />
                                                          </GridPane.margin>
                                                       </Label>
-                                                      <Label text="0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                                      <Label fx:id="displayAcrobaticsMod" text="0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                                                          <GridPane.margin>
                                                             <Insets left="30.0" />
                                                          </GridPane.margin>
                                                       </Label>
-                                                      <Label text="0" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                                      <Label fx:id="displayAnimalHandlingMod" text="0" GridPane.columnIndex="2" GridPane.rowIndex="2">
                                                          <GridPane.margin>
                                                             <Insets left="30.0" />
                                                          </GridPane.margin>
                                                       </Label>
-                                                      <Label text="0" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                                      <Label fx:id="displayArcanaMod" text="0" GridPane.columnIndex="2" GridPane.rowIndex="3">
                                                          <GridPane.margin>
                                                             <Insets left="30.0" />
                                                          </GridPane.margin>
                                                       </Label>
-                                                      <Label text="0" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                                                      <Label fx:id="displayAthleticsMod" text="0" GridPane.columnIndex="2" GridPane.rowIndex="4">
                                                          <GridPane.margin>
                                                             <Insets left="30.0" />
                                                          </GridPane.margin>
                                                       </Label>
-                                                      <Label text="0" GridPane.columnIndex="2" GridPane.rowIndex="5">
+                                                      <Label fx:id="displayDeceptionMod" text="0" GridPane.columnIndex="2" GridPane.rowIndex="5">
                                                          <GridPane.margin>
                                                             <Insets left="30.0" />
                                                          </GridPane.margin>
                                                       </Label>
-                                                      <Label text="0" GridPane.columnIndex="2" GridPane.rowIndex="6">
+                                                      <Label fx:id="displayHistoryMod" text="0" GridPane.columnIndex="2" GridPane.rowIndex="6">
                                                          <GridPane.margin>
                                                             <Insets left="30.0" />
                                                          </GridPane.margin>
                                                       </Label>
-                                                      <Label text="0" GridPane.columnIndex="2" GridPane.rowIndex="7">
+                                                      <Label fx:id="displayInsightMod" text="0" GridPane.columnIndex="2" GridPane.rowIndex="7">
                                                          <GridPane.margin>
                                                             <Insets left="30.0" />
                                                          </GridPane.margin>
                                                       </Label>
-                                                      <Label text="0" GridPane.columnIndex="2" GridPane.rowIndex="8">
+                                                      <Label fx:id="displayIntimidationMod" text="0" GridPane.columnIndex="2" GridPane.rowIndex="8">
                                                          <GridPane.margin>
                                                             <Insets left="30.0" />
                                                          </GridPane.margin>
                                                       </Label>
-                                                      <Label text="0" GridPane.columnIndex="2" GridPane.rowIndex="9">
+                                                      <Label fx:id="displayInvestigationMod" text="0" GridPane.columnIndex="2" GridPane.rowIndex="9">
                                                          <GridPane.margin>
                                                             <Insets left="30.0" />
                                                          </GridPane.margin>
                                                       </Label>
-                                                      <Label text="0" GridPane.columnIndex="2" GridPane.rowIndex="10">
+                                                      <Label fx:id="displayMedicineMod" text="0" GridPane.columnIndex="2" GridPane.rowIndex="10">
                                                          <GridPane.margin>
                                                             <Insets left="30.0" />
                                                          </GridPane.margin>
                                                       </Label>
-                                                      <Label text="0" GridPane.columnIndex="2" GridPane.rowIndex="11">
+                                                      <Label fx:id="displayNatureMod" text="0" GridPane.columnIndex="2" GridPane.rowIndex="11">
                                                          <GridPane.margin>
                                                             <Insets left="30.0" />
                                                          </GridPane.margin>
                                                       </Label>
-                                                      <Label text="0" GridPane.columnIndex="2" GridPane.rowIndex="12">
+                                                      <Label fx:id="displayPerceptionMod" text="0" GridPane.columnIndex="2" GridPane.rowIndex="12">
                                                          <GridPane.margin>
                                                             <Insets left="30.0" />
                                                          </GridPane.margin>
                                                       </Label>
-                                                      <Label text="0" GridPane.columnIndex="2" GridPane.rowIndex="13">
+                                                      <Label fx:id="displayPerformanceMod" text="0" GridPane.columnIndex="2" GridPane.rowIndex="13">
                                                          <GridPane.margin>
                                                             <Insets left="30.0" />
                                                          </GridPane.margin>
                                                       </Label>
-                                                      <Label text="0" GridPane.columnIndex="2" GridPane.rowIndex="14">
+                                                      <Label fx:id="displayPersuasionMod" text="0" GridPane.columnIndex="2" GridPane.rowIndex="14">
                                                          <GridPane.margin>
                                                             <Insets left="30.0" />
                                                          </GridPane.margin>
                                                       </Label>
-                                                      <Label text="0" GridPane.columnIndex="2" GridPane.rowIndex="15">
+                                                      <Label fx:id="displayReligionMod" text="0" GridPane.columnIndex="2" GridPane.rowIndex="15">
                                                          <GridPane.margin>
                                                             <Insets left="30.0" />
                                                          </GridPane.margin>
                                                       </Label>
-                                                      <Label text="0" GridPane.columnIndex="2" GridPane.rowIndex="16">
+                                                      <Label fx:id="displaySleightOfHandMod" text="0" GridPane.columnIndex="2" GridPane.rowIndex="16">
                                                          <GridPane.margin>
                                                             <Insets left="30.0" />
                                                          </GridPane.margin>
                                                       </Label>
-                                                      <Label text="0" GridPane.columnIndex="2" GridPane.rowIndex="17">
+                                                      <Label fx:id="displayStealthMod" text="0" GridPane.columnIndex="2" GridPane.rowIndex="17">
                                                          <GridPane.margin>
                                                             <Insets left="30.0" />
                                                          </GridPane.margin>
                                                       </Label>
-                                                      <Label text="0" GridPane.columnIndex="2" GridPane.rowIndex="18">
+                                                      <Label fx:id="displaySurvivalMod" text="0" GridPane.columnIndex="2" GridPane.rowIndex="18">
                                                          <GridPane.margin>
                                                             <Insets left="30.0" />
                                                          </GridPane.margin>
@@ -488,7 +495,7 @@
                         </BorderPane>
                      </content>
                   </Tab>
-                  <Tab fx:id="newTabButton" text="+">
+                  <Tab fx:id="newTabButton" closable="false" text="+">
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                     </content>
