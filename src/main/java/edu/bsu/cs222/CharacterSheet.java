@@ -41,6 +41,7 @@ public class CharacterSheet {
         createDisplayAction();
         updateCharacterView();
         addDisplayFocusListeners();
+        createSkillLists();
     }
 
     private TextField searchFields(String searchQuery) {
