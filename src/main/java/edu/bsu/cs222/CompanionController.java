@@ -12,6 +12,8 @@ import javafx.scene.layout.BorderPane;
 
 import java.awt.*;
 import java.io.*;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,6 +40,7 @@ public class CompanionController {
     @FXML private Label displayIntMod;
     @FXML private Label displayWisMod;
     @FXML private Label displayChaMod;
+    @FXML private Label networkLabel;
     @FXML private TextField playerNameTextBox;
     @FXML private TextField characterNameTextBox;
     @FXML private TextField raceTextBox;
@@ -92,7 +95,16 @@ public class CompanionController {
     }
 
     @FXML
-    public void dmButtonPress(){}
+    public void dmButtonPress() throws UnknownHostException {
+        networkLabel.setText("Your IP Address is: "+ Inet4Address.getLocalHost());
+        try {
+            Thread t = new NetworkServerParser.HostServer(2000);
+            t.run();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @FXML
     public void loadButtonPress(){
         charTypePane.setVisible(false);
