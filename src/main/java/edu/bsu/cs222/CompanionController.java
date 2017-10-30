@@ -152,7 +152,7 @@ public class CompanionController{
     }
 
     public void initialize(){
-        addDisplayFocusListeners();
+        //addDisplayFocusListeners();
         addNewTabListener();
     }
 
@@ -204,9 +204,7 @@ public class CompanionController{
 
     private void createDisplayAction(){
         for(TextField field: displayFields){
-            field.setOnAction((event) -> {
-                updateCharacterXML();
-            });
+            field.setOnAction((event) -> updateCharacterXML());
         }
 
     }
@@ -216,7 +214,7 @@ public class CompanionController{
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("CharacterTab.fxml"));
             newTab.setContent(loader.load());
-        }catch (IOException e){}
+        }catch (IOException e){e.printStackTrace();}
         characterPane.getTabs().remove(newTabButton);
         characterPane.getTabs().addAll(newTab,newTabButton);
     }
@@ -266,7 +264,7 @@ public class CompanionController{
     public void loadSelectedCharacter() {
         character = new PlayerCharacter(characterLoadList.getSelectionModel().getSelectedItem() + ".xml");
         createSkillLists();
-        updateCharacterView();
+        //updateCharacterView();
         loadPane.setVisible(false);
         characterPane.setVisible(true);
 
