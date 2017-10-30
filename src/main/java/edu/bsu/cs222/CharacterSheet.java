@@ -30,14 +30,20 @@ public class CharacterSheet {
         updateCharacterView();
     }
 
-    private TextField searchForID(String searchQuery) {
-        for(TextField field: displayFields){
-            System.out.println(field);
-            if(field.getId().equals(searchQuery)){
+    private TextField searchFields(String searchQuery) {
+        for (TextField field : displayFields) {
+            if (field.getId().equals(searchQuery)) {
                 //System.out.println(field.getText());
                 return field;
-            }else{
-                System.out.println("ERROR");
+            }
+        }
+        return null;
+    }
+    private Label searchLabels(String searchQuery) {
+        for(Label label: labels){
+            if(label.getId().equals(searchQuery)){
+                //System.out.println(field.getText());
+                return label;
             }
         }
         return null;
@@ -107,17 +113,17 @@ public class CharacterSheet {
         updateField("displayMaxHp", character.getMaxHP());
         updateField("displayCurrentHp", character.getCurrentHp());
         updateField("displayStr", String.valueOf(character.getStats()[0]));
-//        updateField("displayStrMod", getModifier(character.getStats()[0]));
+        updateLabel("displayStrMod", getModifier(character.getStats()[0]));
         updateField("displayDex", String.valueOf(character.getStats()[1]));
-        //updateField("displayDexMod", getModifier(character.getStats()[1]));
+        updateLabel("displayDexMod", getModifier(character.getStats()[1]));
         updateField("displayCon", String.valueOf(character.getStats()[2]));
-        //updateField("displayConMod", getModifier(character.getStats()[2]));
+        updateLabel("displayConMod", getModifier(character.getStats()[2]));
         updateField("displayInt", String.valueOf(character.getStats()[3]));
-        //updateField("displayIntMod", getModifier(character.getStats()[3]));
+        updateLabel("displayIntMod", getModifier(character.getStats()[3]));
         updateField("displayWis", String.valueOf(character.getStats()[4]));
-        //updateField("displayWisMod", getModifier(character.getStats()[4]));
+        updateLabel("displayWisMod", getModifier(character.getStats()[4]));
         updateField("displayCha", String.valueOf(character.getStats()[5]));
-        //updateField("displayChaMod", getModifier(character.getStats()[5]));
+        updateLabel("displayChaMod", getModifier(character.getStats()[5]));
         //updateSkillModifiers();
     }
 
@@ -127,7 +133,23 @@ public class CharacterSheet {
 
 
     private void updateField(String field, String property) {
-        TextField toEdit = searchForID(field);
+        TextField toEdit = searchFields(field);
         toEdit.setText(property);
+    }
+
+    private void updateLabel(String field, String property) {
+        Label toEdit = searchLabels(field);
+        toEdit.setText(property);
+    }
+
+    private void updateSkillModifiers(){
+        for(List<Label> skill: skillList){
+            setSkillModifiers(skill,character.getStats()[skillList.indexOf(skill)]);
+        }
+    }
+    private void setSkillModifiers(List<Label> skillList, int stat){
+        for(Label skill : skillList){
+            skill.setText(getModifier(stat));
+        }
     }
 }

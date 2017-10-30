@@ -40,6 +40,15 @@ public class CompanionController{
     @FXML public Label languageErrorLabel;
     @FXML public Label classErrorLabel;
     @FXML public Label statErrorLabel;
+
+    //Modifier Labels
+    @FXML public Label displayStrMod;
+    @FXML public Label displayDexMod;
+    @FXML public Label displayConMod;
+    @FXML public Label displayIntMod;
+    @FXML public Label displayWisMod;
+    @FXML public Label displayChaMod;
+
     //Skill Labels
     @FXML public Label displayAcrobaticsMod;
     @FXML public Label displayAnimalHandlingMod;
@@ -157,15 +166,15 @@ public class CompanionController{
 
     }
 
-    /*private void updateSkillModifiers(){
+    private void updateSkillModifiers(){
         for(List<Label> skill: skillList){
             setSkillModifiers(skill,character.getStats()[skillList.indexOf(skill)]);
         }
-    }*/
+    }
 
     private void setSkillModifiers(List<Label> skillList, int stat){
         for(Label skill : skillList){
-            //skill.setText(getModifier(stat));
+            skill.setText(getModifier(stat));
         }
     }
 
@@ -187,7 +196,7 @@ public class CompanionController{
         for(TextField field: displayFields){
             field.focusedProperty().addListener((obs, oldVal, newVal) -> {
                 if (!newVal) {
-                    //updateCharacterXML();
+                    updateCharacterXML();
                 }
             });
         }
@@ -245,7 +254,7 @@ public class CompanionController{
     @FXML
     public void loadSelectedCharacter() {
         createNewTab(new PlayerCharacter(
-                characterLoadList.getSelectionModel().getSelectedItem() + ".xml"));
+                characterLoadList.getSelectionModel().getSelectedItem() + ".xml");
         createSkillLists();
         //updateCharacterView();
         loadPane.setVisible(false);
@@ -333,8 +342,8 @@ public class CompanionController{
             statErrorLabel.setVisible(true);
         }
         else {
-            //buildNewCharacter();
-            //updateCharacterView();
+            buildNewCharacter();
+            updateCharacterView();
             addDisplayFocusListeners();
             statPane.setVisible(false);
             characterPane.setVisible(true);
@@ -374,7 +383,7 @@ public class CompanionController{
         return true;
     }
 
-    /*private void buildNewCharacter() {
+    private void buildNewCharacter() {
         character = new PlayerCharacter(playerNameTextBox.getText(), characterNameTextBox.getText());
         character.setPlayerName(playerNameTextBox.getText());
         character.setCharacterName(characterNameTextBox.getText());
@@ -446,7 +455,7 @@ public class CompanionController{
                 displayStr.getText(),displayDex.getText(),displayCon.getText(),
                 displayInt.getText(),displayWis.getText(),displayCha.getText()));
         updateCharacterView();
-    }*/
+    }
 
     private String parseLanguages() {
         String[] languages = languageTextBox.getText().split("\n");
@@ -459,7 +468,7 @@ public class CompanionController{
     }
 
 
-    /*private void parseAbilityModifiers(String ability, String score){
+    private void parseAbilityModifiers(String ability, String score){
         for(StatName statName: StatName.values()){
             if(ability.equals(statName.toString())){
                 character.setStat(statName.getValue(),character.getStats()[statName.getValue()]
@@ -468,7 +477,7 @@ public class CompanionController{
                 return;
             }
         }
-    }*/
+    }
 
     @FXML
     public void openPlayersHandbook(){
