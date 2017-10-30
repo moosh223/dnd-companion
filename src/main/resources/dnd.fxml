@@ -101,11 +101,6 @@
             </BorderPane>
             <TabPane fx:id="characterPane" prefHeight="590.0" prefWidth="543.0" styleClass="toptab" visible="false">
                <tabs>
-                  <Tab fx:id="characterSheetTab" closable="false" text="Character Sheet">
-                     <content>
-                        <fx:include source="CharacterTab.fxml"/>
-                     </content>
-                  </Tab>
                   <Tab fx:id="newTabButton" closable="false" text="+">
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />

@@ -40,15 +40,6 @@ public class CompanionController{
     @FXML public Label languageErrorLabel;
     @FXML public Label classErrorLabel;
     @FXML public Label statErrorLabel;
-
-    //Modifier Labels
-    @FXML public Label displayStrMod;
-    @FXML public Label displayDexMod;
-    @FXML public Label displayConMod;
-    @FXML public Label displayIntMod;
-    @FXML public Label displayWisMod;
-    @FXML public Label displayChaMod;
-
     //Skill Labels
     @FXML public Label displayAcrobaticsMod;
     @FXML public Label displayAnimalHandlingMod;
@@ -128,11 +119,11 @@ public class CompanionController{
     @FXML public ListView<String> characterLoadList;
     @FXML public ContextMenu tabContextMenu;
     @FXML public CheckBox diceRollerButton;
-    @FXML public Tab characterSheetTab;
+    //@FXML public Tab characterSheetTab;
     @FXML public Tab newTabButton;
 
     private List<TextField> displayFields = new ArrayList<>();
-    private PlayerCharacter character;
+    //private PlayerCharacter character;
 
     private enum StatName{
         Strength(0),
@@ -166,15 +157,15 @@ public class CompanionController{
 
     }
 
-    private void updateSkillModifiers(){
+    /*private void updateSkillModifiers(){
         for(List<Label> skill: skillList){
             setSkillModifiers(skill,character.getStats()[skillList.indexOf(skill)]);
         }
-    }
+    }*/
 
     private void setSkillModifiers(List<Label> skillList, int stat){
         for(Label skill : skillList){
-            skill.setText(getModifier(stat));
+            //skill.setText(getModifier(stat));
         }
     }
 
@@ -183,7 +174,7 @@ public class CompanionController{
                 .addListener((obs, oldTab, newTab) -> {
                     if(newTab == newTabButton) {
                         characterPane.getSelectionModel().select(oldTab);
-                        createNewTab();
+                        createNewTab(new PlayerCharacter(String.valueOf(System.nanoTime())));
                     }
                 });
     }
@@ -196,22 +187,15 @@ public class CompanionController{
         for(TextField field: displayFields){
             field.focusedProperty().addListener((obs, oldVal, newVal) -> {
                 if (!newVal) {
-                    updateCharacterXML();
+                    //updateCharacterXML();
                 }
             });
         }
     }
 
-    private void createDisplayAction(){
-        for(TextField field: displayFields){
-            field.setOnAction((event) -> updateCharacterXML());
-        }
-
-    }
-
-    private void createNewTab() {
-        Tab newTab = new Tab("New Tab");
-            CharacterSheet sheet = new CharacterSheet();
+    private void createNewTab(PlayerCharacter character) {
+        Tab newTab = new Tab("Character Sheet");
+            CharacterSheet sheet = new CharacterSheet(character);
             newTab.setContent(sheet.getSheet());
         characterPane.getTabs().remove(newTabButton);
         characterPane.getTabs().addAll(newTab,newTabButton);
@@ -260,7 +244,8 @@ public class CompanionController{
 
     @FXML
     public void loadSelectedCharacter() {
-        character = new PlayerCharacter(characterLoadList.getSelectionModel().getSelectedItem() + ".xml");
+        createNewTab(new PlayerCharacter(
+                characterLoadList.getSelectionModel().getSelectedItem() + ".xml"));
         createSkillLists();
         //updateCharacterView();
         loadPane.setVisible(false);
@@ -348,8 +333,8 @@ public class CompanionController{
             statErrorLabel.setVisible(true);
         }
         else {
-            buildNewCharacter();
-            updateCharacterView();
+            //buildNewCharacter();
+            //updateCharacterView();
             addDisplayFocusListeners();
             statPane.setVisible(false);
             characterPane.setVisible(true);
@@ -389,7 +374,7 @@ public class CompanionController{
         return true;
     }
 
-    private void buildNewCharacter() {
+    /*private void buildNewCharacter() {
         character = new PlayerCharacter(playerNameTextBox.getText(), characterNameTextBox.getText());
         character.setPlayerName(playerNameTextBox.getText());
         character.setCharacterName(characterNameTextBox.getText());
@@ -461,7 +446,7 @@ public class CompanionController{
                 displayStr.getText(),displayDex.getText(),displayCon.getText(),
                 displayInt.getText(),displayWis.getText(),displayCha.getText()));
         updateCharacterView();
-    }
+    }*/
 
     private String parseLanguages() {
         String[] languages = languageTextBox.getText().split("\n");
@@ -474,7 +459,7 @@ public class CompanionController{
     }
 
 
-    private void parseAbilityModifiers(String ability, String score){
+    /*private void parseAbilityModifiers(String ability, String score){
         for(StatName statName: StatName.values()){
             if(ability.equals(statName.toString())){
                 character.setStat(statName.getValue(),character.getStats()[statName.getValue()]
@@ -483,7 +468,7 @@ public class CompanionController{
                 return;
             }
         }
-    }
+    }*/
 
     @FXML
     public void openPlayersHandbook(){
