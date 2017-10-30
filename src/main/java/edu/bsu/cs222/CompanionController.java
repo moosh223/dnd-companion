@@ -4,7 +4,6 @@ import com.sun.javafx.stage.StageHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
@@ -13,8 +12,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import org.w3c.dom.Document;
 
-import javax.xml.soap.Text;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -41,13 +40,6 @@ public class CompanionController{
     @FXML public Label classErrorLabel;
     @FXML public Label statErrorLabel;
 
-    //Modifier Labels
-    @FXML public Label displayStrMod;
-    @FXML public Label displayDexMod;
-    @FXML public Label displayConMod;
-    @FXML public Label displayIntMod;
-    @FXML public Label displayWisMod;
-    @FXML public Label displayChaMod;
 
     //Skill Labels
     @FXML public Label displayAcrobaticsMod;
@@ -92,23 +84,6 @@ public class CompanionController{
     @FXML public TextField wisTextBox;
     @FXML public TextField intTextBox;
     @FXML public TextField chaTextBox;
-
-    @FXML public TextField displayCharName;
-    @FXML public TextField displayRace;
-    @FXML public TextField displayClass;
-    @FXML public TextField displayAlignment;
-    @FXML public TextField displayExp;
-    @FXML public TextField displayAge;
-    @FXML public TextField displaySize;
-    @FXML public TextField displayHeight;
-    @FXML public TextField displayMaxHp;
-    @FXML public TextField displayCurrentHp;
-    @FXML public TextField displayStr;
-    @FXML public TextField displayDex;
-    @FXML public TextField displayCon;
-    @FXML public TextField displayInt;
-    @FXML public TextField displayWis;
-    @FXML public TextField displayCha;
     private List<TextField> creatorTextFields = new ArrayList<>();
 
     //Combo Boxes for Character Creator
@@ -132,7 +107,7 @@ public class CompanionController{
     @FXML public Tab newTabButton;
 
     private List<TextField> displayFields = new ArrayList<>();
-    //private PlayerCharacter character;
+    private XMLParser parser;
 
     private enum StatName{
         Strength(0),
@@ -152,7 +127,6 @@ public class CompanionController{
     }
 
     public void initialize(){
-        //addDisplayFocusListeners();
         addNewTabListener();
     }
 
@@ -163,19 +137,6 @@ public class CompanionController{
         wisSkills.addAll(Arrays.asList(displayAnimalHandlingMod, displayInsightMod,displayMedicineMod,displayPerceptionMod,displaySurvivalMod));
         chaSkills.addAll(Arrays.asList(displayDeceptionMod,displayIntimidationMod,displayPerformanceMod, displayPersuasionMod));
         skillList.addAll(Arrays.asList(strSkills,dexSkills,conSkills,intSkills,wisSkills,chaSkills));
-
-    }
-
-    private void updateSkillModifiers(){
-        for(List<Label> skill: skillList){
-            setSkillModifiers(skill,character.getStats()[skillList.indexOf(skill)]);
-        }
-    }
-
-    private void setSkillModifiers(List<Label> skillList, int stat){
-        for(Label skill : skillList){
-            skill.setText(getModifier(stat));
-        }
     }
 
     private void addNewTabListener() {
@@ -183,26 +144,14 @@ public class CompanionController{
                 .addListener((obs, oldTab, newTab) -> {
                     if(newTab == newTabButton) {
                         characterPane.getSelectionModel().select(oldTab);
-                        createNewTab(new PlayerCharacter(String.valueOf(System.nanoTime())));
+                        createCharacterSheetTab(new PlayerCharacter(String.valueOf(System.nanoTime())));
                     }
                 });
     }
 
-    private void addDisplayFocusListeners() {
-        displayFields.addAll(Arrays.asList(
-                displayCharName, displayRace,displayClass,displayAlignment,displayExp,
-                displayAge,displaySize, displayHeight,displayMaxHp,displayCurrentHp,
-                displayStr,displayDex,displayCon,displayInt,displayWis,displayCha));
-        for(TextField field: displayFields){
-            field.focusedProperty().addListener((obs, oldVal, newVal) -> {
-                if (!newVal) {
-                    updateCharacterXML();
-                }
-            });
-        }
-    }
 
-    private void createNewTab(PlayerCharacter character) {
+
+    private void createCharacterSheetTab(PlayerCharacter character) {
         Tab newTab = new Tab("Character Sheet");
             CharacterSheet sheet = new CharacterSheet(character);
             newTab.setContent(sheet.getSheet());
@@ -213,11 +162,6 @@ public class CompanionController{
     @FXML
     public void closeProgram(){
         System.exit(0);
-    }
-
-    @FXML
-    public void tabCloseAction(){
-        System.out.println();
     }
 
     @FXML
@@ -244,6 +188,7 @@ public class CompanionController{
 
     @FXML
     public void dmButtonPress(){}
+
     @FXML
     public void loadButtonAction(){
         charTypePane.setVisible(false);
@@ -253,10 +198,9 @@ public class CompanionController{
 
     @FXML
     public void loadSelectedCharacter() {
-        createNewTab(new PlayerCharacter(
-                characterLoadList.getSelectionModel().getSelectedItem() + ".xml");
+        createCharacterSheetTab(new PlayerCharacter(
+                characterLoadList.getSelectionModel().getSelectedItem() + ".xml"));
         createSkillLists();
-        //updateCharacterView();
         loadPane.setVisible(false);
         characterPane.setVisible(true);
 
@@ -273,6 +217,7 @@ public class CompanionController{
         ArrayList<String> fileNames = new ArrayList<>();
         assert fileList != null;
         for(File file: fileList){
+            if(file.isFile())
             fileNames.add(file.getName().replace(".xml",""));
         }
         return fileNames;
@@ -343,8 +288,6 @@ public class CompanionController{
         }
         else {
             buildNewCharacter();
-            updateCharacterView();
-            addDisplayFocusListeners();
             statPane.setVisible(false);
             characterPane.setVisible(true);
         }
@@ -383,8 +326,8 @@ public class CompanionController{
         return true;
     }
 
-    private void buildNewCharacter() {
-        character = new PlayerCharacter(playerNameTextBox.getText(), characterNameTextBox.getText());
+    private void buildNewCharacter(){
+        PlayerCharacter character = new PlayerCharacter(String.valueOf(System.nanoTime()));
         character.setPlayerName(playerNameTextBox.getText());
         character.setCharacterName(characterNameTextBox.getText());
         character.setEXP("0");
@@ -405,56 +348,9 @@ public class CompanionController{
         character.setStats(String.format("%s,%s,%s,%s,%s,%s",
                 strTextBox.getText(),dexTextBox.getText(),conTextBox.getText(),
                 intTextBox.getText(),wisTextBox.getText(),chaTextBox.getText()));
-        parseAbilityModifiers(firstAbilityModified.getValue(),firstModifiedScore.getValue());
-        parseAbilityModifiers(secondAbilityModified.getValue(),secondModifiedScore.getValue());
-    }
-
-    private void updateCharacterView(){
-        displayCharName.setText(character.getCharacterName());
-        displayRace.setText(character.getRace());
-        displayClass.setText(character.getClassName());
-        displayAlignment.setText(character.getAlignment());
-        displayExp.setText(character.getEXP());
-        displayAge.setText(character.getAge());
-        displaySize.setText(character.getSize());
-        displayHeight.setText(character.getHeight());
-        displayMaxHp.setText(character.getMaxHP());
-        displayCurrentHp.setText(character.getCurrentHp());
-        displayStr.setText(String.valueOf(character.getStats()[0]));
-        displayStrMod.setText(getModifier(character.getStats()[0]));
-        displayDex.setText(String.valueOf(character.getStats()[1]));
-        displayDexMod.setText(getModifier(character.getStats()[1]));
-        displayCon.setText(String.valueOf(character.getStats()[2]));
-        displayConMod.setText(getModifier(character.getStats()[2]));
-        displayInt.setText(String.valueOf(character.getStats()[3]));
-        displayIntMod.setText(getModifier(character.getStats()[3]));
-        displayWis.setText(String.valueOf(character.getStats()[4]));
-        displayWisMod.setText(getModifier(character.getStats()[4]));
-        displayCha.setText(String.valueOf(character.getStats()[5]));
-        displayChaMod.setText(getModifier(character.getStats()[5]));
-        updateSkillModifiers();
-
-    }
-
-    private String getModifier(int stat){
-        return String.valueOf((int)Math.floor((stat-10)/2.0));
-    }
-    @FXML
-    private void updateCharacterXML(){
-        character.setCharacterName(displayCharName.getText());
-        character.setRace(displayRace.getText());
-        character.setClassName(displayClass.getText());
-        character.setAlignment(displayAlignment.getText());
-        character.setEXP(displayExp.getText());
-        character.setAge(displayAge.getText());
-        character.setSize(displaySize.getText());
-        character.setHeight(displayHeight.getText());
-        character.setMaxHp(displayMaxHp.getText());
-        character.setCurrentHp(displayCurrentHp.getText());
-        character.setStats(String.format("%s,%s,%s,%s,%s,%s",
-                displayStr.getText(),displayDex.getText(),displayCon.getText(),
-                displayInt.getText(),displayWis.getText(),displayCha.getText()));
-        updateCharacterView();
+        parseAbilityModifiers(character,firstAbilityModified.getValue(),firstModifiedScore.getValue());
+        parseAbilityModifiers(character,secondAbilityModified.getValue(),secondModifiedScore.getValue());
+        createCharacterSheetTab(character);
     }
 
     private String parseLanguages() {
@@ -468,11 +364,11 @@ public class CompanionController{
     }
 
 
-    private void parseAbilityModifiers(String ability, String score){
+    private void parseAbilityModifiers(PlayerCharacter character,String ability, String score){
         for(StatName statName: StatName.values()){
             if(ability.equals(statName.toString())){
-                character.setStat(statName.getValue(),character.getStats()[statName.getValue()]
-                        +Integer.parseInt(score));
+                character.setStat(statName.getValue(),Integer.parseInt(score)+
+                        character.getStats()[statName.getValue()]);
             }else if(ability.equals("None")){
                 return;
             }

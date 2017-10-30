@@ -8,9 +8,13 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import org.w3c.dom.Document;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CharacterSheet {
@@ -20,6 +24,14 @@ public class CharacterSheet {
     private TabPane testTab;
     private List<TextField> displayFields = new ArrayList<>();
     private List<Label> labels = new ArrayList<>();
+    private List<String> strSkills = new ArrayList<>();
+    private List<String> dexSkills = new ArrayList<>();
+    private List<String> conSkills = new ArrayList<>();
+    private List<String> intSkills = new ArrayList<>();
+    private List<String> wisSkills = new ArrayList<>();
+    private List<String> chaSkills = new ArrayList<>();
+    private List<List<String>> skillList = new ArrayList<>();
+
 
     public CharacterSheet(PlayerCharacter character) {
         sheet = new FXMLLoader(getClass().getClassLoader().getResource("CharacterTab.fxml"));
@@ -28,12 +40,12 @@ public class CharacterSheet {
         buildDisplayFields();
         createDisplayAction();
         updateCharacterView();
+        addDisplayFocusListeners();
     }
 
     private TextField searchFields(String searchQuery) {
         for (TextField field : displayFields) {
             if (field.getId().equals(searchQuery)) {
-                //System.out.println(field.getText());
                 return field;
             }
         }
@@ -42,8 +54,27 @@ public class CharacterSheet {
     private Label searchLabels(String searchQuery) {
         for(Label label: labels){
             if(label.getId().equals(searchQuery)){
-                //System.out.println(field.getText());
                 return label;
+            }
+        }
+        return null;
+    }
+
+    private void createSkillLists() {
+        strSkills.add("displayAthleticsMod");
+        dexSkills.addAll(Arrays.asList("displayAcrobaticsMod", "displaySleightOfHandMod","displayStealthMod"));
+        intSkills.addAll(Arrays.asList("displayArcanaMod", "displayHistoryMod", "displayInvestigationMod","displayNatureMod","displayReligionMod"));
+        wisSkills.addAll(Arrays.asList("displayAnimalHandlingMod", "displayInsightMod","displayMedicineMod","displayPerceptionMod","displaySurvivalMod"));
+        chaSkills.addAll(Arrays.asList("displayDeceptionMod","displayIntimidationMod","displayPerformanceMod", "displayPersuasionMod"));
+        skillList.addAll(Arrays.asList(strSkills,dexSkills,conSkills,intSkills,wisSkills,chaSkills));
+
+    }
+
+    private Method searchCharacterMethods(String searchQuery){
+
+        for(Method method: PlayerCharacter.class.getMethods()){
+            if(method.getName().equals(searchQuery)){
+                return  method;
             }
         }
         return null;
@@ -53,14 +84,22 @@ public class CharacterSheet {
         for(Tab tab :testTab.getTabs()){
             Pane paneContent = (Pane)tab.getContent();
             for(Node node: paneContent.getChildren()){
-                if(node.getId() != null){
-                    try{
-                        displayFields.add((TextField)node);
-                    }catch(Exception e){
-                        labels.add((Label)node);
-                    }
+                if(node.getId() != null) try {
+                    displayFields.add((TextField) node);
+                } catch (ClassCastException e) {
+                    labels.add((Label) node);
                 }
             }
+        }
+    }
+
+    private void addDisplayFocusListeners() {
+        for(TextField field: displayFields){
+            field.focusedProperty().addListener((obs, oldVal, newVal) -> {
+                if (!newVal) {
+                    updateCharacterXML();
+                }
+            });
         }
     }
 
@@ -84,27 +123,10 @@ public class CharacterSheet {
         return parent;
     }
 
-    private void updateCharacterXML(){
-        /*character.setCharacterName(displayCharName.getText());
-        character.setRace(displayRace.getText());
-        character.setClassName(displayClass.getText());
-        character.setAlignment(displayAlignment.getText());
-        character.setEXP(displayExp.getText());
-        character.setAge(displayAge.getText());
-        character.setSize(displaySize.getText());
-        character.setHeight(displayHeight.getText());
-        character.setMaxHp(displayMaxHp.getText());
-        character.setCurrentHp(displayCurrentHp.getText());
-        character.setStats(String.format("%s,%s,%s,%s,%s,%s",
-                displayStr.getText(),displayDex.getText(),displayCon.getText(),
-                displayInt.getText(),displayWis.getText(),displayCha.getText()));
-        updateCharacterView();*/
-    }
-
     private void updateCharacterView(){
-       updateField("displayCharName", character.getCharacterName());
+        updateField("displayCharName", character.getCharacterName());
         updateField("displayRace", character.getRace());
-        updateField("displayClass", character.getClassName());
+        updateField("displayClassName", character.getClassName());
         updateField("displayAlignment", character.getAlignment());
         updateField("displayExp", character.getEXP());
         updateField("displayAge", character.getAge());
@@ -127,6 +149,38 @@ public class CharacterSheet {
         //updateSkillModifiers();
     }
 
+    private void updateCharacterXML(){
+        writeField("setCharacterName","displayCharName");
+        writeField("setRace","displayRace");
+        writeField("setClassName","displayClassName");
+        writeField("setAlignment","displayAlignment");
+        writeField("setEXP","displayExp");
+        writeField("setAge","displayAge");
+        writeField("setSize","displaySize");
+        writeField("setHeight","displayHeight");
+        writeField("setMaxHp","displayMaxHp");
+        writeField("setCurrentHp","displayCurrentHp");
+        writeStats(String.format("%s,%s,%s,%s,%s,%s",
+                searchFields("displayStr").getText(),searchFields("displayDex").getText(),
+                searchFields("displayCon").getText(),searchFields("displayInt").getText(),
+                searchFields("displayWis").getText(),searchFields("displayCha").getText()
+        ));
+
+        //character.setStats(String.format("%s,%s,%s,%s,%s,%s",
+        //        displayStr.getText(),displayDex.getText(),displayCon.getText(),
+        //        displayInt.getText(),displayWis.getText(),displayCha.getText()));*/
+        updateCharacterView();
+    }
+
+    private void writeStats(String stats) {
+        try{
+            Method toEdit = searchCharacterMethods("setStats");
+            toEdit.invoke(character,stats);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
     private String getModifier(int stat){
         return String.valueOf((int)Math.floor((stat-10)/2.0));
     }
@@ -142,14 +196,32 @@ public class CharacterSheet {
         toEdit.setText(property);
     }
 
-    private void updateSkillModifiers(){
-        for(List<Label> skill: skillList){
-            setSkillModifiers(skill,character.getStats()[skillList.indexOf(skill)]);
+    private void writeField(String field, String property) {
+        try{
+            Method toEdit = searchCharacterMethods(field);
+            toEdit.invoke(character,searchFields(property).getText());
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
         }
     }
+
+
+    /*private void updateSkillModifiers(){
+        for(List<String> skill: skillList){
+            setSkillModifiers(skill,character.getStats()[skillList.indexOf(skill)]);
+        }
+    }*/
     private void setSkillModifiers(List<Label> skillList, int stat){
         for(Label skill : skillList){
             skill.setText(getModifier(stat));
         }
+    }
+
+    public Document getXMLDoc() {
+        return character.getXML();
+    }
+
+    public PlayerCharacter getCharacter() {
+        return character;
     }
 }

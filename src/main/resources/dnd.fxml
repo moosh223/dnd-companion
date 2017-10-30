@@ -41,13 +41,6 @@
             </items>
           </Menu>
         </menus>
-         <contextMenu>
-            <ContextMenu fx:id="tabContextMenu">
-              <items>
-                <MenuItem mnemonicParsing="false" onAction="#tabCloseAction" text="Close Tab" />
-              </items>
-            </ContextMenu>
-         </contextMenu>
       </MenuBar>
    </top>
    <center>
