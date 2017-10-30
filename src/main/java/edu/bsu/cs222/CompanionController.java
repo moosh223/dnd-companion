@@ -211,10 +211,8 @@ public class CompanionController{
 
     private void createNewTab() {
         Tab newTab = new Tab("New Tab");
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("CharacterTab.fxml"));
-            newTab.setContent(loader.load());
-        }catch (IOException e){e.printStackTrace();}
+            CharacterSheet sheet = new CharacterSheet();
+            newTab.setContent(sheet.getSheet());
         characterPane.getTabs().remove(newTabButton);
         characterPane.getTabs().addAll(newTab,newTabButton);
     }
