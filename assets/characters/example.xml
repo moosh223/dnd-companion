@@ -3,7 +3,7 @@
     <name>Fido</name>
     <race>Good Boy</race>
     <classname>Pupper</classname>
-    <stats>13,12,14,20,15,1900</stats>
+    <stats>13,12,14,20,15,16</stats>
     <maxhp>20</maxhp>
     <currenthp>24</currenthp>
     <exp>0</exp>

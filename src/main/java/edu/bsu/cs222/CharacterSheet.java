@@ -22,6 +22,7 @@ public class CharacterSheet {
     private FXMLLoader sheet;
     private PlayerCharacter character;
     private TabPane testTab;
+    BorderPane parent;
     private List<TextField> displayFields = new ArrayList<>();
     private List<Label> labels = new ArrayList<>();
     private List<String> strSkills = new ArrayList<>();
@@ -47,7 +48,6 @@ public class CharacterSheet {
     private TextField searchFields(String searchQuery) {
         for (TextField field : displayFields) {
             if (field.getId().equals(searchQuery)) {
-                System.out.println("FIELD FOUND");
                 return field;
             }
         }
@@ -56,7 +56,6 @@ public class CharacterSheet {
     private Label searchLabels(String searchQuery) {
         for(Label label: labels){
             if(label.getId().equals(searchQuery)){
-                System.out.println("LABEL FOUND");
                 return label;
             }
         }
@@ -87,7 +86,6 @@ public class CharacterSheet {
                 if(node.getId() != null) try {
                     displayFields.add((TextField) node);
                 } catch (ClassCastException e) {
-                    System.out.println((node));
                     labels.add((Label) node);
                 }
             }
@@ -99,7 +97,6 @@ public class CharacterSheet {
         GridPane pane = (GridPane)((Pane)tab.getContent()).getChildren().get(0);
         for(Node node: pane.getChildren()){
             if(node.getId() != null) try {
-                System.out.println(node.getId());
                 labels.add((Label) node);
             } catch (ClassCastException e) {
                 e.printStackTrace();
@@ -126,7 +123,7 @@ public class CharacterSheet {
 
     private void loadTabPaneContent() {
         try{
-            BorderPane parent = sheet.load();
+            parent = sheet.load();
             testTab = (TabPane) parent.getCenter();
         }catch(IOException e){
             e.printStackTrace();
@@ -214,7 +211,6 @@ public class CharacterSheet {
 
     private void updateSkillModifiers(){
         for(List<String> skill: skillLists){
-            System.out.println(skillLists.size());
             setSkillModifiers(skill,Integer.parseInt(getModifier(character.getStats()[skillLists.indexOf(skill)])));
         }
     }
@@ -227,5 +223,9 @@ public class CharacterSheet {
 
     public PlayerCharacter getCharacter() {
         return character;
+    }
+
+    public Node getSheet() {
+        return parent;
     }
 }

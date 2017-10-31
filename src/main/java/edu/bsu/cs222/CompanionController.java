@@ -25,149 +25,57 @@ import java.util.List;
 public class CompanionController {
 
     //ViewPanes
-    @FXML
-    public BorderPane welcomePane;
-    @FXML
-    public TabPane characterPane;
-    @FXML
-    public BorderPane charTypePane;
-    @FXML
-    public BorderPane loadPane;
-    @FXML
-    public BorderPane namePane;
-    @FXML
-    public AnchorPane racePane;
-    @FXML
-    public AnchorPane languagePane;
-    @FXML
-    public AnchorPane classPane;
-    @FXML
-    public AnchorPane statPane;
-
+    @FXML public BorderPane welcomePane;
+    @FXML public TabPane characterPane;
+    @FXML public BorderPane charTypePane;
+    @FXML public BorderPane loadPane;
+    @FXML public BorderPane namePane;
+    @FXML public AnchorPane racePane;
+    @FXML public AnchorPane languagePane;
+    @FXML public AnchorPane classPane;
+    @FXML public AnchorPane statPane;
     //ErrorLabels
-    @FXML
-    public Label nameErrorLabel;
-    @FXML
-    public Label raceErrorLabel;
-    @FXML
-    public Label languageErrorLabel;
-    @FXML
-    public Label classErrorLabel;
-    @FXML
-    public Label statErrorLabel;
-
-
-    //Skill Labels
-    @FXML
-    public Label displayAcrobaticsMod;
-    @FXML
-    public Label displayAnimalHandlingMod;
-    @FXML
-    public Label displayArcanaMod;
-    @FXML
-    public Label displayAthleticsMod;
-    @FXML
-    public Label displayDeceptionMod;
-    @FXML
-    public Label displayHistoryMod;
-    @FXML
-    public Label displayInsightMod;
-    @FXML
-    public Label displayIntimidationMod;
-    @FXML
-    public Label displayInvestigationMod;
-    @FXML
-    public Label displayMedicineMod;
-    @FXML
-    public Label displayNatureMod;
-    @FXML
-    public Label displayPerceptionMod;
-    @FXML
-    public Label displayPerformanceMod;
-    @FXML
-    public Label displayPersuasionMod;
-    @FXML
-    public Label displayReligionMod;
-    @FXML
-    public Label displaySleightOfHandMod;
-    @FXML
-    public Label displayStealthMod;
-    @FXML
-    public Label displaySurvivalMod;
-    private List<Label> strSkills = new ArrayList<>();
-    private List<Label> dexSkills = new ArrayList<>();
-    private List<Label> conSkills = new ArrayList<>();
-    private List<Label> intSkills = new ArrayList<>();
-    private List<Label> wisSkills = new ArrayList<>();
-    private List<Label> chaSkills = new ArrayList<>();
-    private List<List<Label>> skillList = new ArrayList<>();
+    @FXML public Label nameErrorLabel;
+    @FXML public Label raceErrorLabel;
+    @FXML public Label languageErrorLabel;
+    @FXML public Label classErrorLabel;
+    @FXML public Label statErrorLabel;
 
     //Text Fields for Character Creator
-    @FXML
-    public TextField playerNameTextBox;
-    @FXML
-    public TextField characterNameTextBox;
-    @FXML
-    public TextField raceTextBox;
-    @FXML
-    public TextField ageTextBox;
-    @FXML
-    public TextField heightTextBox;
-    @FXML
-    public TextField speedTextBox;
-    @FXML
-    public TextField classTextBox;
-    @FXML
-    public TextField hpTextBox;
-    @FXML
-    public TextArea languageTextBox;
-    @FXML
-    public TextField strTextBox;
-    @FXML
-    public TextField dexTextBox;
-    @FXML
-    public TextField conTextBox;
-    @FXML
-    public TextField wisTextBox;
-    @FXML
-    public TextField intTextBox;
-    @FXML
-    public TextField chaTextBox;
+    @FXML public TextField playerNameTextBox;
+    @FXML public TextField characterNameTextBox;
+    @FXML public TextField raceTextBox;
+    @FXML public TextField ageTextBox;
+    @FXML public TextField heightTextBox;
+    @FXML public TextField speedTextBox;
+    @FXML public TextField classTextBox;
+    @FXML public TextField hpTextBox;
+    @FXML public TextArea languageTextBox;
+    @FXML public TextField strTextBox;
+    @FXML public TextField dexTextBox;
+    @FXML public TextField conTextBox;
+    @FXML public TextField wisTextBox;
+    @FXML public TextField intTextBox;
+    @FXML public TextField chaTextBox;
     private List<TextField> creatorTextFields = new ArrayList<>();
 
     //Combo Boxes for Character Creator
-    @FXML
-    public ComboBox<String> firstAbilityModified;
-    @FXML
-    public ComboBox<String> firstModifiedScore;
-    @FXML
-    public ComboBox<String> secondAbilityModified;
-    @FXML
-    public ComboBox<String> secondModifiedScore;
-    @FXML
-    public ComboBox<String> alignmentBox;
-    @FXML
-    public ComboBox<String> sizeBox;
-    @FXML
-    public ComboBox<String> primaryAbilityOne;
-    @FXML
-    public ComboBox<String> primaryAbilityTwo;
-    @FXML
-    public ComboBox<String> savingThrowOne;
-    @FXML
-    public ComboBox<String> savingThrowTwo;
+    @FXML public ComboBox<String> firstAbilityModified;
+    @FXML public ComboBox<String> firstModifiedScore;
+    @FXML public ComboBox<String> secondAbilityModified;
+    @FXML public ComboBox<String> secondModifiedScore;
+    @FXML public ComboBox<String> alignmentBox;
+    @FXML public ComboBox<String> sizeBox;
+    @FXML public ComboBox<String> primaryAbilityOne;
+    @FXML public ComboBox<String> primaryAbilityTwo;
+    @FXML public ComboBox<String> savingThrowOne;
+    @FXML public ComboBox<String> savingThrowTwo;
     private List<ComboBox> creatorComboBoxes = new ArrayList<>();
 
     //Miscellaneous Elements
-    @FXML
-    public ListView<String> characterLoadList;
-    @FXML
-    public ContextMenu tabContextMenu;
-    @FXML
-    public CheckBox diceRollerButton;
-    //@FXML public Tab characterSheetTab;
-    @FXML
-    public Tab newTabButton;
+    @FXML public ListView<String> characterLoadList;
+    @FXML public CheckBox diceRollerButton;
+    @FXML public Tab newTabButton;
 
     private List<TextField> displayFields = new ArrayList<>();
     private XMLParser parser = new XMLParser();
@@ -192,26 +100,6 @@ public class CompanionController {
     }
 
     public void initialize() {
-        addNewTabListener();
-    }
-
-    private void createSkillLists() {
-        strSkills.add(displayAthleticsMod);
-        dexSkills.addAll(Arrays.asList(displayAcrobaticsMod, displaySleightOfHandMod, displayStealthMod));
-        intSkills.addAll(Arrays.asList(displayArcanaMod, displayHistoryMod, displayInvestigationMod, displayNatureMod, displayReligionMod));
-        wisSkills.addAll(Arrays.asList(displayAnimalHandlingMod, displayInsightMod, displayMedicineMod, displayPerceptionMod, displaySurvivalMod));
-        chaSkills.addAll(Arrays.asList(displayDeceptionMod, displayIntimidationMod, displayPerformanceMod, displayPersuasionMod));
-        skillList.addAll(Arrays.asList(strSkills, dexSkills, conSkills, intSkills, wisSkills, chaSkills));
-    }
-
-    private void addNewTabListener() {
-        characterPane.getSelectionModel().selectedItemProperty()
-                .addListener((obs, oldTab, newTab) -> {
-                    if (newTab == newTabButton) {
-                        characterPane.getSelectionModel().select(oldTab);
-                        createCharacterSheetTab(new PlayerCharacter(String.valueOf(System.nanoTime())));
-                    }
-                });
     }
 
 
@@ -219,8 +107,14 @@ public class CompanionController {
         Tab newTab = new Tab("Character Sheet");
         CharacterSheet sheet = new CharacterSheet(character);
         newTab.setContent(sheet.getSheet());
-        characterPane.getTabs().remove(newTabButton);
-        characterPane.getTabs().addAll(newTab, newTabButton);
+        characterPane.getTabs().addAll(newTab);
+    }
+
+    @FXML
+    public void newCharacterSheetMenu(){
+        if(characterPane.isVisible()) {
+            createCharacterSheetTab(new PlayerCharacter(String.valueOf(System.nanoTime())));
+        }
     }
 
     @FXML
@@ -268,7 +162,6 @@ public class CompanionController {
                 createCharacterSheetTab(new PlayerCharacter(entry.getKey() + ".xml"));
             }
         }
-        createSkillLists();
         loadPane.setVisible(false);
         characterPane.setVisible(true);
 
@@ -370,10 +263,6 @@ public class CompanionController {
 
     @FXML
     public void rcvButtonPress() {
-       /*
-        charTypePane.setVisible(false);
-        characterPane.setVisible(true);
-       */
     }
 
 
@@ -437,7 +326,6 @@ public class CompanionController {
         languageTag.append(languages[languages.length - 1]);
         return languageTag.toString().replace("null", " ").trim();
     }
-
 
     private void parseAbilityModifiers(PlayerCharacter character, String ability, String score) {
         for (StatName statName : StatName.values()) {
