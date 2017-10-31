@@ -14,21 +14,21 @@
           <menus>
               <Menu mnemonicParsing="false" text="File">
                  <items>
+                     <Menu mnemonicParsing="false" text="New">
+                        <items>
+                            <Menu fx:id="newTabMenu" mnemonicParsing="false" text="Tab">
+                               <items>
+                                   <MenuItem fx:id="newCharacterSheetMenuItem" mnemonicParsing="false" onAction="#newCharacterSheetMenuAction" text="Character Sheet" />
+                                  <MenuItem fx:id="newJournalMenuItem" mnemonicParsing="false" onAction="#newJournalMenuAction" text="Journal" />
+                               </items>
+                            </Menu>
+                        </items>
+                     </Menu>
                      <MenuItem mnemonicParsing="false" onAction="#closeProgram" text="Quit">
                          <accelerator>
                              <KeyCodeCombination alt="UP" code="Q" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                          </accelerator>
                      </MenuItem>
-                     <Menu mnemonicParsing="false" text="New">
-                        <items>
-                            <Menu mnemonicParsing="false" text="Tab">
-                               <items>
-                                   <MenuItem mnemonicParsing="false" onAction="#newCharacterSheetMenu" text="Character Sheet" />
-                                  <MenuItem mnemonicParsing="false" onAction="#newJournalMenu" text="Journal" />
-                               </items>
-                            </Menu>
-                        </items>
-                     </Menu>
                  </items>
               </Menu>
               <Menu mnemonicParsing="false" text="Edit">

@@ -4,7 +4,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
-import sun.misc.IOUtils;
 
 import java.io.*;
 
@@ -47,6 +46,7 @@ public class JournalTab {
             FileReader fileReader = new FileReader(filepath);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             journalSpace.setText(bufferedReader.readLine());
+        } catch (FileNotFoundException ignored){
         } catch (IOException e) {
             e.printStackTrace();
         }

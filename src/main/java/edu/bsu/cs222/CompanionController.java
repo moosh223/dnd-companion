@@ -7,6 +7,8 @@ import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -75,8 +77,12 @@ public class CompanionController {
     //Miscellaneous Elements
     @FXML public ListView<String> characterLoadList;
     @FXML public CheckBox diceRollerButton;
+    @FXML public MenuItem newCharacterSheetMenuItem;
+    @FXML public MenuItem newJournalMenuItem;
+    @FXML public Menu newTabMenu;
     private XMLParser parser = new XMLParser();
-    private File dir;
+    private File dir = new File("assets/characters/");
+    private boolean isPlayer = true;
 
     private enum StatName {
         Strength(0),
@@ -98,6 +104,7 @@ public class CompanionController {
     }
 
     public void initialize() {
+        newTabMenu.setDisable(true);
     }
 
 
@@ -117,16 +124,16 @@ public class CompanionController {
     }
 
     @FXML
-    public void newCharacterSheetMenu(){
-        if(characterPane.isVisible()) {
+    public void newCharacterSheetMenuAction(){
+        if(characterPane.isVisible()&& !isPlayer) {
             createCharacterSheetTab(new PlayerCharacter(String.valueOf(System.nanoTime())));
         }
     }
 
     @FXML
-    public void newJournalMenu(){
+    public void newJournalMenuAction(){
         if(characterPane.isVisible()) {
-            createJournalTab(dir+"/journal.jour");
+            createJournalTab(String.format("%s/%d.jour",dir,System.nanoTime()));
         }
     }
 
@@ -155,6 +162,7 @@ public class CompanionController {
     public void playerButtonPress() {
         welcomePane.setVisible(false);
         charTypePane.setVisible(true);
+        isPlayer = true;
     }
 
     @FXML
@@ -170,46 +178,53 @@ public class CompanionController {
 
     @FXML
     public void loadSelectedCharacter() {
-        for (Map.Entry<String, String> entry : getFileList().entrySet()) {
+        for (Map.Entry<String, String> entry : getXMLFileList().entrySet()) {
             if (characterLoadList.getSelectionModel().getSelectedItem().equals(entry.getValue())) {
                 createCharacterSheetTab(new PlayerCharacter(String.format("%s/%s.xml",entry.getKey(),entry.getKey())));
                 dir = new File("assets/characters/"+entry.getKey());
-                for(File file: dir.listFiles()){
-                    if(file.getName().contains(".jour")){
+                for(File file: dir.listFiles())
+                    if (file.getName().contains(".jour"))
                         createJournalTab(file.getPath());
-                    }
-                }
             }
         }
+        newTabMenu.setDisable(false);
+        newJournalMenuItem.setDisable(false);
+        newCharacterSheetMenuItem.setDisable(true);
         loadPane.setVisible(false);
         characterPane.setVisible(true);
 
     }
 
     private void populateLoadTable() {
-        ObservableMap<String, String> fileList = FXCollections.observableMap(getFileList());
+        ObservableMap<String, String> fileList = FXCollections.observableMap(getXMLFileList());
         for (String name : fileList.values()) {
             characterLoadList.getItems().add(name);
         }
     }
 
-    private Map<String, String> getFileList() {
-        File folder = new File("assets/characters");
-        File[] fileList = folder.listFiles();
-        Map<String, String> fileNames = new HashMap<>();
-        assert fileList != null;
-        for (File file : fileList) {
-            if (file.isDirectory()) try {
-                for(File docs: file.listFiles()){
-                    if (docs.isFile() && docs.getName().contains(".xml")){
-                        Document doc = parser.buildDocumentStream(docs.getAbsolutePath());
+    private List<File> getCharacterFiles(){
+        List<File> characterList = new ArrayList<>();
+        for (File file : dir.listFiles()) {
+            if (file.isDirectory())
+                characterList.add(file);
+        }
+        return characterList;
+    }
+
+    private Map<String, String> getXMLFileList() {
+        Map<String,String> fileNames = new HashMap<>();
+        try {
+            for (File dir : getCharacterFiles()) {
+                for(File file: dir.listFiles()) {
+                    if (file.isFile() && file.getName().contains(".xml")) {
+                        Document doc = parser.buildDocumentStream(file.getAbsolutePath());
                         String displayName = doc.getDocumentElement().getElementsByTagName("name").item(0).getTextContent();
                         fileNames.put(file.getName().replace(".xml", ""), displayName);
                     }
                 }
-            } catch (ParserConfigurationException | IOException | SAXException e) {
-                e.printStackTrace();
             }
+        } catch (ParserConfigurationException | IOException | SAXException e) {
+            e.printStackTrace();
         }
         return fileNames;
     }
