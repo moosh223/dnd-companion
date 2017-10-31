@@ -75,10 +75,8 @@ public class CompanionController {
     //Miscellaneous Elements
     @FXML public ListView<String> characterLoadList;
     @FXML public CheckBox diceRollerButton;
-    @FXML public Tab newTabButton;
-
-    private List<TextField> displayFields = new ArrayList<>();
     private XMLParser parser = new XMLParser();
+    private File dir;
 
     private enum StatName {
         Strength(0),
@@ -111,9 +109,24 @@ public class CompanionController {
     }
 
     @FXML
+    private void createJournalTab(String filepath) {
+        Tab newTab = new Tab("Journal");
+        JournalTab journalTab = new JournalTab(filepath);
+        newTab.setContent(journalTab.getSheet());
+        characterPane.getTabs().addAll(newTab);
+    }
+
+    @FXML
     public void newCharacterSheetMenu(){
         if(characterPane.isVisible()) {
             createCharacterSheetTab(new PlayerCharacter(String.valueOf(System.nanoTime())));
+        }
+    }
+
+    @FXML
+    public void newJournalMenu(){
+        if(characterPane.isVisible()) {
+            createJournalTab(dir+"/journal.jour");
         }
     }
 
@@ -159,7 +172,13 @@ public class CompanionController {
     public void loadSelectedCharacter() {
         for (Map.Entry<String, String> entry : getFileList().entrySet()) {
             if (characterLoadList.getSelectionModel().getSelectedItem().equals(entry.getValue())) {
-                createCharacterSheetTab(new PlayerCharacter(entry.getKey() + ".xml"));
+                createCharacterSheetTab(new PlayerCharacter(String.format("%s/%s.xml",entry.getKey(),entry.getKey())));
+                dir = new File("assets/characters/"+entry.getKey());
+                for(File file: dir.listFiles()){
+                    if(file.getName().contains(".jour")){
+                        createJournalTab(file.getPath());
+                    }
+                }
             }
         }
         loadPane.setVisible(false);
@@ -180,10 +199,14 @@ public class CompanionController {
         Map<String, String> fileNames = new HashMap<>();
         assert fileList != null;
         for (File file : fileList) {
-            if (file.isFile()) try {
-                Document doc = parser.buildDocumentStream(file.getAbsolutePath());
-                String displayName = doc.getDocumentElement().getElementsByTagName("name").item(0).getTextContent();
-                fileNames.put(file.getName().replace(".xml", ""), displayName);
+            if (file.isDirectory()) try {
+                for(File docs: file.listFiles()){
+                    if (docs.isFile() && docs.getName().contains(".xml")){
+                        Document doc = parser.buildDocumentStream(docs.getAbsolutePath());
+                        String displayName = doc.getDocumentElement().getElementsByTagName("name").item(0).getTextContent();
+                        fileNames.put(file.getName().replace(".xml", ""), displayName);
+                    }
+                }
             } catch (ParserConfigurationException | IOException | SAXException e) {
                 e.printStackTrace();
             }
@@ -291,7 +314,9 @@ public class CompanionController {
     }
 
     private void buildNewCharacter() {
-        PlayerCharacter character = new PlayerCharacter(String.valueOf(System.nanoTime()));
+        dir = new File("assets/characters/"+String.valueOf(System.nanoTime()));
+        dir.mkdir();
+        PlayerCharacter character = new PlayerCharacter(String.format("%s/%s",dir.getName(),dir.getName()));
         character.setPlayerName(playerNameTextBox.getText());
         character.setCharacterName(characterNameTextBox.getText());
         character.setEXP("0");

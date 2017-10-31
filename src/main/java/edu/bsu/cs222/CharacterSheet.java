@@ -9,7 +9,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import org.w3c.dom.Document;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -22,7 +21,7 @@ public class CharacterSheet {
     private FXMLLoader sheet;
     private PlayerCharacter character;
     private TabPane testTab;
-    BorderPane parent;
+    private BorderPane parent;
     private List<TextField> displayFields = new ArrayList<>();
     private List<Label> labels = new ArrayList<>();
     private List<String> strSkills = new ArrayList<>();
@@ -36,7 +35,7 @@ public class CharacterSheet {
     public CharacterSheet(PlayerCharacter character) {
         sheet = new FXMLLoader(getClass().getClassLoader().getResource("CharacterTab.fxml"));
         this.character = character;
-        loadTabPaneContent();
+        loadPaneContent();
         buildDisplayFields();
         buildSkillFields();
         createDisplayAction();
@@ -121,7 +120,7 @@ public class CharacterSheet {
 
     }
 
-    private void loadTabPaneContent() {
+    private void loadPaneContent() {
         try{
             parent = sheet.load();
             testTab = (TabPane) parent.getCenter();
