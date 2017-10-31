@@ -7,6 +7,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import org.w3c.dom.Document;
 
@@ -20,7 +21,6 @@ import java.util.List;
 public class CharacterSheet {
     private FXMLLoader sheet;
     private PlayerCharacter character;
-    private BorderPane parent;
     private TabPane testTab;
     private List<TextField> displayFields = new ArrayList<>();
     private List<Label> labels = new ArrayList<>();
@@ -30,23 +30,24 @@ public class CharacterSheet {
     private List<String> intSkills = new ArrayList<>();
     private List<String> wisSkills = new ArrayList<>();
     private List<String> chaSkills = new ArrayList<>();
-    private List<List<String>> skillList = new ArrayList<>();
-
+    private List<List<String>> skillLists = new ArrayList<>();
 
     public CharacterSheet(PlayerCharacter character) {
         sheet = new FXMLLoader(getClass().getClassLoader().getResource("CharacterTab.fxml"));
         this.character = character;
         loadTabPaneContent();
         buildDisplayFields();
+        buildSkillFields();
         createDisplayAction();
-        updateCharacterView();
         addDisplayFocusListeners();
         createSkillLists();
+        updateCharacterView();
     }
 
     private TextField searchFields(String searchQuery) {
         for (TextField field : displayFields) {
             if (field.getId().equals(searchQuery)) {
+                System.out.println("FIELD FOUND");
                 return field;
             }
         }
@@ -55,6 +56,7 @@ public class CharacterSheet {
     private Label searchLabels(String searchQuery) {
         for(Label label: labels){
             if(label.getId().equals(searchQuery)){
+                System.out.println("LABEL FOUND");
                 return label;
             }
         }
@@ -67,12 +69,9 @@ public class CharacterSheet {
         intSkills.addAll(Arrays.asList("displayArcanaMod", "displayHistoryMod", "displayInvestigationMod","displayNatureMod","displayReligionMod"));
         wisSkills.addAll(Arrays.asList("displayAnimalHandlingMod", "displayInsightMod","displayMedicineMod","displayPerceptionMod","displaySurvivalMod"));
         chaSkills.addAll(Arrays.asList("displayDeceptionMod","displayIntimidationMod","displayPerformanceMod", "displayPersuasionMod"));
-        skillList.addAll(Arrays.asList(strSkills,dexSkills,conSkills,intSkills,wisSkills,chaSkills));
-
+        skillLists.addAll(Arrays.asList(strSkills,dexSkills,conSkills,intSkills,wisSkills,chaSkills));
     }
-
     private Method searchCharacterMethods(String searchQuery){
-
         for(Method method: PlayerCharacter.class.getMethods()){
             if(method.getName().equals(searchQuery)){
                 return  method;
@@ -88,8 +87,22 @@ public class CharacterSheet {
                 if(node.getId() != null) try {
                     displayFields.add((TextField) node);
                 } catch (ClassCastException e) {
+                    System.out.println((node));
                     labels.add((Label) node);
                 }
+            }
+        }
+    }
+
+    private void buildSkillFields(){
+        Tab tab = testTab.getTabs().get(2);
+        GridPane pane = (GridPane)((Pane)tab.getContent()).getChildren().get(0);
+        for(Node node: pane.getChildren()){
+            if(node.getId() != null) try {
+                System.out.println(node.getId());
+                labels.add((Label) node);
+            } catch (ClassCastException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -113,15 +126,11 @@ public class CharacterSheet {
 
     private void loadTabPaneContent() {
         try{
-            parent = sheet.load();
-            testTab = (TabPane)parent.getCenter();
+            BorderPane parent = sheet.load();
+            testTab = (TabPane) parent.getCenter();
         }catch(IOException e){
             e.printStackTrace();
         }
-    }
-
-    public BorderPane getSheet() {
-        return parent;
     }
 
     private void updateCharacterView(){
@@ -147,7 +156,7 @@ public class CharacterSheet {
         updateLabel("displayWisMod", getModifier(character.getStats()[4]));
         updateField("displayCha", String.valueOf(character.getStats()[5]));
         updateLabel("displayChaMod", getModifier(character.getStats()[5]));
-        //updateSkillModifiers();
+        updateSkillModifiers();
     }
 
     private void updateCharacterXML(){
@@ -166,10 +175,6 @@ public class CharacterSheet {
                 searchFields("displayCon").getText(),searchFields("displayInt").getText(),
                 searchFields("displayWis").getText(),searchFields("displayCha").getText()
         ));
-
-        //character.setStats(String.format("%s,%s,%s,%s,%s,%s",
-        //        displayStr.getText(),displayDex.getText(),displayCon.getText(),
-        //        displayInt.getText(),displayWis.getText(),displayCha.getText()));*/
         updateCharacterView();
     }
 
@@ -207,19 +212,17 @@ public class CharacterSheet {
     }
 
 
-    /*private void updateSkillModifiers(){
-        for(List<String> skill: skillList){
-            setSkillModifiers(skill,character.getStats()[skillList.indexOf(skill)]);
-        }
-    }*/
-    private void setSkillModifiers(List<Label> skillList, int stat){
-        for(Label skill : skillList){
-            skill.setText(getModifier(stat));
+    private void updateSkillModifiers(){
+        for(List<String> skill: skillLists){
+            System.out.println(skillLists.size());
+            setSkillModifiers(skill,Integer.parseInt(getModifier(character.getStats()[skillLists.indexOf(skill)])));
         }
     }
-
-    public Document getXMLDoc() {
-        return character.getXML();
+    private void setSkillModifiers(List<String> skillList, int stat){
+        for(String skill : skillList){
+            Label label = searchLabels(skill);
+            label.setText(String.valueOf(stat));
+        }
     }
 
     public PlayerCharacter getCharacter() {

@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class CharacterTest{
-    private PlayerCharacter char1 = new PlayerCharacter("Example","Character Name");
+    private PlayerCharacter char1 = new PlayerCharacter(String.valueOf(System.nanoTime()));
 
     @Test
     public void testCharHP() {
