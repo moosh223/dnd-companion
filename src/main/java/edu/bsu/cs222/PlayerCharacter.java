@@ -12,6 +12,11 @@ public class PlayerCharacter {
     private String filepath="assets/characters/";
     private XMLParser parser = new XMLParser();
     private Document xmlDoc;
+
+    public Document getXML() {
+        return xmlDoc;
+    }
+
     private enum TagType{
         name,
         race,
@@ -40,6 +45,9 @@ public class PlayerCharacter {
 
     public PlayerCharacter(String filepath) {
         this.filepath += filepath;
+        if(!filepath.contains(".xml")){
+            this.filepath += ".xml";
+        }
         try{
             linkToDocument();
         }catch(Exception e){

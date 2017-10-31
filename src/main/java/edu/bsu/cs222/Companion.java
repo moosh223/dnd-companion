@@ -21,7 +21,7 @@ public class Companion extends Application {
         primaryStage.setTitle("Dungeons & Dragons Companion");
         primaryStage.getIcons().add(new Image("icon.png"));
         parent.getStylesheets().clear();
-        parent.getStylesheets().add("themes/dark.css");
+        parent.getStylesheets().add("themes/default.css");
         primaryStage.setResizable(true);
         primaryStage.setScene(scene);
         primaryStage.show();

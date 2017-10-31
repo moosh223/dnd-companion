@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.input.*?>
 <?import javafx.collections.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
@@ -13,7 +14,10 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem mnemonicParsing="false" text="Close" />
+              <MenuItem mnemonicParsing="false" onAction="#closeProgram" text="Quit">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="Q" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
@@ -21,6 +25,15 @@
               <MenuItem mnemonicParsing="false" text="Delete" />
             </items>
           </Menu>
+            <Menu mnemonicParsing="false" text="View">
+              <items>
+                  <CustomMenuItem mnemonicParsing="false" onAction="#setDiceRollerVisible">
+                    <content>
+                      <CheckBox fx:id="diceRollerButton" contentDisplay="CENTER" text="Dice Roller" />
+                    </content>
+                  </CustomMenuItem>
+              </items>
+            </Menu>
           <Menu mnemonicParsing="false" text="Help">
             <items>
               <MenuItem mnemonicParsing="false" text="About" />
@@ -72,91 +85,19 @@
                <center>
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#loadButtonPress" text="Load" />
+                        <Button mnemonicParsing="false" onAction="#loadButtonAction" text="Load" />
                         <Button mnemonicParsing="false" onAction="#newButtonPress" text="New" />
                         <Button mnemonicParsing="false" onAction="#rcvButtonPress" text="RCV" />
                      </children>
                   </HBox>
                </center>
             </BorderPane>
-            <TabPane fx:id="characterPane" onKeyTyped="#updateCharacterXML" prefHeight="590.0" prefWidth="543.0" styleClass="toptab" tabClosingPolicy="UNAVAILABLE" visible="false">
+            <TabPane fx:id="characterPane" prefHeight="590.0" prefWidth="543.0" styleClass="toptab" visible="false">
                <tabs>
-                  <Tab text="Character Sheet">
-                     <content>
-                        <BorderPane prefHeight="200.0" prefWidth="200.0">
-                           <center>
-                              <TabPane prefHeight="200.0" prefWidth="200.0" side="LEFT" styleClass="sidetab" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
-                                 <tabs>
-                                    <Tab text="Info">
-                                      <content>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                             <children>
-                                                <Label layoutX="41.0" layoutY="32.0" text="Name:" AnchorPane.leftAnchor="50.0" />
-                                                <Label layoutX="41.0" layoutY="76.0" text="Race:" AnchorPane.leftAnchor="50.0" />
-                                                <Label layoutX="51.0" layoutY="120.0" text="Class:" AnchorPane.leftAnchor="51.0" />
-                                                <Label layoutX="53.0" layoutY="175.0" text="Alignment:" AnchorPane.leftAnchor="53.0" />
-                                                <Label layoutX="279.0" layoutY="175.0" text="Exp:" AnchorPane.leftAnchor="279.0" />
-                                                <Label layoutX="54.0" layoutY="227.0" text="Age:" AnchorPane.leftAnchor="54.0" />
-                                                <Label layoutX="278.0" layoutY="227.0" text="Size:" AnchorPane.leftAnchor="278.0" />
-                                                <Label layoutX="48.0" layoutY="280.0" text="Height:" AnchorPane.leftAnchor="48.0" />
-                                                <TextField fx:id="displayCharName" layoutX="151.0" layoutY="27.0" onAction="#updateCharacterXML" />
-                                                <TextField fx:id="displayRace" layoutX="151.0" layoutY="71.0" onAction="#updateCharacterXML" />
-                                                <TextField fx:id="displayClass" layoutX="150.0" layoutY="115.0" onAction="#updateCharacterXML" />
-                                                <TextField fx:id="displayAlignment" layoutX="150.0" layoutY="170.0" onAction="#updateCharacterXML" prefHeight="31.0" prefWidth="100.0" />
-                                                <TextField fx:id="displayExp" layoutX="328.0" layoutY="170.0" onAction="#updateCharacterXML" prefHeight="31.0" prefWidth="100.0" />
-                                                <TextField fx:id="displayAge" layoutX="150.0" layoutY="222.0" onAction="#updateCharacterXML" prefHeight="31.0" prefWidth="100.0" />
-                                                <TextField fx:id="displaySize" layoutX="328.0" layoutY="222.0" onAction="#updateCharacterXML" prefHeight="31.0" prefWidth="100.0" />
-                                                <TextField fx:id="displayHeight" layoutX="150.0" layoutY="275.0" onAction="#updateCharacterXML" prefHeight="31.0" prefWidth="100.0" />
-                                             </children>
-                                          </AnchorPane>
-                                      </content>
-                                    </Tab>
-                                    <Tab text="Stats">
-                                       <content>
-                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                             <children>
-                                                <Label layoutX="51.0" layoutY="24.0" text="Hit points (HP):" />
-                                                <Label layoutX="51.0" layoutY="59.0" text="Max:" />
-                                                <Label layoutX="219.0" layoutY="59.0" text="Current:" />
-                                                <Label layoutX="51.0" layoutY="149.0" text="Strength:" />
-                                                <Label layoutX="331.0" layoutY="117.0" text="Modifier:" />
-                                                <Label layoutX="51.0" layoutY="198.0" text="Dexterity:" />
-                                                <Label layoutX="51.0" layoutY="242.0" text="Constitution:" />
-                                                <Label layoutX="51.0" layoutY="290.0" text="Intelligence:" />
-                                                <Label layoutX="50.0" layoutY="337.0" text="Wisdom:" />
-                                                <Label layoutX="51.0" layoutY="392.0" text="Charisma:" />
-                                                <TextField fx:id="displayStr" layoutX="152.0" layoutY="144.0" onAction="#updateCharacterXML" prefWidth="100.0" />
-                                                <TextField fx:id="displayDex" layoutX="152.0" layoutY="193.0" onAction="#updateCharacterXML" prefWidth="100.0" />
-                                                <TextField fx:id="displayCon" layoutX="152.0" layoutY="237.0" onAction="#updateCharacterXML" prefWidth="100.0" />
-                                                <TextField fx:id="displayInt" layoutX="152.0" layoutY="285.0" onAction="#updateCharacterXML" prefWidth="100.0" />
-                                                <TextField fx:id="displayWis" layoutX="152.0" layoutY="332.0" onAction="#updateCharacterXML" prefWidth="100.0" />
-                                                <TextField fx:id="displayCha" layoutX="152.0" layoutY="387.0" onAction="#updateCharacterXML" prefWidth="100.0" />
-                                                <Label fx:id="displayStrMod" layoutX="357.0" layoutY="149.0" text="0" />
-                                                <Label fx:id="displayDexMod" layoutX="357.0" layoutY="198.0" text="0" />
-                                                <Label fx:id="displayConMod" layoutX="357.0" layoutY="242.0" text="0" />
-                                                <Label fx:id="displayIntMod" layoutX="357.0" layoutY="290.0" text="0" />
-                                                <Label fx:id="displayWisMod" layoutX="357.0" layoutY="337.0" text="0" />
-                                                <Label fx:id="displayChaMod" layoutX="357.0" layoutY="392.0" text="0" />
-                                                <TextField fx:id="displayMaxHp" layoutX="91.0" layoutY="54.0" onAction="#updateCharacterXML" prefWidth="100.0" />
-                                                <TextField fx:id="displayCurrentHp" layoutX="285.0" layoutY="54.0" onAction="#updateCharacterXML" prefWidth="100.0" />
-                                             </children></AnchorPane>
-                                       </content>
-                                    </Tab>
-                                    <Tab text="Skills">
-                                       <content>
-                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: #00FF00;" />
-                                       </content>
-                                    </Tab>
-                                 </tabs>
-                              </TabPane>
-                           </center>
-                        </BorderPane>
-                     </content>
-                  </Tab>
-                  <Tab text="Spell Sheet">
-                     <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                     </content>
+                  <Tab fx:id="newTabButton" closable="false" text="+">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                    </content>
                   </Tab>
                </tabs>
             </TabPane>

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <character owner="Josh">
     <name>Mooshian</name>
-    <race>Human</race>
+    <race>Doggo</race>
     <classname>Fighter</classname>
-    <stats>15,14,13,12,20,14</stats>
+    <stats>19,14,13,12,20,14</stats>
     <maxhp>20</maxhp>
     <currenthp>20</currenthp>
-    <exp>0</exp>
+    <exp>1600</exp>
     <age>18</age>
     <alignment>Neutral(N)</alignment>
     <size>Medium</size>
