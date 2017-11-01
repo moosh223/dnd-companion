@@ -93,6 +93,11 @@ public class CompanionController {
     private File dir = new File("assets/characters/");
     private boolean isPlayer = true;
 
+    NetworkServerParser netParse;
+
+    public CompanionController() throws IOException {
+    }
+
     private enum StatName {
         Strength(0),
         Dexterity(1),
@@ -148,8 +153,8 @@ public class CompanionController {
     }
 
     @FXML
-    public void closeProgram() {
-
+    public void closeProgram() throws IOException {
+        netParse.terminateConnection();
         System.exit(0);
     }
 
@@ -182,18 +187,19 @@ public class CompanionController {
     @FXML
     public void dmButtonPress() throws UnknownHostException {
         try {
-            NetworkServerParser netParse = new NetworkServerParser(2000);
+            netParse = new NetworkServerParser(2000);
             networkLabel.setText("Your IP Address is: "+ netParse.getLANAddress());
             new Thread(() -> {
                     try {
-                        netParse.server = netParse.serverSocket.accept();
-                        DataInputStream in = new DataInputStream(netParse.server.getInputStream());
+                        while(true) {
+                            netParse.server = netParse.serverSocket.accept();
+                            DataInputStream in = new DataInputStream(netParse.server.getInputStream());
 
-                        System.out.println(in.readUTF());
-                        DataOutputStream out = new DataOutputStream(netParse.server.getOutputStream());
-                        out.writeUTF("Thank you for connecting to " + netParse.server.getLocalSocketAddress()
-                                + "\nGoodbye!");
-
+                            System.out.println(in.readUTF());
+                            DataOutputStream out = new DataOutputStream(netParse.server.getOutputStream());
+                            out.writeUTF("Thank you for connecting to " + netParse.server.getLocalSocketAddress()
+                                    + "\nGoodbye!");
+                        }
                     } catch (SocketTimeoutException s) {
 
                     } catch (IOException e) {
@@ -350,7 +356,7 @@ public class CompanionController {
 
     @FXML
     public void rcvButtonPress() {
-        new NetworkClientParser("10.225.19.201");
+        new NetworkClientParser("10.225.71.81");
     }
 
 
