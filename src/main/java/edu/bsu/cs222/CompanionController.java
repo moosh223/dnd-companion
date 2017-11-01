@@ -98,8 +98,7 @@ public class CompanionController {
     public void dmButtonPress() throws UnknownHostException {
         networkLabel.setText("Your IP Address is: "+ Inet4Address.getLocalHost());
         try {
-            Thread t = new NetworkServerParser.HostServer(2000);
-            t.run();
+            new NetworkServerParser.HostServer(2000).run();
         } catch (IOException e) {
             e.printStackTrace();
         }
