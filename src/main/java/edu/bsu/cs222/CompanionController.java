@@ -4,6 +4,8 @@ import com.sun.javafx.stage.StageHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
@@ -11,6 +13,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -151,13 +154,16 @@ public class CompanionController {
     }
 
     @FXML
-    public void setDiceRollerVisible() {
-        Stage stage;
+    public void setDiceRollerVisible() throws IOException {
+        Stage stage = new Stage();
         if (diceRollerButton.isSelected()) {
-            stage = new Stage();
-            Scene scene = new Scene(new AnchorPane());
-            stage.setOnCloseRequest((event) ->
-                    diceRollerButton.selectedProperty().setValue(false));
+            Parent parent = FXMLLoader.load(getClass().getClassLoader().getResource("DiceRoll.fxml"));
+            Scene scene=new Scene(parent);
+            stage.setTitle("Dice Roller");
+            stage.getIcons().add(new Image("DiceIcon.png"));
+            parent.getStylesheets().clear();
+            parent.getStylesheets().add("themes/default.css");
+            stage.setResizable(true);
             stage.setScene(scene);
             stage.show();
             return;
