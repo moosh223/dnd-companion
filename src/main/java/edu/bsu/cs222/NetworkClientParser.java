@@ -5,10 +5,8 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class NetworkClientParser {
-    public class client {
 
-        public static void main(String [] args) {
-
+           public NetworkClientParser(){
             Scanner scan = new Scanner(System.in);
             //10.2.170.231
             String serverName = scan.nextLine();
@@ -32,4 +30,4 @@ public class NetworkClientParser {
             }
         }
     }
-}
+
