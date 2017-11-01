@@ -95,6 +95,9 @@ public class CompanionController {
     private File dir = new File("assets/characters/");
     private boolean isPlayer = true;
 
+    NetworkServerParser netParse;
+
+
     private enum StatName {
         Strength(0),
         Dexterity(1),
@@ -150,8 +153,8 @@ public class CompanionController {
     }
 
     @FXML
-    public void closeProgram() {
-
+    public void closeProgram() throws IOException {
+        netParse.terminateConnection();
         System.exit(0);
     }
 
@@ -184,14 +187,15 @@ public class CompanionController {
     @FXML
     public void dmButtonPress() throws UnknownHostException {
         try {
-            NetworkServerParser netParse = new NetworkServerParser(2000);
+            netParse = new NetworkServerParser(2000);
             networkLabel.setText("Your IP Address is: "+ netParse.getLANAddress());
             new Thread(() -> {
                     try {
-                        netParse.server = netParse.serverSocket.accept();
-                        netParse.getMessageFromClient();
-                        netParse.writeToClient("HI there my special little guy");
-
+                        while(true) {
+                            netParse.server = netParse.serverSocket.accept();
+                            netParse.getMessageFromClient();
+                            netParse.writeToClient("HI there my special little guy");
+                        }
                     } catch (SocketTimeoutException s) {
 
                     } catch (IOException e) {
