@@ -11,7 +11,6 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -20,14 +19,13 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
@@ -49,6 +47,7 @@ public class CompanionController {
     @FXML public Label languageErrorLabel;
     @FXML public Label classErrorLabel;
     @FXML public Label statErrorLabel;
+    @FXML public Label networkLabel;
 
     //Text Fields for Character Creator
     @FXML public TextField playerNameTextBox;
@@ -147,6 +146,7 @@ public class CompanionController {
 
     @FXML
     public void closeProgram() {
+
         System.exit(0);
     }
 
@@ -175,11 +175,10 @@ public class CompanionController {
 
     @FXML
     public void dmButtonPress() throws UnknownHostException {
-        networkLabel.setText("Your IP Address is: "+ Inet4Address.getLocalHost());
         try {
             NetworkServerParser netParse = new NetworkServerParser(2000);
+            networkLabel.setText("Your IP Address is: "+ netParse.getLANAddress());
             new Thread(() -> {
-                while (true) {
                     try {
                         netParse.server = netParse.serverSocket.accept();
                         DataInputStream in = new DataInputStream(netParse.server.getInputStream());
@@ -190,14 +189,12 @@ public class CompanionController {
                                 + "\nGoodbye!");
 
                     } catch (SocketTimeoutException s) {
-                        break;
+
                     } catch (IOException e) {
                         e.printStackTrace();
-                        break;
                     }
-                }
             }).start();
-        } catch (IOException e) {
+        }catch(IOException e){
             e.printStackTrace();
         }
     }
