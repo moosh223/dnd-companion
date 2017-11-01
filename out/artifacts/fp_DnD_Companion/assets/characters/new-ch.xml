@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<character owner="New">
+    <name>Ch</name>
+    <race>a</race>
+    <classname>a</classname>
+    <stats>6,12,12,12,12,12</stats>
+    <maxhp>12</maxhp>
+    <currenthp>12</currenthp>
+    <exp>0</exp>
+    <age>12</age>
+    <alignment>Lawful Good(LG)</alignment>
+    <size>Small</size>
+    <height>12</height>
+    <speed>12</speed>
+    <languages>c</languages>
+</character>

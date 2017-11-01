@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<character owner="a">
+    <name>a</name>
+    <race>elf</race>
+    <classname>warrior</classname>
+    <stats>20,16,14,14,12,10</stats>
+    <maxhp>19</maxhp>
+    <currenthp>19</currenthp>
+    <exp>0</exp>
+    <age>45</age>
+    <alignment>Neutral(N)</alignment>
+    <size>Large</size>
+    <height>7'</height>
+    <speed>35</speed>
+    <languages>common,elvish</languages>
+</character>
