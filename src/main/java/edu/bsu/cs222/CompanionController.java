@@ -11,6 +11,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -112,6 +113,7 @@ public class CompanionController {
         Tab newTab = new Tab("Character Sheet");
         CharacterSheet sheet = new CharacterSheet(character);
         newTab.setContent(sheet.getSheet());
+        newTab.setClosable(false);
         characterPane.getTabs().addAll(newTab);
     }
 
@@ -164,7 +166,6 @@ public class CompanionController {
         charTypePane.setVisible(true);
         isPlayer = true;
     }
-
     @FXML
     public void dmButtonPress() {
     }
@@ -175,42 +176,12 @@ public class CompanionController {
         loadPane.setVisible(true);
         populateLoadTable();
     }
-
-    @FXML
-    public void loadSelectedCharacter() {
-        for (Map.Entry<String, String> entry : getXMLFileList().entrySet()) {
-            if (characterLoadList.getSelectionModel().getSelectedItem().equals(entry.getValue())) {
-                createCharacterSheetTab(new PlayerCharacter(String.format("%s/%s.xml",entry.getKey(),entry.getKey())));
-                dir = new File("assets/characters/"+entry.getKey());
-                for(File file: dir.listFiles())
-                    if (file.getName().contains(".jour"))
-                        createJournalTab(file.getPath());
-            }
-        }
-        newTabMenu.setDisable(false);
-        newJournalMenuItem.setDisable(false);
-        newCharacterSheetMenuItem.setDisable(true);
-        loadPane.setVisible(false);
-        characterPane.setVisible(true);
-
-    }
-
     private void populateLoadTable() {
         ObservableMap<String, String> fileList = FXCollections.observableMap(getXMLFileList());
         for (String name : fileList.values()) {
             characterLoadList.getItems().add(name);
         }
     }
-
-    private List<File> getCharacterFiles(){
-        List<File> characterList = new ArrayList<>();
-        for (File file : dir.listFiles()) {
-            if (file.isDirectory())
-                characterList.add(file);
-        }
-        return characterList;
-    }
-
     private Map<String, String> getXMLFileList() {
         Map<String,String> fileNames = new HashMap<>();
         try {
@@ -228,6 +199,53 @@ public class CompanionController {
         }
         return fileNames;
     }
+
+    @FXML
+    public void loadSelectedCharacter() {
+        try {
+            for (Map.Entry<String, String> entry : getXMLFileList().entrySet()) {
+                if (characterLoadList.getSelectionModel().getSelectedItem().equals(entry.getValue())) {
+                    createCharacterSheetTab(new PlayerCharacter(String.format("%s/%s.xml", entry.getKey(), entry.getKey())));
+                    createCharacterJournals(entry.getKey());
+                }
+            }
+        }catch(NullPointerException e){
+            makeNewChracterFolder();
+            createCharacterSheetTab(new PlayerCharacter(
+                    String.format("%s/%s",dir.getName(),dir.getName())));
+        }
+        newTabMenu.setDisable(false);
+        newJournalMenuItem.setDisable(false);
+        newCharacterSheetMenuItem.setDisable(true);
+        loadPane.setVisible(false);
+        characterPane.setVisible(true);
+    }
+
+    private void createCharacterJournals(String directory) {
+        dir = new File("assets/characters/" + directory);
+        for (File file : dir.listFiles())
+            if (file.getName().contains(".jour"))
+                createJournalTab(file.getPath());
+    }
+
+
+    private void makeNewChracterFolder() {
+        dir = new File("assets/characters/"+String.valueOf(System.nanoTime()));
+        dir.mkdir();
+    }
+
+
+
+    private List<File> getCharacterFiles(){
+        List<File> characterList = new ArrayList<>();
+        for (File file : dir.listFiles()) {
+            if (file.isDirectory())
+                characterList.add(file);
+        }
+        return characterList;
+    }
+
+
 
     @FXML
     public void newButtonPress() {
@@ -294,6 +312,9 @@ public class CompanionController {
             statErrorLabel.setVisible(true);
         } else {
             buildNewCharacter();
+            newTabMenu.setDisable(false);
+            newJournalMenuItem.setDisable(false);
+            newCharacterSheetMenuItem.setDisable(true);
             statPane.setVisible(false);
             characterPane.setVisible(true);
         }
@@ -329,8 +350,7 @@ public class CompanionController {
     }
 
     private void buildNewCharacter() {
-        dir = new File("assets/characters/"+String.valueOf(System.nanoTime()));
-        dir.mkdir();
+        makeNewChracterFolder();
         PlayerCharacter character = new PlayerCharacter(String.format("%s/%s",dir.getName(),dir.getName()));
         character.setPlayerName(playerNameTextBox.getText());
         character.setCharacterName(characterNameTextBox.getText());

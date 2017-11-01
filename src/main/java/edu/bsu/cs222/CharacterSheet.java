@@ -35,13 +35,25 @@ public class CharacterSheet {
     public CharacterSheet(PlayerCharacter character) {
         sheet = new FXMLLoader(getClass().getClassLoader().getResource("CharacterTab.fxml"));
         this.character = character;
+        init();
+        updateCharacterView();
+    }
+
+    private void init() {
         loadPaneContent();
-        buildDisplayFields();
-        buildSkillFields();
+        buildDataFields();
+        setActions();
+    }
+
+    private void setActions() {
         createDisplayAction();
         addDisplayFocusListeners();
+    }
+
+    private void buildDataFields() {
+        buildDisplayFields();
+        buildSkillFields();
         createSkillLists();
-        updateCharacterView();
     }
 
     private TextField searchFields(String searchQuery) {
@@ -52,6 +64,7 @@ public class CharacterSheet {
         }
         return null;
     }
+
     private Label searchLabels(String searchQuery) {
         for(Label label: labels){
             if(label.getId().equals(searchQuery)){
@@ -177,6 +190,7 @@ public class CharacterSheet {
     private void writeStats(String stats) {
         try{
             Method toEdit = searchCharacterMethods("setStats");
+            assert toEdit != null;
             toEdit.invoke(character,stats);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
@@ -190,23 +204,25 @@ public class CharacterSheet {
 
     private void updateField(String field, String property) {
         TextField toEdit = searchFields(field);
+        assert toEdit != null;
         toEdit.setText(property);
     }
 
     private void updateLabel(String field, String property) {
         Label toEdit = searchLabels(field);
+        assert toEdit != null;
         toEdit.setText(property);
     }
 
     private void writeField(String field, String property) {
         try{
             Method toEdit = searchCharacterMethods(field);
+            assert toEdit != null;
             toEdit.invoke(character,searchFields(property).getText());
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
     }
-
 
     private void updateSkillModifiers(){
         for(List<String> skill: skillLists){
@@ -216,14 +232,10 @@ public class CharacterSheet {
     private void setSkillModifiers(List<String> skillList, int stat){
         for(String skill : skillList){
             Label label = searchLabels(skill);
+            assert label != null;
             label.setText(String.valueOf(stat));
         }
     }
-
-    public PlayerCharacter getCharacter() {
-        return character;
-    }
-
     public Node getSheet() {
         return parent;
     }
