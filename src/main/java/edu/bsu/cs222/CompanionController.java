@@ -13,6 +13,7 @@ import javafx.scene.layout.BorderPane;
 import java.awt.*;
 import java.io.*;
 import java.net.Inet4Address;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -98,7 +99,26 @@ public class CompanionController {
     public void dmButtonPress() throws UnknownHostException {
         networkLabel.setText("Your IP Address is: "+ Inet4Address.getLocalHost());
         try {
-            new NetworkServerParser.HostServer(2000).run();
+            NetworkServerParser netParse = new NetworkServerParser(2000);
+            new Thread(() -> {
+                while (true) {
+                    try {
+                        netParse.server = netParse.serverSocket.accept();
+                        DataInputStream in = new DataInputStream(netParse.server.getInputStream());
+
+                        System.out.println(in.readUTF());
+                        DataOutputStream out = new DataOutputStream(netParse.server.getOutputStream());
+                        out.writeUTF("Thank you for connecting to " + netParse.server.getLocalSocketAddress()
+                                + "\nGoodbye!");
+
+                    } catch (SocketTimeoutException s) {
+                        break;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                }
+            }).start();
         } catch (IOException e) {
             e.printStackTrace();
         }
