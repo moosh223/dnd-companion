@@ -4,6 +4,8 @@ import com.sun.javafx.stage.StageHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
@@ -20,8 +22,13 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.*;
 import java.util.List;
 
@@ -43,6 +50,7 @@ public class CompanionController {
     @FXML public Label languageErrorLabel;
     @FXML public Label classErrorLabel;
     @FXML public Label statErrorLabel;
+    @FXML public Label networkLabel;
 
     //Text Fields for Character Creator
     @FXML public TextField playerNameTextBox;
@@ -141,17 +149,21 @@ public class CompanionController {
 
     @FXML
     public void closeProgram() {
+
         System.exit(0);
     }
 
     @FXML
-    public void setDiceRollerVisible() {
-        Stage stage;
+    public void setDiceRollerVisible() throws IOException {
+        Stage stage = new Stage();
         if (diceRollerButton.isSelected()) {
-            stage = new Stage();
-            Scene scene = new Scene(new AnchorPane());
-            stage.setOnCloseRequest((event) ->
-                    diceRollerButton.selectedProperty().setValue(false));
+            Parent parent = FXMLLoader.load(getClass().getClassLoader().getResource("DiceRoll.fxml"));
+            Scene scene=new Scene(parent);
+            stage.setTitle("Dice Roller");
+            stage.getIcons().add(new Image("DiceIcon.png"));
+            parent.getStylesheets().clear();
+            parent.getStylesheets().add("themes/default.css");
+            stage.setResizable(true);
             stage.setScene(scene);
             stage.show();
             return;
@@ -166,8 +178,31 @@ public class CompanionController {
         charTypePane.setVisible(true);
         isPlayer = true;
     }
+
     @FXML
-    public void dmButtonPress() {
+    public void dmButtonPress() throws UnknownHostException {
+        try {
+            NetworkServerParser netParse = new NetworkServerParser(2000);
+            networkLabel.setText("Your IP Address is: "+ netParse.getLANAddress());
+            new Thread(() -> {
+                    try {
+                        netParse.server = netParse.serverSocket.accept();
+                        DataInputStream in = new DataInputStream(netParse.server.getInputStream());
+
+                        System.out.println(in.readUTF());
+                        DataOutputStream out = new DataOutputStream(netParse.server.getOutputStream());
+                        out.writeUTF("Thank you for connecting to " + netParse.server.getLocalSocketAddress()
+                                + "\nGoodbye!");
+
+                    } catch (SocketTimeoutException s) {
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+            }).start();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -245,15 +280,12 @@ public class CompanionController {
         return characterList;
     }
 
-
-
     @FXML
     public void newButtonPress() {
         creatorTextFields.addAll(Arrays.asList(playerNameTextBox, characterNameTextBox));
         charTypePane.setVisible(false);
         namePane.setVisible(true);
     }
-
     @FXML
     public void nameNextButtonPress() {
         if (!isPageFilled()) {
@@ -268,7 +300,6 @@ public class CompanionController {
             racePane.setVisible(true);
         }
     }
-
     @FXML
     public void raceNextButtonPress() {
         if (!isPageFilled()) {
@@ -278,7 +309,6 @@ public class CompanionController {
             languagePane.setVisible(true);
         }
     }
-
     @FXML
     public void languageNextButtonPress() {
         if (!isPageFilled() || languageTextBox.getText().equals("")) {
@@ -292,7 +322,6 @@ public class CompanionController {
             classPane.setVisible(true);
         }
     }
-
     @FXML
     public void classNextButtonPress() {
         if (!isPageFilled()) {
@@ -305,7 +334,6 @@ public class CompanionController {
             statPane.setVisible(true);
         }
     }
-
     @FXML
     public void statNextButtonPress() {
         if (!isPageFilled()) {
@@ -322,6 +350,7 @@ public class CompanionController {
 
     @FXML
     public void rcvButtonPress() {
+        new NetworkClientParser("10.225.19.201");
     }
 
 
