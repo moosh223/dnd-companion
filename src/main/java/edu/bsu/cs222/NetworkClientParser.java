@@ -6,10 +6,7 @@ import java.util.Scanner;
 
 public class NetworkClientParser {
 
-           public NetworkClientParser(){
-            Scanner scan = new Scanner(System.in);
-            //10.2.170.231
-            String serverName = scan.nextLine();
+           public NetworkClientParser(String serverName){
             int port = 2000;
             try {
                 System.out.println("Connecting to " + serverName + " on port " + port);

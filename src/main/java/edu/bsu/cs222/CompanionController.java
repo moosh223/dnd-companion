@@ -344,6 +344,7 @@ public class CompanionController {
 
     @FXML
     public void rcvButtonPress() {
+        new NetworkClientParser("10.225.19.201");
     }
 
 

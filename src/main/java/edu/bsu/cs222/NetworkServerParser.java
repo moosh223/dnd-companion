@@ -1,7 +1,5 @@
 package edu.bsu.cs222;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.*;
 import java.util.Enumeration;
@@ -20,7 +18,7 @@ public class NetworkServerParser {
             server.close();
         }
 
-    public InetAddress getLANAddress() {
+    public InetAddress getLANAddress() throws UnknownHostException{
         try {
             InetAddress candidateAddress = null;
             // Iterate all NICs (network interface cards)...
@@ -30,7 +28,6 @@ public class NetworkServerParser {
                 for (Enumeration inetAddrs = iface.getInetAddresses(); inetAddrs.hasMoreElements();) {
                     InetAddress inetAddr = (InetAddress) inetAddrs.nextElement();
                     if (!inetAddr.isLoopbackAddress()) {
-
                         if (inetAddr.isSiteLocalAddress()) {
                             // Found non-loopback site-local address. Return it immediately...
                             return inetAddr;
@@ -63,7 +60,7 @@ public class NetworkServerParser {
         catch (Exception e) {
             UnknownHostException unknownHostException = new UnknownHostException("Failed to determine LAN address: " + e);
             unknownHostException.initCause(e);
+            throw unknownHostException;
         }
-        return null;
     }
 }
