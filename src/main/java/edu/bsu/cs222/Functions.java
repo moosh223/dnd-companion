@@ -3,11 +3,15 @@ package edu.bsu.cs222;
 import javafx.fxml.FXML;
 
 import java.util.*;
-import java.lang.Math;
 
 public class Functions {
 
     @FXML
+    public void rollDice(){
+        int i = 4;
+        rollDice(i);
+    }
+
     public int rollDice(int i) {
         Random rand = new Random();
         return rand.nextInt(i)+1;
