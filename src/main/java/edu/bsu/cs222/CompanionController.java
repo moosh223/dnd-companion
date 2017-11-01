@@ -2,25 +2,29 @@ package edu.bsu.cs222;
 
 import com.sun.javafx.stage.StageHelper;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 import java.util.List;
 
-public class CompanionController{
+public class CompanionController {
 
     //ViewPanes
     @FXML public BorderPane welcomePane;
@@ -32,41 +36,12 @@ public class CompanionController{
     @FXML public AnchorPane languagePane;
     @FXML public AnchorPane classPane;
     @FXML public AnchorPane statPane;
-
     //ErrorLabels
     @FXML public Label nameErrorLabel;
     @FXML public Label raceErrorLabel;
     @FXML public Label languageErrorLabel;
     @FXML public Label classErrorLabel;
     @FXML public Label statErrorLabel;
-
-
-    //Skill Labels
-    @FXML public Label displayAcrobaticsMod;
-    @FXML public Label displayAnimalHandlingMod;
-    @FXML public Label displayArcanaMod;
-    @FXML public Label displayAthleticsMod;
-    @FXML public Label displayDeceptionMod;
-    @FXML public Label displayHistoryMod;
-    @FXML public Label displayInsightMod;
-    @FXML public Label displayIntimidationMod;
-    @FXML public Label displayInvestigationMod;
-    @FXML public Label displayMedicineMod;
-    @FXML public Label displayNatureMod;
-    @FXML public Label displayPerceptionMod;
-    @FXML public Label displayPerformanceMod;
-    @FXML public Label displayPersuasionMod;
-    @FXML public Label displayReligionMod;
-    @FXML public Label displaySleightOfHandMod;
-    @FXML public Label displayStealthMod;
-    @FXML public Label displaySurvivalMod;
-    private List<Label> strSkills = new ArrayList<>();
-    private List<Label> dexSkills = new ArrayList<>();
-    private List<Label> conSkills = new ArrayList<>();
-    private List<Label> intSkills = new ArrayList<>();
-    private List<Label> wisSkills = new ArrayList<>();
-    private List<Label> chaSkills = new ArrayList<>();
-    private List<List<Label>> skillList = new ArrayList<>();
 
     //Text Fields for Character Creator
     @FXML public TextField playerNameTextBox;
@@ -101,15 +76,15 @@ public class CompanionController{
 
     //Miscellaneous Elements
     @FXML public ListView<String> characterLoadList;
-    @FXML public ContextMenu tabContextMenu;
     @FXML public CheckBox diceRollerButton;
-    //@FXML public Tab characterSheetTab;
-    @FXML public Tab newTabButton;
+    @FXML public MenuItem newCharacterSheetMenuItem;
+    @FXML public MenuItem newJournalMenuItem;
+    @FXML public Menu newTabMenu;
+    private XMLParser parser = new XMLParser();
+    private File dir = new File("assets/characters/");
+    private boolean isPlayer = true;
 
-    private List<TextField> displayFields = new ArrayList<>();
-    private XMLParser parser;
-
-    private enum StatName{
+    private enum StatName {
         Strength(0),
         Dexterity(1),
         Constitution(2),
@@ -118,56 +93,59 @@ public class CompanionController{
         Charisma(5);
 
         private int stat;
+
         StatName(int stat) {
             this.stat = stat;
         }
-        private int getValue(){
+
+        private int getValue() {
             return stat;
         }
     }
 
-    public void initialize(){
-        addNewTabListener();
+    public void initialize() {
+        newTabMenu.setDisable(true);
     }
-
-    private void createSkillLists() {
-        strSkills.add(displayAthleticsMod);
-        dexSkills.addAll(Arrays.asList(displayAcrobaticsMod, displaySleightOfHandMod,displayStealthMod));
-        intSkills.addAll(Arrays.asList(displayArcanaMod, displayHistoryMod, displayInvestigationMod,displayNatureMod,displayReligionMod));
-        wisSkills.addAll(Arrays.asList(displayAnimalHandlingMod, displayInsightMod,displayMedicineMod,displayPerceptionMod,displaySurvivalMod));
-        chaSkills.addAll(Arrays.asList(displayDeceptionMod,displayIntimidationMod,displayPerformanceMod, displayPersuasionMod));
-        skillList.addAll(Arrays.asList(strSkills,dexSkills,conSkills,intSkills,wisSkills,chaSkills));
-    }
-
-    private void addNewTabListener() {
-        characterPane.getSelectionModel().selectedItemProperty()
-                .addListener((obs, oldTab, newTab) -> {
-                    if(newTab == newTabButton) {
-                        characterPane.getSelectionModel().select(oldTab);
-                        createCharacterSheetTab(new PlayerCharacter(String.valueOf(System.nanoTime())));
-                    }
-                });
-    }
-
 
 
     private void createCharacterSheetTab(PlayerCharacter character) {
         Tab newTab = new Tab("Character Sheet");
-            CharacterSheet sheet = new CharacterSheet(character);
-            newTab.setContent(sheet.getSheet());
-        characterPane.getTabs().remove(newTabButton);
-        characterPane.getTabs().addAll(newTab,newTabButton);
+        CharacterSheet sheet = new CharacterSheet(character);
+        newTab.setContent(sheet.getSheet());
+        characterPane.getTabs().addAll(newTab);
     }
 
     @FXML
-    public void closeProgram(){
+    private void createJournalTab(String filepath) {
+        Tab newTab = new Tab("Journal");
+        JournalTab journalTab = new JournalTab(filepath);
+        newTab.setContent(journalTab.getSheet());
+        characterPane.getTabs().addAll(newTab);
+    }
+
+    @FXML
+    public void newCharacterSheetMenuAction(){
+        if(characterPane.isVisible()&& !isPlayer) {
+            createCharacterSheetTab(new PlayerCharacter(String.valueOf(System.nanoTime())));
+        }
+    }
+
+    @FXML
+    public void newJournalMenuAction(){
+        if(characterPane.isVisible()) {
+            createJournalTab(String.format("%s/%d.jour",dir,System.nanoTime()));
+        }
+    }
+
+    @FXML
+    public void closeProgram() {
         System.exit(0);
     }
 
     @FXML
-    public void setDiceRollerVisible(){
+    public void setDiceRollerVisible() {
         Stage stage;
-        if(diceRollerButton.isSelected()){
+        if (diceRollerButton.isSelected()) {
             stage = new Stage();
             Scene scene = new Scene(new AnchorPane());
             stage.setOnCloseRequest((event) ->
@@ -176,21 +154,23 @@ public class CompanionController{
             stage.show();
             return;
         }
-            stage = StageHelper.getStages().get(StageHelper.getStages().size()-1);
-            stage.close();
+        stage = StageHelper.getStages().get(StageHelper.getStages().size() - 1);
+        stage.close();
     }
 
     @FXML
-    public void playerButtonPress(){
+    public void playerButtonPress() {
         welcomePane.setVisible(false);
         charTypePane.setVisible(true);
+        isPlayer = true;
     }
 
     @FXML
-    public void dmButtonPress(){}
+    public void dmButtonPress() {
+    }
 
     @FXML
-    public void loadButtonAction(){
+    public void loadButtonAction() {
         charTypePane.setVisible(false);
         loadPane.setVisible(true);
         populateLoadTable();
@@ -198,95 +178,121 @@ public class CompanionController{
 
     @FXML
     public void loadSelectedCharacter() {
-        createCharacterSheetTab(new PlayerCharacter(
-                characterLoadList.getSelectionModel().getSelectedItem() + ".xml"));
-        createSkillLists();
+        for (Map.Entry<String, String> entry : getXMLFileList().entrySet()) {
+            if (characterLoadList.getSelectionModel().getSelectedItem().equals(entry.getValue())) {
+                createCharacterSheetTab(new PlayerCharacter(String.format("%s/%s.xml",entry.getKey(),entry.getKey())));
+                dir = new File("assets/characters/"+entry.getKey());
+                for(File file: dir.listFiles())
+                    if (file.getName().contains(".jour"))
+                        createJournalTab(file.getPath());
+            }
+        }
+        newTabMenu.setDisable(false);
+        newJournalMenuItem.setDisable(false);
+        newCharacterSheetMenuItem.setDisable(true);
         loadPane.setVisible(false);
         characterPane.setVisible(true);
 
     }
 
     private void populateLoadTable() {
-        ObservableList<String> fileList = FXCollections.observableArrayList(getFileList());
-        characterLoadList.getItems().addAll(fileList);
+        ObservableMap<String, String> fileList = FXCollections.observableMap(getXMLFileList());
+        for (String name : fileList.values()) {
+            characterLoadList.getItems().add(name);
+        }
     }
 
-    private ArrayList<String> getFileList() {
-        File folder = new File("assets/characters");
-        File[] fileList = folder.listFiles();
-        ArrayList<String> fileNames = new ArrayList<>();
-        assert fileList != null;
-        for(File file: fileList){
-            if(file.isFile())
-            fileNames.add(file.getName().replace(".xml",""));
+    private List<File> getCharacterFiles(){
+        List<File> characterList = new ArrayList<>();
+        for (File file : dir.listFiles()) {
+            if (file.isDirectory())
+                characterList.add(file);
+        }
+        return characterList;
+    }
+
+    private Map<String, String> getXMLFileList() {
+        Map<String,String> fileNames = new HashMap<>();
+        try {
+            for (File dir : getCharacterFiles()) {
+                for(File file: dir.listFiles()) {
+                    if (file.isFile() && file.getName().contains(".xml")) {
+                        Document doc = parser.buildDocumentStream(file.getAbsolutePath());
+                        String displayName = doc.getDocumentElement().getElementsByTagName("name").item(0).getTextContent();
+                        fileNames.put(file.getName().replace(".xml", ""), displayName);
+                    }
+                }
+            }
+        } catch (ParserConfigurationException | IOException | SAXException e) {
+            e.printStackTrace();
         }
         return fileNames;
     }
 
     @FXML
-    public void newButtonPress(){
-        creatorTextFields.addAll(Arrays.asList(playerNameTextBox,characterNameTextBox));
+    public void newButtonPress() {
+        creatorTextFields.addAll(Arrays.asList(playerNameTextBox, characterNameTextBox));
         charTypePane.setVisible(false);
         namePane.setVisible(true);
     }
+
     @FXML
-    public void nameNextButtonPress(){
-        if(!isPageFilled()) {
+    public void nameNextButtonPress() {
+        if (!isPageFilled()) {
             nameErrorLabel.setVisible(true);
-        }
-        else {
+        } else {
             creatorTextFields.addAll(
                     Arrays.asList(raceTextBox, ageTextBox, heightTextBox, speedTextBox));
             creatorComboBoxes.addAll(
-                    Arrays.asList(firstAbilityModified,firstModifiedScore,
-                            secondAbilityModified,secondModifiedScore,alignmentBox,sizeBox));
+                    Arrays.asList(firstAbilityModified, firstModifiedScore,
+                            secondAbilityModified, secondModifiedScore, alignmentBox, sizeBox));
             namePane.setVisible(false);
             racePane.setVisible(true);
         }
     }
+
     @FXML
-    public void raceNextButtonPress(){
-        if(!isPageFilled()){
+    public void raceNextButtonPress() {
+        if (!isPageFilled()) {
             raceErrorLabel.setVisible(true);
-        }
-        else{
+        } else {
             racePane.setVisible(false);
             languagePane.setVisible(true);
         }
     }
+
     @FXML
-    public void languageNextButtonPress(){
+    public void languageNextButtonPress() {
         if (!isPageFilled() || languageTextBox.getText().equals("")) {
             languageErrorLabel.setVisible(true);
-        }
-        else{
+        } else {
             creatorTextFields.addAll(
                     Arrays.asList(classTextBox, hpTextBox));
             creatorComboBoxes.addAll(
-                    Arrays.asList(savingThrowOne,savingThrowTwo,primaryAbilityOne,primaryAbilityTwo));
+                    Arrays.asList(savingThrowOne, savingThrowTwo, primaryAbilityOne, primaryAbilityTwo));
             languagePane.setVisible(false);
             classPane.setVisible(true);
         }
     }
+
     @FXML
-    public void classNextButtonPress(){
-        if(!isPageFilled()){
+    public void classNextButtonPress() {
+        if (!isPageFilled()) {
             classErrorLabel.setVisible(true);
-        }
-        else{
+        } else {
             creatorTextFields.addAll(
-                    Arrays.asList(strTextBox, dexTextBox,conTextBox,
-                            intTextBox,wisTextBox,chaTextBox));
+                    Arrays.asList(strTextBox, dexTextBox, conTextBox,
+                            intTextBox, wisTextBox, chaTextBox));
             classPane.setVisible(false);
             statPane.setVisible(true);
         }
     }
+
     @FXML
-    public void statNextButtonPress(){
-        if (!isPageFilled()){
+    public void statNextButtonPress() {
+        if (!isPageFilled()) {
             statErrorLabel.setVisible(true);
-        }
-        else {
+        } else {
             buildNewCharacter();
             statPane.setVisible(false);
             characterPane.setVisible(true);
@@ -294,40 +300,38 @@ public class CompanionController{
     }
 
     @FXML
-    public void rcvButtonPress(){
-       /*
-        charTypePane.setVisible(false);
-        characterPane.setVisible(true);
-       */
+    public void rcvButtonPress() {
     }
 
 
-    private boolean isPageFilled(){
+    private boolean isPageFilled() {
         return isComboBoxFilled() && isTextFieldFilled();
     }
 
-    private boolean isTextFieldFilled(){
-        for(TextField field: creatorTextFields){
-            if(field.getText().equals("")){
+    private boolean isTextFieldFilled() {
+        for (TextField field : creatorTextFields) {
+            if (field.getText().equals("")) {
                 return false;
             }
         }
         return true;
     }
 
-    private boolean isComboBoxFilled(){
-        for(ComboBox box: creatorComboBoxes){
-            try{
+    private boolean isComboBoxFilled() {
+        for (ComboBox box : creatorComboBoxes) {
+            try {
                 box.getValue().equals(null);
-            }catch(NullPointerException npe){
+            } catch (NullPointerException npe) {
                 return false;
             }
         }
         return true;
     }
 
-    private void buildNewCharacter(){
-        PlayerCharacter character = new PlayerCharacter(String.valueOf(System.nanoTime()));
+    private void buildNewCharacter() {
+        dir = new File("assets/characters/"+String.valueOf(System.nanoTime()));
+        dir.mkdir();
+        PlayerCharacter character = new PlayerCharacter(String.format("%s/%s",dir.getName(),dir.getName()));
         character.setPlayerName(playerNameTextBox.getText());
         character.setCharacterName(characterNameTextBox.getText());
         character.setEXP("0");
@@ -346,38 +350,37 @@ public class CompanionController{
         String saveThrowOne = savingThrowOne.getValue();
         String saveThrowTwo = savingThrowTwo.getValue();
         character.setStats(String.format("%s,%s,%s,%s,%s,%s",
-                strTextBox.getText(),dexTextBox.getText(),conTextBox.getText(),
-                intTextBox.getText(),wisTextBox.getText(),chaTextBox.getText()));
-        parseAbilityModifiers(character,firstAbilityModified.getValue(),firstModifiedScore.getValue());
-        parseAbilityModifiers(character,secondAbilityModified.getValue(),secondModifiedScore.getValue());
+                strTextBox.getText(), dexTextBox.getText(), conTextBox.getText(),
+                intTextBox.getText(), wisTextBox.getText(), chaTextBox.getText()));
+        parseAbilityModifiers(character, firstAbilityModified.getValue(), firstModifiedScore.getValue());
+        parseAbilityModifiers(character, secondAbilityModified.getValue(), secondModifiedScore.getValue());
         createCharacterSheetTab(character);
     }
 
     private String parseLanguages() {
         String[] languages = languageTextBox.getText().split("\n");
-        StringBuilder languageTag= new StringBuilder();
-        for(int i=0; i< languages.length-1;i++){
+        StringBuilder languageTag = new StringBuilder();
+        for (int i = 0; i < languages.length - 1; i++) {
             languageTag.append(languages[i]).append(",");
         }
         languageTag.append(languages[languages.length - 1]);
-        return languageTag.toString().replace("null"," ").trim();
+        return languageTag.toString().replace("null", " ").trim();
     }
 
-
-    private void parseAbilityModifiers(PlayerCharacter character,String ability, String score){
-        for(StatName statName: StatName.values()){
-            if(ability.equals(statName.toString())){
-                character.setStat(statName.getValue(),Integer.parseInt(score)+
+    private void parseAbilityModifiers(PlayerCharacter character, String ability, String score) {
+        for (StatName statName : StatName.values()) {
+            if (ability.equals(statName.toString())) {
+                character.setStat(statName.getValue(), Integer.parseInt(score) +
                         character.getStats()[statName.getValue()]);
-            }else if(ability.equals("None")){
+            } else if (ability.equals("None")) {
                 return;
             }
         }
     }
 
     @FXML
-    public void openPlayersHandbook(){
-        if(Desktop.isDesktopSupported()){
+    public void openPlayersHandbook() {
+        if (Desktop.isDesktopSupported()) {
             new Thread(() -> {
                 try {
                     File file = new File("assets/Players_Handbook.pdf");

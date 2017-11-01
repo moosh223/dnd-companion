@@ -33,16 +33,6 @@ public class PlayerCharacter {
         languages,
     }
 
-    public PlayerCharacter(String playerName, String characterName) {
-        this.filepath += playerName.toLowerCase().replace(' ', '_') + "-"
-                + characterName.toLowerCase().replace(' ','_')+".xml";
-        try{
-            linkToDocument();
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-    }
-
     public PlayerCharacter(String filepath) {
         this.filepath += filepath;
         if(!filepath.contains(".xml")){
