@@ -20,6 +20,12 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
+import java.io.*;
+import java.net.Inet4Address;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -166,8 +172,34 @@ public class CompanionController {
         charTypePane.setVisible(true);
         isPlayer = true;
     }
+
     @FXML
-    public void dmButtonPress() {
+    public void dmButtonPress() throws UnknownHostException {
+        networkLabel.setText("Your IP Address is: "+ Inet4Address.getLocalHost());
+        try {
+            NetworkServerParser netParse = new NetworkServerParser(2000);
+            new Thread(() -> {
+                while (true) {
+                    try {
+                        netParse.server = netParse.serverSocket.accept();
+                        DataInputStream in = new DataInputStream(netParse.server.getInputStream());
+
+                        System.out.println(in.readUTF());
+                        DataOutputStream out = new DataOutputStream(netParse.server.getOutputStream());
+                        out.writeUTF("Thank you for connecting to " + netParse.server.getLocalSocketAddress()
+                                + "\nGoodbye!");
+
+                    } catch (SocketTimeoutException s) {
+                        break;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                }
+            }).start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -245,15 +277,12 @@ public class CompanionController {
         return characterList;
     }
 
-
-
     @FXML
     public void newButtonPress() {
         creatorTextFields.addAll(Arrays.asList(playerNameTextBox, characterNameTextBox));
         charTypePane.setVisible(false);
         namePane.setVisible(true);
     }
-
     @FXML
     public void nameNextButtonPress() {
         if (!isPageFilled()) {
@@ -268,7 +297,6 @@ public class CompanionController {
             racePane.setVisible(true);
         }
     }
-
     @FXML
     public void raceNextButtonPress() {
         if (!isPageFilled()) {
@@ -278,7 +306,6 @@ public class CompanionController {
             languagePane.setVisible(true);
         }
     }
-
     @FXML
     public void languageNextButtonPress() {
         if (!isPageFilled() || languageTextBox.getText().equals("")) {
@@ -292,7 +319,6 @@ public class CompanionController {
             classPane.setVisible(true);
         }
     }
-
     @FXML
     public void classNextButtonPress() {
         if (!isPageFilled()) {
@@ -305,7 +331,6 @@ public class CompanionController {
             statPane.setVisible(true);
         }
     }
-
     @FXML
     public void statNextButtonPress() {
         if (!isPageFilled()) {
