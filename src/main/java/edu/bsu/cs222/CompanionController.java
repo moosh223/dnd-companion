@@ -44,6 +44,7 @@ public class CompanionController {
     @FXML public AnchorPane languagePane;
     @FXML public AnchorPane classPane;
     @FXML public AnchorPane statPane;
+    @FXML public AnchorPane rcvPane;
     //ErrorLabels
     @FXML public Label nameErrorLabel;
     @FXML public Label raceErrorLabel;
@@ -85,6 +86,7 @@ public class CompanionController {
 
     //Miscellaneous Elements
     @FXML public ListView<String> characterLoadList;
+    @FXML public ListView<String> sendView;
     @FXML public CheckBox diceRollerButton;
     @FXML public MenuItem newCharacterSheetMenuItem;
     @FXML public MenuItem newJournalMenuItem;
@@ -187,12 +189,8 @@ public class CompanionController {
             new Thread(() -> {
                     try {
                         netParse.server = netParse.serverSocket.accept();
-                        DataInputStream in = new DataInputStream(netParse.server.getInputStream());
-
-                        System.out.println(in.readUTF());
-                        DataOutputStream out = new DataOutputStream(netParse.server.getOutputStream());
-                        out.writeUTF("Thank you for connecting to " + netParse.server.getLocalSocketAddress()
-                                + "\nGoodbye!");
+                        netParse.getMessageFromClient();
+                        netParse.writeToClient("HI there my special little guy");
 
                     } catch (SocketTimeoutException s) {
 
@@ -215,6 +213,13 @@ public class CompanionController {
         ObservableMap<String, String> fileList = FXCollections.observableMap(getXMLFileList());
         for (String name : fileList.values()) {
             characterLoadList.getItems().add(name);
+        }
+    }
+
+    private void populateSendTable() {
+        ObservableMap<String, String> fileList = FXCollections.observableMap(getXMLFileList());
+        for (String name : fileList.values()) {
+            sendView.getItems().add(name);
         }
     }
     private Map<String, String> getXMLFileList() {
@@ -350,7 +355,24 @@ public class CompanionController {
 
     @FXML
     public void rcvButtonPress() {
-        new NetworkClientParser("10.225.19.201");
+        charTypePane.setVisible(false);
+        rcvPane.setVisible(true);
+        populateSendTable();
+    }
+
+    @FXML
+    public void sendSelectedCharacter() {
+        try {
+            for (Map.Entry<String, String> entry : getXMLFileList().entrySet()) {
+                if (sendView.getSelectionModel().getSelectedItem().equals(entry.getValue())) {
+                    NetworkClientParser clientParser = new NetworkClientParser("10.225.19.201");
+                    clientParser.writeToServer(String.format("assets/characters/%s",entry.getKey()));
+                    clientParser.getMessageFromServer();
+                }
+            }
+        }catch(NullPointerException e){
+            e.printStackTrace();
+        }
     }
 
 

@@ -6,25 +6,43 @@ import java.util.Scanner;
 
 public class NetworkClientParser {
 
-           public NetworkClientParser(String serverName){
-            int port = 2000;
-            try {
-                System.out.println("Connecting to " + serverName + " on port " + port);
-                Socket client = new Socket(serverName, port);
+    private Socket client;
+    private String serverName;
 
-                System.out.println("Just connected to " + client.getRemoteSocketAddress());
-                OutputStream outToServer = client.getOutputStream();
-                DataOutputStream out = new DataOutputStream(outToServer);
+    public NetworkClientParser(String serverName){
+        int port = 2000;
+        this.serverName = serverName;
+        connectToServer(port);
+    }
 
-                out.writeUTF("Hello from " + client.getLocalSocketAddress());
-                InputStream inFromServer = client.getInputStream();
-                DataInputStream in = new DataInputStream(inFromServer);
-
-                System.out.println("Server says " + in.readUTF());
-                client.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    private void connectToServer(int port) {
+        try {
+            System.out.println("Connecting to " + serverName + " on port " + port);
+            client = new Socket(serverName, port);
+            System.out.println("Just connected to " + client.getRemoteSocketAddress());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
+
+    public void getMessageFromServer(){
+        try{
+            InputStream outToServer = client.getInputStream();
+            DataInputStream out = new DataInputStream(outToServer);
+            System.out.println(out.readUTF());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void writeToServer(String message){
+        try{
+            OutputStream outToServer = client.getOutputStream();
+            DataOutputStream out = new DataOutputStream(outToServer);
+            out.writeUTF(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
 
