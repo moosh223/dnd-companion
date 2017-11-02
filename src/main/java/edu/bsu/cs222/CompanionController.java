@@ -22,12 +22,9 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.*;
 import java.util.List;
@@ -95,7 +92,7 @@ public class CompanionController {
     private File dir = new File("assets/characters/");
     private boolean isPlayer = true;
 
-    NetworkServerParser netParse;
+    private NetworkServerParser netParse;
 
 
     private enum StatName {
@@ -120,7 +117,6 @@ public class CompanionController {
     public void initialize() {
         newTabMenu.setDisable(true);
     }
-
 
     private void createCharacterSheetTab(PlayerCharacter character) {
         Tab newTab = new Tab("Character Sheet");
@@ -154,7 +150,6 @@ public class CompanionController {
 
     @FXML
     public void closeProgram() throws IOException {
-        netParse.terminateConnection();
         System.exit(0);
     }
 
@@ -162,7 +157,9 @@ public class CompanionController {
     public void setDiceRollerVisible() throws IOException {
         Stage stage = new Stage();
         if (diceRollerButton.isSelected()) {
-            Parent parent = FXMLLoader.load(getClass().getClassLoader().getResource("DiceRoll.fxml"));
+            URL loadDir = getClass().getClassLoader().getResource("DiceRoll.fxml");
+            assert loadDir != null;
+            Parent parent = FXMLLoader.load(loadDir);
             Scene scene=new Scene(parent);
             stage.setTitle("Dice Roller");
             stage.getIcons().add(new Image("DiceIcon.png"));
@@ -190,17 +187,17 @@ public class CompanionController {
             netParse = new NetworkServerParser(2000);
             networkLabel.setText("Your IP Address is: "+ netParse.getLANAddress());
             new Thread(() -> {
-                    try {
-                        while(true) {
-                            netParse.server = netParse.serverSocket.accept();
+                        Thread.currentThread().setName("NetThread");
+                        while(Thread.currentThread().isAlive()) {
+                            System.out.println("WHAT");
+                            try {
+                                netParse.server = netParse.serverSocket.accept();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                             netParse.getMessageFromClient();
-                            netParse.writeToClient("HI there my special little guy");
+                            netParse.writeToClient("hey there,"+netParse.server.getInetAddress());
                         }
-                    } catch (SocketTimeoutException s) {
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
             }).start();
         }catch(IOException e){
             e.printStackTrace();
@@ -230,7 +227,9 @@ public class CompanionController {
         Map<String,String> fileNames = new HashMap<>();
         try {
             for (File dir : getCharacterFiles()) {
-                for(File file: dir.listFiles()) {
+                File[] fileList = dir.listFiles();
+                assert fileList != null;
+                for (File file : fileList) {
                     if (file.isFile() && file.getName().contains(".xml")) {
                         Document doc = parser.buildDocumentStream(file.getAbsolutePath());
                         String displayName = doc.getDocumentElement().getElementsByTagName("name").item(0).getTextContent();
@@ -254,7 +253,7 @@ public class CompanionController {
                 }
             }
         }catch(NullPointerException e){
-            makeNewChracterFolder();
+            makeNewCharacterFolder();
             createCharacterSheetTab(new PlayerCharacter(
                     String.format("%s/%s",dir.getName(),dir.getName())));
         }
@@ -267,25 +266,29 @@ public class CompanionController {
 
     private void createCharacterJournals(String directory) {
         dir = new File("assets/characters/" + directory);
-        for (File file : dir.listFiles())
+        File[] fileList = dir.listFiles();
+        assert fileList != null;
+        for (File file : fileList)
             if (file.getName().contains(".jour"))
                 createJournalTab(file.getPath());
     }
 
 
-    private void makeNewChracterFolder() {
+    private void makeNewCharacterFolder() {
         dir = new File("assets/characters/"+String.valueOf(System.nanoTime()));
-        dir.mkdir();
+        final boolean mkdir = dir.mkdir();
+        System.out.println(mkdir);
     }
 
 
 
     private List<File> getCharacterFiles(){
         List<File> characterList = new ArrayList<>();
-        for (File file : dir.listFiles()) {
+        File[] fileList = dir.listFiles();
+        assert fileList != null;
+        for (File file : fileList)
             if (file.isDirectory())
                 characterList.add(file);
-        }
         return characterList;
     }
 
@@ -369,7 +372,7 @@ public class CompanionController {
         try {
             for (Map.Entry<String, String> entry : getXMLFileList().entrySet()) {
                 if (sendView.getSelectionModel().getSelectedItem().equals(entry.getValue())) {
-                    NetworkClientParser clientParser = new NetworkClientParser("10.225.19.201");
+                    NetworkClientParser clientParser = new NetworkClientParser("10.225.71.81");
                     clientParser.writeToServer(String.format("assets/characters/%s",entry.getKey()));
                     clientParser.getMessageFromServer();
                 }
@@ -395,9 +398,7 @@ public class CompanionController {
 
     private boolean isComboBoxFilled() {
         for (ComboBox box : creatorComboBoxes) {
-            try {
-                box.getValue().equals(null);
-            } catch (NullPointerException npe) {
+            if(box.getValue() == null){
                 return false;
             }
         }
@@ -405,7 +406,7 @@ public class CompanionController {
     }
 
     private void buildNewCharacter() {
-        makeNewChracterFolder();
+        makeNewCharacterFolder();
         PlayerCharacter character = new PlayerCharacter(String.format("%s/%s",dir.getName(),dir.getName()));
         character.setPlayerName(playerNameTextBox.getText());
         character.setCharacterName(characterNameTextBox.getText());
@@ -420,11 +421,11 @@ public class CompanionController {
         character.setClassName(classTextBox.getText());
         character.setMaxHp(hpTextBox.getText());
         character.setCurrentHp(hpTextBox.getText());
-        String primaryOne = primaryAbilityOne.getValue();
+        /*String primaryOne = primaryAbilityOne.getValue();
         String primaryTwo = primaryAbilityTwo.getValue();
         String saveThrowOne = savingThrowOne.getValue();
         String saveThrowTwo = savingThrowTwo.getValue();
-        character.setStats(String.format("%s,%s,%s,%s,%s,%s",
+        */character.setStats(String.format("%s,%s,%s,%s,%s,%s",
                 strTextBox.getText(), dexTextBox.getText(), conTextBox.getText(),
                 intTextBox.getText(), wisTextBox.getText(), chaTextBox.getText()));
         parseAbilityModifiers(character, firstAbilityModified.getValue(), firstModifiedScore.getValue());

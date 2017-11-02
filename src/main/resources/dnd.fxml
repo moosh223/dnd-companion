@@ -26,7 +26,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="618.0" prefWidth="543.0" styleClass="background" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.bsu.cs222.CompanionController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="618.0" prefWidth="543.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.bsu.cs222.CompanionController">
    <top>
        <MenuBar prefHeight="14.0" prefWidth="477.0" styleClass="menu" BorderPane.alignment="CENTER">
           <menus>
@@ -75,6 +75,12 @@
    <center>
        <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
           <children>
+            <AnchorPane fx:id="rcvPane" prefHeight="200.0" prefWidth="200.0" visible="false">
+               <children>
+                  <ListView fx:id="sendView" layoutX="73.0" layoutY="46.0" prefHeight="433.0" prefWidth="421.0" />
+                  <Button layoutX="451.0" layoutY="488.0" mnemonicParsing="false" onAction="#sendSelectedCharacter" text="Load" />
+               </children>
+            </AnchorPane>
               <BorderPane fx:id="welcomePane" focusTraversable="true" prefHeight="588.0" prefWidth="543.0">
                  <top>
                      <Label alignment="CENTER" prefHeight="120.0" prefWidth="477.0" text="Welcome to D&amp;D Companion" textAlignment="CENTER" wrapText="true" BorderPane.alignment="CENTER">
@@ -240,7 +246,7 @@
                              <Font size="12.0" />
                          </font>
                      </Label>
-                     <Button layoutX="397.0" layoutY="515.0" mnemonicParsing="false" onAction="#raceNextButtonPress" prefHeight="30.0" prefWidth="75.0" text="Next" />
+                     <Button layoutX="397.0" layoutY="515.0" mnemonicParsing="false" onAction="#raceNextButtonPress" prefHeight="30.0" prefWidth="75.0" text="Next" AnchorPane.bottomAnchor="40.0" AnchorPane.rightAnchor="40.0" />
                      <ComboBox fx:id="firstAbilityModified" layoutX="24.0" layoutY="165.0" prefWidth="150.0">
                          <items>
                              <FXCollections fx:factory="observableArrayList">
@@ -378,9 +384,9 @@
               </AnchorPane>
               <AnchorPane fx:id="languagePane" focusTraversable="true" prefHeight="590.0" prefWidth="543.0" visible="false">
                  <children>
-                     <TextArea fx:id="languageTextBox" layoutX="41.0" layoutY="55.0" prefHeight="457.0" prefWidth="445.0" />
+                     <TextArea fx:id="languageTextBox" layoutX="41.0" layoutY="55.0" prefHeight="426.0" prefWidth="445.0" />
                      <Label layoutX="41.0" layoutY="34.0" text="List the languages your character speaks." />
-                     <Button layoutX="421.0" layoutY="534.0" mnemonicParsing="false" onAction="#languageNextButtonPress" prefHeight="30.0" prefWidth="70.0" text="Next" />
+                     <Button layoutX="421.0" layoutY="534.0" mnemonicParsing="false" onAction="#languageNextButtonPress" prefHeight="30.0" prefWidth="70.0" text="Next" AnchorPane.bottomAnchor="40.0" AnchorPane.rightAnchor="40.0" />
                      <Label layoutX="324.0" layoutY="36.0" text="Help" textFill="#4800ff" underline="true">
                          <tooltip>
                              <Tooltip prefWidth="200.0" text="All character's speak common and their race's native language but you may be able to speak more if your DM allows it. Chapter 2 of the Player's Handbook will tell you what languages your race can speak." wrapText="true" />
@@ -484,7 +490,7 @@
                              <Font size="12.0" />
                          </font>
                      </Label>
-                     <Button layoutX="424.0" layoutY="516.0" mnemonicParsing="false" onAction="#classNextButtonPress" prefHeight="30.0" prefWidth="70.0" text="Next" />
+                     <Button layoutX="424.0" layoutY="516.0" mnemonicParsing="false" onAction="#classNextButtonPress" prefHeight="30.0" prefWidth="70.0" text="Next" AnchorPane.bottomAnchor="40.0" AnchorPane.rightAnchor="40.0" />
                  </children>
               </AnchorPane>
               <AnchorPane fx:id="statPane" focusTraversable="true" prefHeight="200.0" prefWidth="200.0" visible="false">
@@ -502,7 +508,7 @@
                      <TextField fx:id="intTextBox" layoutX="178.0" layoutY="327.0" prefWidth="90.0" />
                      <TextField fx:id="wisTextBox" layoutX="178.0" layoutY="382.0" prefWidth="90.0" />
                      <TextField fx:id="chaTextBox" layoutX="178.0" layoutY="445.0" prefWidth="90.0" />
-                     <Button layoutX="430.0" layoutY="507.0" mnemonicParsing="false" onAction="#statNextButtonPress" prefHeight="30.0" prefWidth="70.0" text="Next" />
+                     <Button layoutX="430.0" layoutY="507.0" mnemonicParsing="false" onAction="#statNextButtonPress" prefHeight="30.0" prefWidth="70.0" text="Next" AnchorPane.bottomAnchor="40.0" AnchorPane.rightAnchor="40.0" />
                      <Label fx:id="statErrorLabel" alignment="CENTER" layoutX="119.0" layoutY="24.0" text="ERROR: Please make sure all fields are filled in." textAlignment="CENTER" textFill="RED" visible="false" />
                      <Label layoutX="288.0" layoutY="101.0" text="Help" textFill="#4800ff" underline="true">
                          <tooltip>
@@ -517,4 +523,7 @@
           </children>
        </StackPane>
    </center>
+   <bottom>
+      <Label fx:id="networkLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="21.0" prefWidth="559.0" text="Not Connected" textAlignment="RIGHT" textFill="#f20404" BorderPane.alignment="CENTER" />
+   </bottom>
 </BorderPane>
