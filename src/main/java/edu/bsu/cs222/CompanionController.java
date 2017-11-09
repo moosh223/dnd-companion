@@ -1,6 +1,5 @@
 package edu.bsu.cs222;
 
-import com.sun.javafx.stage.StageHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
@@ -91,9 +90,9 @@ public class CompanionController {
     private XMLParser parser = new XMLParser();
     private File dir = new File("assets/characters/");
     private boolean isPlayer = true;
+    Stage stage = new Stage();
 
     private NetworkServerParser netParse;
-
 
     private enum StatName {
         Strength(0),
@@ -118,6 +117,11 @@ public class CompanionController {
         newTabMenu.setDisable(true);
     }
 
+    /**Creates a new character sheet tab
+     * @author Josh Mooshian <jmmooshian@bsu.edu>
+     * @param character Character used to create the new character sheet
+     * @see #createJournalTab(String) createJournalTab
+     */
     private void createCharacterSheetTab(PlayerCharacter character) {
         Tab newTab = new Tab("Character Sheet");
         CharacterSheet sheet = new CharacterSheet(character);
@@ -155,7 +159,6 @@ public class CompanionController {
 
     @FXML
     public void setDiceRollerVisible() throws IOException {
-        Stage stage = new Stage();
         if (diceRollerButton.isSelected()) {
             URL loadDir = getClass().getClassLoader().getResource("DiceRoll.fxml");
             assert loadDir != null;
@@ -165,12 +168,13 @@ public class CompanionController {
             stage.getIcons().add(new Image("DiceIcon.png"));
             parent.getStylesheets().clear();
             parent.getStylesheets().add("themes/default.css");
-            stage.setResizable(true);
+            stage.setOnCloseRequest((e) -> diceRollerButton.selectedProperty().setValue(false));
+            stage.setResizable(false);
             stage.setScene(scene);
             stage.show();
             return;
         }
-        stage = StageHelper.getStages().get(StageHelper.getStages().size() - 1);
+        //stage = StageHelper.getStages().get(StageHelper.getStages().size() - 1);
         stage.close();
     }
 
@@ -189,7 +193,7 @@ public class CompanionController {
             new Thread(() -> {
                         Thread.currentThread().setName("NetThread");
                         while(Thread.currentThread().isAlive()) {
-                            System.out.println("WHAT");
+                            System.out.println("Awaiting client message...");
                             try {
                                 netParse.server = netParse.serverSocket.accept();
                             } catch (IOException e) {
@@ -231,7 +235,7 @@ public class CompanionController {
                 assert fileList != null;
                 for (File file : fileList) {
                     if (file.isFile() && file.getName().contains(".xml")) {
-                        Document doc = parser.buildDocumentStream(file.getAbsolutePath());
+                        Document doc = parser.buildDocumentStream(file.getPath());
                         String displayName = doc.getDocumentElement().getElementsByTagName("name").item(0).getTextContent();
                         fileNames.put(file.getName().replace(".xml", ""), displayName);
                     }
@@ -372,7 +376,7 @@ public class CompanionController {
         try {
             for (Map.Entry<String, String> entry : getXMLFileList().entrySet()) {
                 if (sendView.getSelectionModel().getSelectedItem().equals(entry.getValue())) {
-                    NetworkClientParser clientParser = new NetworkClientParser("10.225.71.81");
+                    NetworkClientParser clientParser = new NetworkClientParser("10.181.117.6");
                     clientParser.writeToServer(String.format("assets/characters/%s",entry.getKey()));
                     clientParser.getMessageFromServer();
                 }

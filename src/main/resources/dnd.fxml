@@ -9,7 +9,7 @@
 <?import javafx.scene.text.*?>
 <?import java.lang.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="618.0" prefWidth="543.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.bsu.cs222.CompanionController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.bsu.cs222.CompanionController">
    <top>
        <MenuBar prefHeight="14.0" prefWidth="477.0" styleClass="menu" BorderPane.alignment="CENTER">
           <menus>
@@ -58,7 +58,7 @@
    <center>
        <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
           <children>
-            <AnchorPane fx:id="rcvPane" prefHeight="200.0" prefWidth="200.0" visible="false">
+            <AnchorPane fx:id="rcvPane" visible="false">
                <children>
                   <ListView fx:id="sendView" layoutX="73.0" layoutY="46.0" prefHeight="433.0" prefWidth="421.0" />
                   <Button layoutX="451.0" layoutY="488.0" mnemonicParsing="false" onAction="#sendSelectedCharacter" text="Load" />
@@ -92,7 +92,7 @@
                      </GridPane>
                  </center>
               </BorderPane>
-              <BorderPane fx:id="charTypePane" prefHeight="200.0" prefWidth="200.0" visible="false">
+              <BorderPane fx:id="charTypePane" visible="false">
                  <top>
                      <Label prefHeight="144.0" prefWidth="447.0" text="Do you want to load a saved character, start a new character, or receive one from the DM?" textAlignment="CENTER" wrapText="true" BorderPane.alignment="CENTER">
                          <font>
@@ -101,7 +101,7 @@
                      </Label>
                  </top>
                  <center>
-                     <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" BorderPane.alignment="CENTER">
+                     <HBox alignment="CENTER" prefHeight="100.0" spacing="20.0" BorderPane.alignment="CENTER">
                         <children>
                             <Button mnemonicParsing="false" onAction="#loadButtonAction" text="Load" />
                             <Button mnemonicParsing="false" onAction="#newButtonPress" text="New" />
@@ -111,7 +111,7 @@
                  </center>
               </BorderPane>
               <TabPane fx:id="characterPane" prefHeight="590.0" prefWidth="543.0" styleClass="toptab" visible="false" />
-              <BorderPane fx:id="loadPane" prefHeight="200.0" prefWidth="200.0" visible="false">
+              <BorderPane fx:id="loadPane" visible="false">
                  <top>
                      <Label text="Select character to load" textAlignment="CENTER" BorderPane.alignment="CENTER">
                          <BorderPane.margin>
@@ -120,7 +120,7 @@
                      </Label>
                  </top>
                  <center>
-                     <ListView fx:id="characterLoadList" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+                     <ListView fx:id="characterLoadList" prefHeight="443.0" prefWidth="598.0" BorderPane.alignment="CENTER" />
                  </center>
                  <bottom>
                      <Button mnemonicParsing="false" onAction="#loadSelectedCharacter" text="Load" BorderPane.alignment="CENTER_RIGHT">
@@ -132,7 +132,7 @@
               </BorderPane>
               <BorderPane fx:id="namePane" prefHeight="200.0" prefWidth="200.0" visible="false">
                  <center>
-                     <GridPane alignment="CENTER" BorderPane.alignment="CENTER">
+                     <GridPane alignment="CENTER" prefHeight="30.0" prefWidth="75.0" BorderPane.alignment="CENTER">
                          <columnConstraints>
                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="291.0" minWidth="10.0" prefWidth="273.0" />
                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="273.0" minWidth="10.0" prefWidth="270.0" />
@@ -193,7 +193,7 @@
                                     <Insets bottom="10.0" />
                                 </GridPane.margin>
                             </Label>
-                            <Button mnemonicParsing="false" onAction="#nameNextButtonPress" prefHeight="30.0" prefWidth="75.0" text="Next" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
+                            <Button mnemonicParsing="false" onAction="#nameNextButtonPress" text="Next" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
                                 <GridPane.margin>
                                     <Insets bottom="40.0" right="40.0" />
                                 </GridPane.margin>
@@ -507,6 +507,9 @@
        </StackPane>
    </center>
    <bottom>
-      <Label fx:id="networkLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="21.0" prefWidth="559.0" text="Not Connected" textAlignment="RIGHT" textFill="#f20404" BorderPane.alignment="CENTER" />
+      <Label fx:id="networkLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="21.0" prefWidth="559.0" text="Not Connected" textAlignment="RIGHT" textFill="#f20404" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="10.0" right="25.0" />
+         </BorderPane.margin></Label>
    </bottom>
 </BorderPane>

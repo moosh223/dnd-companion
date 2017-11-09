@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <character owner="Josh Mooshian">
     <name>Fido</name>
-    <race>Good Boy</race>
+    <race>Good Boi</race>
     <classname>Pupper</classname>
     <stats>13,12,14,20,15,16</stats>
     <maxhp>20</maxhp>

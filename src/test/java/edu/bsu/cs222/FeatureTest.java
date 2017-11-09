@@ -8,7 +8,7 @@ public class FeatureTest {
 
     @Test
     public void testDiceRoller(){
-       Functions roller = new Functions();
+       DiceRollerController roller = new DiceRollerController();
         int roll = roller.rollDice(20);
         Assert.assertTrue(20 >= roll && roll >= 1 );
     }
