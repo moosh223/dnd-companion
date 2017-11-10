@@ -15,7 +15,7 @@ public class JournalTab {
     private String filepath;
 
     public JournalTab(String filepath){
-        sheet = new FXMLLoader(getClass().getClassLoader().getResource("JournalTab.fxml"));
+        sheet = new FXMLLoader(getClass().getClassLoader().getResource("fxml/JournalTab.fxml"));
         this.filepath = filepath;
         loadPaneContent();
         setTextListener();

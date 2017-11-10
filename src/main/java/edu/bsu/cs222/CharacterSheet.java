@@ -33,7 +33,7 @@ public class CharacterSheet {
     private List<List<String>> skillLists = new ArrayList<>();
 
     public CharacterSheet(PlayerCharacter character) {
-        sheet = new FXMLLoader(getClass().getClassLoader().getResource("CharacterTab.fxml"));
+        sheet = new FXMLLoader(getClass().getClassLoader().getResource("fxml/CharacterTab.fxml"));
         this.character = character;
         init();
         updateCharacterView();

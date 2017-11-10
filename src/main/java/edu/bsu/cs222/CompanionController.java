@@ -160,12 +160,12 @@ public class CompanionController {
     @FXML
     public void setDiceRollerVisible() throws IOException {
         if (diceRollerButton.isSelected()) {
-            URL loadDir = getClass().getClassLoader().getResource("DiceRoll.fxml");
+            URL loadDir = getClass().getClassLoader().getResource("fxml/DiceRoll.fxml");
             assert loadDir != null;
             Parent parent = FXMLLoader.load(loadDir);
             Scene scene=new Scene(parent);
             stage.setTitle("Dice Roller");
-            stage.getIcons().add(new Image("DiceIcon.png"));
+            stage.getIcons().add(new Image("icons/DiceIcon.png"));
             parent.getStylesheets().clear();
             parent.getStylesheets().add("themes/default.css");
             stage.setOnCloseRequest((e) -> diceRollerButton.selectedProperty().setValue(false));
@@ -376,7 +376,7 @@ public class CompanionController {
         try {
             for (Map.Entry<String, String> entry : getXMLFileList().entrySet()) {
                 if (sendView.getSelectionModel().getSelectedItem().equals(entry.getValue())) {
-                    NetworkClientParser clientParser = new NetworkClientParser("10.181.117.6");
+                    NetworkClientParser clientParser = new NetworkClientParser("10.2.152.158");
                     clientParser.writeToServer(String.format("assets/characters/%s",entry.getKey()));
                     clientParser.getMessageFromServer();
                 }

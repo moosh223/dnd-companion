@@ -17,12 +17,12 @@ public class Companion extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException{
-        URL fxml = getClass().getClassLoader().getResource("dnd.fxml");
+        URL fxml = getClass().getClassLoader().getResource("fxml/dnd.fxml");
         assert  fxml != null;
         Parent parent = FXMLLoader.load(fxml);
         Scene scene=new Scene(parent);
         primaryStage.setTitle("Dungeons & Dragons Companion");
-        primaryStage.getIcons().add(new Image("icon.png"));
+        primaryStage.getIcons().add(new Image("icons/icon.png"));
         parent.getStylesheets().clear();
         parent.getStylesheets().add("themes/default.css");
         primaryStage.setResizable(true);
