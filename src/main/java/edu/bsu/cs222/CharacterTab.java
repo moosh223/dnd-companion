@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CharacterSheet {
+public class CharacterTab {
     private FXMLLoader sheet;
     private PlayerCharacter character;
     private TabPane testTab;
@@ -32,7 +32,7 @@ public class CharacterSheet {
     private List<String> chaSkills = new ArrayList<>();
     private List<List<String>> skillLists = new ArrayList<>();
 
-    public CharacterSheet(PlayerCharacter character) {
+    public CharacterTab(PlayerCharacter character) {
         sheet = new FXMLLoader(getClass().getClassLoader().getResource("fxml/CharacterTab.fxml"));
         this.character = character;
         init();

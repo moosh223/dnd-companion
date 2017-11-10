@@ -1,7 +1,7 @@
 /***Global Definitions***/
 *{
-    -fx-main-background: #e0e0e0;
-    -fx-main-text-fill: #0e0e0e;
+    -fx-main-background: #0e0e0e;
+    -fx-main-text-fill: #e0e0e0;
     -fx-main-border-color: -fx-main-text-fill;
     -fx-main-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
 }

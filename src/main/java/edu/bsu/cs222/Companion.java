@@ -17,7 +17,7 @@ public class Companion extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException{
-        URL fxml = getClass().getClassLoader().getResource("fxml/dnd.fxml");
+        URL fxml = getClass().getClassLoader().getResource("fxml/MainCompanion.fxml");
         assert  fxml != null;
         Parent parent = FXMLLoader.load(fxml);
         Scene scene=new Scene(parent);

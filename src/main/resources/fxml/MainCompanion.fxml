@@ -21,6 +21,7 @@
                                <items>
                                    <MenuItem fx:id="newCharacterSheetMenuItem" mnemonicParsing="false" onAction="#newCharacterSheetMenuAction" text="Character Sheet" />
                                   <MenuItem fx:id="newJournalMenuItem" mnemonicParsing="false" onAction="#newJournalMenuAction" text="Journal" />
+                              <MenuItem mnemonicParsing="false" onAction="#newSpellSheetMenuAction" text="Spell Sheet" />
                                </items>
                             </Menu>
                         </items>

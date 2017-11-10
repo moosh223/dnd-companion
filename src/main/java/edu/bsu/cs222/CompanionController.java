@@ -124,18 +124,26 @@ public class CompanionController {
      */
     private void createCharacterSheetTab(PlayerCharacter character) {
         Tab newTab = new Tab("Character Sheet");
-        CharacterSheet sheet = new CharacterSheet(character);
+        CharacterTab sheet = new CharacterTab(character);
         newTab.setContent(sheet.getSheet());
         newTab.setClosable(false);
-        characterPane.getTabs().addAll(newTab);
+        characterPane.getTabs().add(newTab);
     }
 
-    @FXML
+
     private void createJournalTab(String filepath) {
         Tab newTab = new Tab("Journal");
         JournalTab journalTab = new JournalTab(filepath);
         newTab.setContent(journalTab.getSheet());
-        characterPane.getTabs().addAll(newTab);
+        characterPane.getTabs().add(newTab);
+    }
+
+
+    private void createSpellSheetTab(){
+        Tab newTab = new Tab("Spell Sheet");
+        SpellTab spellTab = new SpellTab();
+        newTab.setContent(spellTab.getSheet());
+        characterPane.getTabs().add(newTab);
     }
 
     @FXML
@@ -149,6 +157,13 @@ public class CompanionController {
     public void newJournalMenuAction(){
         if(characterPane.isVisible()) {
             createJournalTab(String.format("%s/%d.jour",dir,System.nanoTime()));
+        }
+    }
+
+    @FXML
+    public void newSpellSheetMenuAction(){
+        if(characterPane.isVisible()){
+            createSpellSheetTab();
         }
     }
 
