@@ -15,9 +15,9 @@ public class DiceRollerController {
 
     @FXML
     public void rollDice(){
-        int diceType = parseDiceType(this.diceType.getValue());
+        int numberOfSides = parseDiceType(diceType.getValue());
         int numberOfDice = Integer.parseInt(diceToRoll.getText());
-        int[] diceResult = rollMultipleDice(numberOfDice,diceType);
+        int[] diceResult = rollMultipleDice(numberOfDice,numberOfSides);
 
         rollResult.setText("You rolled: "+Arrays.toString(diceResult));
         rollSum.setText("Sum of your dice rolls: "+String.valueOf(sumDiceRolls(diceResult)));
