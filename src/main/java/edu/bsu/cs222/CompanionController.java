@@ -23,6 +23,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.*;
@@ -93,6 +94,7 @@ public class CompanionController {
     Stage stage = new Stage();
 
     private NetworkServerParser netParse;
+    private NetworkClientParser clientParser;
 
     private enum StatName {
         Strength(0),
@@ -206,16 +208,16 @@ public class CompanionController {
             netParse = new NetworkServerParser(2000);
             networkLabel.setText("Your IP Address is: "+ netParse.getLANAddress());
             new Thread(() -> {
-                        Thread.currentThread().setName("NetThread");
+                        Thread.currentThread().setName(String.valueOf(System.nanoTime()));
+                        try {
+                            netParse.server = netParse.serverSocket.accept();
+                            System.out.printf("%s has connected%n",netParse.server.getInetAddress().toString());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         while(Thread.currentThread().isAlive()) {
-                            System.out.println("Awaiting client message...");
-                            try {
-                                netParse.server = netParse.serverSocket.accept();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
                             netParse.getMessageFromClient();
-                            netParse.writeToClient("hey there,"+netParse.server.getInetAddress());
+                            netParse.writeToClient("Hey there,"+Thread.currentThread().getName());
                         }
             }).start();
         }catch(IOException e){
@@ -387,13 +389,26 @@ public class CompanionController {
     }
 
     @FXML
+    public void connectToServer(){
+        try {
+            clientParser = new NetworkClientParser("mooshPC");
+            networkLabel.setText("Connected to: " + clientParser.getSocket());
+        }catch(Exception e){
+            System.err.println("Unable to establish a connection");
+        }
+    }
+
+    @FXML
     public void sendSelectedCharacter() {
         try {
             for (Map.Entry<String, String> entry : getXMLFileList().entrySet()) {
                 if (sendView.getSelectionModel().getSelectedItem().equals(entry.getValue())) {
-                    NetworkClientParser clientParser = new NetworkClientParser("10.2.152.158");
-                    clientParser.writeToServer(String.format("assets/characters/%s",entry.getKey()));
-                    clientParser.getMessageFromServer();
+                    try {
+                        clientParser.writeToServer(String.format("assets/characters/%s", entry.getKey()));
+                        clientParser.getMessageFromServer();
+                    }catch(NullPointerException e){
+                        System.err.println("You aren't connected to a client!");
+                    }
                 }
             }
         }catch(NullPointerException e){
