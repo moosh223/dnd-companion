@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -20,8 +21,8 @@ import java.util.List;
 public class CharacterTab {
     private FXMLLoader sheet;
     private PlayerCharacter character;
-    private TabPane testTab;
-    private BorderPane parent;
+    private TabPane tabPane;
+    private AnchorPane parent;
     private List<TextField> displayFields = new ArrayList<>();
     private List<Label> labels = new ArrayList<>();
     private List<String> strSkills = new ArrayList<>();
@@ -92,7 +93,7 @@ public class CharacterTab {
     }
 
     private void buildDisplayFields() {
-        for(Tab tab :testTab.getTabs()){
+        for(Tab tab : tabPane.getTabs()){
             Pane paneContent = (Pane)tab.getContent();
             for(Node node: paneContent.getChildren()){
                 if(node.getId() != null) try {
@@ -105,7 +106,7 @@ public class CharacterTab {
     }
 
     private void buildSkillFields(){
-        Tab tab = testTab.getTabs().get(2);
+        Tab tab = tabPane.getTabs().get(2);
         GridPane pane = (GridPane)((Pane)tab.getContent()).getChildren().get(0);
         for(Node node: pane.getChildren()){
             if(node.getId() != null) try {
@@ -136,7 +137,8 @@ public class CharacterTab {
     private void loadPaneContent() {
         try{
             parent = sheet.load();
-            testTab = (TabPane) parent.getCenter();
+            BorderPane borderPane =  (BorderPane)parent.getChildren().get(0);
+            tabPane = (TabPane) borderPane.getCenter();
         }catch(IOException e){
             e.printStackTrace();
         }
