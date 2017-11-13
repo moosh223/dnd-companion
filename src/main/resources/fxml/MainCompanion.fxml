@@ -73,7 +73,8 @@
               </Menu>
             <Menu mnemonicParsing="false" text="Network">
               <items>
-                <MenuItem fx:id="networking" mnemonicParsing="false" onAction="#networkConnector" text="Connect" />
+                <MenuItem fx:id="networking" mnemonicParsing="false" onAction="#startServer" text="Start Server" />
+                  <MenuItem fx:id="serverConnect" mnemonicParsing="false" onAction="#connectToServer" text="Connect to Server" />
               </items>
             </Menu>
               <Menu mnemonicParsing="false" text="Help">

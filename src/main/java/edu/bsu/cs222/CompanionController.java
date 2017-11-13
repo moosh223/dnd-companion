@@ -221,23 +221,30 @@ public class CompanionController {
     }
 
     @FXML
-    private void networkConnector() {
+    private void startServer() {
         try {
             netParse = new NetworkServerParser(2000);
             networkLabel.setText("Your IP Address is: "+ netParse.getLANAddress());
             new Thread(() -> {
-                        Thread.currentThread().setName(String.valueOf(System.nanoTime()));
-                        try {
-                            netParse.server = netParse.serverSocket.accept();
-                            System.out.printf("%s has connected%n",netParse.server.getInetAddress().toString());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        while(Thread.currentThread().isAlive()) {
-                            netParse.getMessageFromClient();
-                            netParse.writeToClient("Hey there,"+Thread.currentThread().getName());
-                        }
+                while(true) {
+                    try {
+                        netParse.server = netParse.serverSocket.accept();
+                        System.out.printf("%s has connected%n", netParse.server.getInetAddress().toString());
+                        System.out.println("CREATING NEW THREAD");
+                        new Thread(() -> {
+                            Thread.currentThread().setName(String.valueOf(System.nanoTime()));
+                            while (Thread.currentThread().isAlive()) {
+                                netParse.getMessageFromClient();
+                                netParse.writeToClient("Hey there," + Thread.currentThread().getName());
+                            }
+                        }).start();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
             }).start();
+
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -490,7 +497,7 @@ public class CompanionController {
     @FXML
     public void connectToServer(){
         try {
-            clientParser = new NetworkClientParser("mooshPC");
+            clientParser = new NetworkClientParser("10.244.114.144");
             networkLabel.setText("Connected to: " + clientParser.getSocket());
         }catch(Exception e){
             System.err.println("Unable to establish a connection");
