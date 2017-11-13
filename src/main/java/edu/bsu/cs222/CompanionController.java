@@ -311,7 +311,6 @@ public class CompanionController {
 
         newCharacterSheetMenuItem.setDisable(false);
         loadCampaignPane.setVisible(false);
-
     }
 
     @FXML
@@ -385,8 +384,7 @@ public class CompanionController {
         charTypePaneDM.setVisible(false);
         newCampaignPane.setVisible(true);
     }
-
-
+    
 
     @FXML
     public void newButtonPress() {
