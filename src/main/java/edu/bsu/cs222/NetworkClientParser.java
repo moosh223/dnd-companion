@@ -26,13 +26,15 @@ public class NetworkClientParser {
     }
 
     public void getMessageFromServer(){
-        try{
-            InputStream outToServer = socket.getInputStream();
-            DataInputStream out = new DataInputStream(outToServer);
-            System.out.println(out.readUTF());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        new Thread(() -> {
+            try{
+                InputStream outToServer = socket.getInputStream();
+                DataInputStream out = new DataInputStream(outToServer);
+                System.out.println(out.readUTF());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     public void writeToServer(String message){

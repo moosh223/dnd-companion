@@ -1,5 +1,6 @@
 package edu.bsu.cs222;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
@@ -24,7 +25,9 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.ConnectException;
+import java.net.Socket;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
@@ -105,6 +108,7 @@ public class CompanionController {
 
 
     private NetworkServerParser netParse;
+    private ArrayList<Socket> socketsList=new ArrayList<>();
     private NetworkClientParser clientParser;
 
     private enum StatName {
@@ -221,27 +225,25 @@ public class CompanionController {
     }
 
     @FXML
-    private void networkConnector() {
-        try {
-            netParse = new NetworkServerParser(2000);
-            networkLabel.setText("Your IP Address is: "+ netParse.getLANAddress());
-            new Thread(() -> {
-                        Thread.currentThread().setName(String.valueOf(System.nanoTime()));
-                        try {
-                            netParse.server = netParse.serverSocket.accept();
-                            System.out.printf("%s has connected%n",netParse.server.getInetAddress().toString());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        while(Thread.currentThread().isAlive()) {
-                            netParse.getMessageFromClient();
-                            netParse.writeToClient("Hey there,"+Thread.currentThread().getName());
-                        }
-            }).start();
-        }catch(IOException e){
-            e.printStackTrace();
-        }
+    private void networkConnector() throws IOException {
+        netParse=new NetworkServerParser(2000);
+        networkLabel.setText("Your IP Address is: "+ netParse.getLANAddress());
+        new Thread(() -> {
+            Thread.currentThread().setName(String.valueOf(System.nanoTime()));
+            try {
+                netParse.server = netParse.serverSocket.accept();
+                socketsList.add(netParse.server);
+                System.out.printf("%s has connected%n",socketsList.get(0).getInetAddress().toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            while(Thread.currentThread().isAlive()) {
+                netParse.getMessageFromClient();
+                netParse.writeToClient(socketsList.get(0), "Hey there,"+Thread.currentThread().getName());
+            }
+        }).start();
     }
+
 
     @FXML
     public void loadButtonAction() {
@@ -490,7 +492,7 @@ public class CompanionController {
     @FXML
     public void connectToServer(){
         try {
-            clientParser = new NetworkClientParser("mooshPC");
+            clientParser = new NetworkClientParser("10.0.0.6");
             networkLabel.setText("Connected to: " + clientParser.getSocket());
         }catch(Exception e){
             System.err.println("Unable to establish a connection");
@@ -500,7 +502,6 @@ public class CompanionController {
     @FXML
     public void sendSelectedCharacter() {
         try {
-            connectToServer();
             for (Map.Entry<String, String> entry : getXMLFileList("assets/characters/").entrySet()) {
                 if (sendView.getSelectionModel().getSelectedItem().equals(entry.getValue())) {
                     try {

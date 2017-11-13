@@ -52,18 +52,20 @@ public class NetworkServerParser {
     }
 
     public void getMessageFromClient(){
-        try{
-            InputStream fromClient = server.getInputStream();
-            DataInputStream out = new DataInputStream(fromClient);
-            System.out.println(out.readUTF());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        new Thread(() -> {
+            try{
+                InputStream fromClient = server.getInputStream();
+                DataInputStream out = new DataInputStream(fromClient);
+                System.out.println(out.readUTF());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
-    public void writeToClient(String message){
+    public void writeToClient(Socket socket, String message){
         try{
-            OutputStream toClient = server.getOutputStream();
+            OutputStream toClient = socket.getOutputStream();
             DataOutputStream out = new DataOutputStream(toClient);
             out.writeUTF(message);
         } catch (IOException e) {
