@@ -25,7 +25,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.net.UnknownHostException;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
 
@@ -35,7 +35,10 @@ public class CompanionController {
     @FXML public BorderPane welcomePane;
     @FXML public TabPane characterPane;
     @FXML public BorderPane charTypePane;
+    @FXML public BorderPane charTypePaneDM;
     @FXML public BorderPane loadPane;
+    @FXML public BorderPane loadCampaignPane;
+    @FXML public BorderPane newCampaignPane;
     @FXML public BorderPane namePane;
     @FXML public AnchorPane racePane;
     @FXML public AnchorPane languagePane;
@@ -68,6 +71,10 @@ public class CompanionController {
     @FXML public TextField chaTextBox;
     private List<TextField> creatorTextFields = new ArrayList<>();
 
+    // Text Fields for New Campaign
+    @FXML public TextField campaignTitle;
+    @FXML public TextField campaignSummary;
+
     //Combo Boxes for Character Creator
     @FXML public ComboBox<String> firstAbilityModified;
     @FXML public ComboBox<String> firstModifiedScore;
@@ -79,18 +86,22 @@ public class CompanionController {
     @FXML public ComboBox<String> primaryAbilityTwo;
     @FXML public ComboBox<String> savingThrowOne;
     @FXML public ComboBox<String> savingThrowTwo;
-    private List<ComboBox> creatorComboBoxes = new ArrayList<>();
+    private List<ComboBox>  creatorComboBoxes = new ArrayList<>();
 
     //Miscellaneous Elements
+    @FXML public ListView<String> campaignLoadList;
     @FXML public ListView<String> characterLoadList;
     @FXML public ListView<String> sendView;
     @FXML public CheckBox diceRollerButton;
     @FXML public MenuItem newCharacterSheetMenuItem;
+    @FXML public MenuItem loadPrevCharacters;
     @FXML public MenuItem newJournalMenuItem;
     @FXML public Menu newTabMenu;
     private XMLParser parser = new XMLParser();
-    private File dir = new File("assets/characters/");
+    private File dir;
+    private String currentCampaignDirectory;
     private boolean isPlayer = true;
+
 
     private NetworkServerParser netParse;
 
@@ -137,7 +148,8 @@ public class CompanionController {
     @FXML
     public void newCharacterSheetMenuAction(){
         if(characterPane.isVisible()&& !isPlayer) {
-            createCharacterSheetTab(new PlayerCharacter(String.valueOf(System.nanoTime())));
+            String newChar = makeNewCharacterFolder(String.format("assets/campaigns/%s/characters/",currentCampaignDirectory));
+            createCharacterSheetTab(new PlayerCharacter(String.format("assets/campaigns/%s/characters/%s/%s",currentCampaignDirectory,newChar,newChar)));
         }
     }
 
@@ -182,22 +194,29 @@ public class CompanionController {
     }
 
     @FXML
-    public void dmButtonPress() throws UnknownHostException {
+    public void dmButtonPress() {
+        welcomePane.setVisible(false);
+        charTypePaneDM.setVisible(true);
+        isPlayer = false;
+    }
+
+    @FXML
+    private void networkConnector() {
         try {
             netParse = new NetworkServerParser(2000);
             networkLabel.setText("Your IP Address is: "+ netParse.getLANAddress());
             new Thread(() -> {
-                        Thread.currentThread().setName("NetThread");
-                        while(Thread.currentThread().isAlive()) {
-                            System.out.println("WHAT");
-                            try {
-                                netParse.server = netParse.serverSocket.accept();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            netParse.getMessageFromClient();
-                            netParse.writeToClient("hey there,"+netParse.server.getInetAddress());
-                        }
+                Thread.currentThread().setName("NetThread");
+                while(Thread.currentThread().isAlive()) {
+                    System.out.println("WHAT");
+                    try {
+                        netParse.server = netParse.serverSocket.accept();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    netParse.getMessageFromClient();
+                    netParse.writeToClient("hey there,"+netParse.server.getInetAddress());
+                }
             }).start();
         }catch(IOException e){
             e.printStackTrace();
@@ -210,22 +229,48 @@ public class CompanionController {
         loadPane.setVisible(true);
         populateLoadTable();
     }
+
+    @FXML
+    public void loadButtonCampaign() {
+        charTypePaneDM.setVisible(false);
+        loadCampaignPane.setVisible(true);
+        populateLoadTableDM();
+    }
+
     private void populateLoadTable() {
-        ObservableMap<String, String> fileList = FXCollections.observableMap(getXMLFileList());
+        ObservableMap<String, String> fileList = FXCollections.observableMap(getXMLFileList("assets/characters/"));
         for (String name : fileList.values()) {
             characterLoadList.getItems().add(name);
         }
     }
 
+//    @FXML
+//    public void loadPrevCharacters() {
+//        String currentDir = currentCampaignDirectory;
+//        ObservableMap<String, String> fileList = FXCollections.observableMap(getXMLFileList("assets/campaign/%s/characters/",currentDir));
+//        for (String name : fileList.values()) {
+//            characterLoadList.getItems().add(name);
+//        }
+//    }
+
+    private void populateLoadTableDM() {
+        ObservableMap<String, String> fileList = FXCollections.observableMap(getXMLFileList("assets/campaigns/"));
+        for (String name : fileList.values()) {
+            campaignLoadList.getItems().add(name);
+        }
+    }
+
     private void populateSendTable() {
-        ObservableMap<String, String> fileList = FXCollections.observableMap(getXMLFileList());
+        ObservableMap<String, String> fileList = FXCollections.observableMap(getXMLFileList("assets/characters/"));
         for (String name : fileList.values()) {
             sendView.getItems().add(name);
         }
     }
-    private Map<String, String> getXMLFileList() {
+
+    private Map<String, String> getXMLFileList(String searchPath) {
         Map<String,String> fileNames = new HashMap<>();
         try {
+            dir = new File(searchPath);
             for (File dir : getCharacterFiles()) {
                 File[] fileList = dir.listFiles();
                 assert fileList != null;
@@ -234,6 +279,11 @@ public class CompanionController {
                         Document doc = parser.buildDocumentStream(file.getAbsolutePath());
                         String displayName = doc.getDocumentElement().getElementsByTagName("name").item(0).getTextContent();
                         fileNames.put(file.getName().replace(".xml", ""), displayName);
+                    }
+                    if (file.isFile() && file.getName().contains(".Xml")) {
+                        Document doc = parser.buildDocumentStream(file.getAbsolutePath());
+                        String displayName = doc.getDocumentElement().getElementsByTagName("title").item(0).getTextContent();
+                        fileNames.put(file.getName().replace(".Xml", ""), displayName);
                     }
                 }
             }
@@ -244,18 +294,40 @@ public class CompanionController {
     }
 
     @FXML
+    public void loadSelectedCampaign() {
+        try {
+            for (Map.Entry<String, String> entry : getXMLFileList("assets/campaigns/").entrySet()) {
+                System.out.println(entry.getValue());
+                if (campaignLoadList.getSelectionModel().getSelectedItem().equals(entry.getValue())) {
+                    currentCampaignDirectory = entry.getKey();
+                }
+            }
+        }catch(NullPointerException e){
+            buildNewCampaign();
+        }
+        newTabMenu.setDisable(false);
+        newJournalMenuItem.setDisable(false);
+        characterPane.setVisible(true);
+
+        newCharacterSheetMenuItem.setDisable(false);
+        loadCampaignPane.setVisible(false);
+
+    }
+
+    @FXML
     public void loadSelectedCharacter() {
         try {
-            for (Map.Entry<String, String> entry : getXMLFileList().entrySet()) {
+            for (Map.Entry<String, String> entry : getXMLFileList("assets/characters/").entrySet()) {
                 if (characterLoadList.getSelectionModel().getSelectedItem().equals(entry.getValue())) {
-                    createCharacterSheetTab(new PlayerCharacter(String.format("%s/%s.xml", entry.getKey(), entry.getKey())));
+                    createCharacterSheetTab(new PlayerCharacter(String.format("assets/characters/%s/%s.xml", entry.getKey(), entry.getKey())));
                     createCharacterJournals(entry.getKey());
                 }
             }
         }catch(NullPointerException e){
-            makeNewCharacterFolder();
+            System.out.println("EMPTY NEW CHAR");
+            String charFile = makeNewCharacterFolder("assets/characters/");
             createCharacterSheetTab(new PlayerCharacter(
-                    String.format("%s/%s",dir.getName(),dir.getName())));
+                    String.format("assets/characters/%s/%s",charFile,charFile)));
         }
         newTabMenu.setDisable(false);
         newJournalMenuItem.setDisable(false);
@@ -274,16 +346,32 @@ public class CompanionController {
     }
 
 
-    private void makeNewCharacterFolder() {
-        dir = new File("assets/characters/"+String.valueOf(System.nanoTime()));
-        final boolean mkdir = dir.mkdir();
-        System.out.println(mkdir);
+    private String makeNewCharacterFolder(String stringPath) {
+        final File mkdir = new File(stringPath+System.nanoTime());
+        try {
+            Files.createDirectory(mkdir.toPath());
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        System.out.println(mkdir.getPath());
+        return mkdir.getName();
     }
 
-
+    private String makeNewCampaignFolder() {
+        final File mkdir = new File("assets/campaigns/"+String.valueOf(System.nanoTime()));
+        final File charFolder = new File(mkdir.getPath()+"/characters/");
+        try {
+            Files.createDirectory(mkdir.toPath());
+            Files.createDirectory(charFolder.toPath());
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        return mkdir.getName();
+    }
 
     private List<File> getCharacterFiles(){
         List<File> characterList = new ArrayList<>();
+        System.out.println(dir.getPath());
         File[] fileList = dir.listFiles();
         assert fileList != null;
         for (File file : fileList)
@@ -291,6 +379,14 @@ public class CompanionController {
                 characterList.add(file);
         return characterList;
     }
+
+    @FXML
+    public void newButtonCampaign() {
+        charTypePaneDM.setVisible(false);
+        newCampaignPane.setVisible(true);
+    }
+
+
 
     @FXML
     public void newButtonPress() {
@@ -361,6 +457,22 @@ public class CompanionController {
     }
 
     @FXML
+    public void newCampaignNextButtonPress() {
+        if (!isPageFilled()) {
+            nameErrorLabel.setVisible(true);
+        } else {
+            creatorTextFields.addAll(
+                    Arrays.asList(campaignTitle, campaignSummary));
+            buildNewCampaign();
+            newCampaignPane.setVisible(false);
+            newTabMenu.setDisable(false);
+            newJournalMenuItem.setDisable(false);
+            newCharacterSheetMenuItem.setDisable(false);
+            characterPane.setVisible(true);
+        }
+    }
+
+    @FXML
     public void rcvButtonPress() {
         charTypePane.setVisible(false);
         rcvPane.setVisible(true);
@@ -370,9 +482,9 @@ public class CompanionController {
     @FXML
     public void sendSelectedCharacter() {
         try {
-            for (Map.Entry<String, String> entry : getXMLFileList().entrySet()) {
+            for (Map.Entry<String, String> entry : getXMLFileList("assets/characters/").entrySet()) {
                 if (sendView.getSelectionModel().getSelectedItem().equals(entry.getValue())) {
-                    NetworkClientParser clientParser = new NetworkClientParser("10.225.71.81");
+                    NetworkClientParser clientParser = new NetworkClientParser("127.0.0.7");
                     clientParser.writeToServer(String.format("assets/characters/%s",entry.getKey()));
                     clientParser.getMessageFromServer();
                 }
@@ -405,9 +517,18 @@ public class CompanionController {
         return true;
     }
 
+    private void buildNewCampaign() {
+        currentCampaignDirectory = makeNewCampaignFolder();
+        String campaignDir = currentCampaignDirectory;
+        CampaignCreation campaign = new CampaignCreation(String.format("assets/campaigns/%s/%s",campaignDir, campaignDir));
+        System.out.print(String.format("assets/campaigns/%s/",campaignDir));
+        campaign.setCampaignTitle(campaignTitle.getText());
+        campaign.setCampaignDescription(campaignSummary.getText());
+    }
+
     private void buildNewCharacter() {
-        makeNewCharacterFolder();
-        PlayerCharacter character = new PlayerCharacter(String.format("%s/%s",dir.getName(),dir.getName()));
+        String charFile = makeNewCharacterFolder("assets/characters/");
+        PlayerCharacter character = new PlayerCharacter(String.format("assets/characters/%s/%s",charFile,charFile));
         character.setPlayerName(playerNameTextBox.getText());
         character.setCharacterName(characterNameTextBox.getText());
         character.setEXP("0");
