@@ -232,40 +232,45 @@ public class CompanionController {
                         netParse.server = netParse.serverSocket.accept();
                         System.out.printf("%s has connected%n", netParse.server.getInetAddress().toString());
                         System.out.println("CREATING NEW THREAD");
-                        new Thread(() -> {
-                            Thread.currentThread().setName(String.valueOf(System.nanoTime()));
-                            Socket threadSocket = netParse.server;
-                            try {
-                                DataOutputStream toClient = new DataOutputStream(threadSocket.getOutputStream());
-                                DataInputStream fromClient = new DataInputStream(threadSocket.getInputStream());
-                                while (Thread.currentThread().isAlive()) {
-                                    try {
-                                        System.out.println(fromClient.readUTF());
-                                        toClient.writeUTF("Hey there," + Thread.currentThread().getName());
-                                    }catch(SocketException e){
-                                        System.err.printf("ERROR: %s has disconnected%n",Thread.currentThread().getName());
-                                        try {
-                                            Thread.currentThread().join();
-                                        }catch(InterruptedException ie){
-                                            ie.printStackTrace();
-                                        }
-                                    }
-                                }
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-                        }).start();
+                        createNewNetThread();
                     } catch (IOException e) {
-                        System.out.println("WOT");
                         e.printStackTrace();
                     }
 
                 }
             }).start();
-
         }catch(IOException e){
             e.printStackTrace();
+        }
+    }
+
+    private void createNewNetThread() {
+        new Thread(() -> {
+            Thread.currentThread().setName(String.valueOf(System.nanoTime()));
+            Socket threadSocket = netParse.server;
+            try {
+                DataOutputStream toClient = new DataOutputStream(threadSocket.getOutputStream());
+                DataInputStream fromClient = new DataInputStream(threadSocket.getInputStream());
+                while (Thread.currentThread().isAlive()) {
+                    try {
+                        System.out.println(fromClient.readUTF());
+                        toClient.writeUTF("Hey there," + Thread.currentThread().getName());
+                    }catch(SocketException e){
+                        closeNetworkThread();
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    private void closeNetworkThread() {
+        System.err.printf("ERROR: %s has disconnected%n",Thread.currentThread().getName());
+        try {
+            Thread.currentThread().join();
+        }catch(InterruptedException ie){
+            ie.printStackTrace();
         }
     }
 
