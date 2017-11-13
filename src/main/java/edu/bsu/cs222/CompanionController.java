@@ -21,10 +21,11 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.ConnectException;
-import java.net.URL;
+import java.net.*;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
@@ -101,7 +102,7 @@ public class CompanionController {
     private File dir;
     private String currentCampaignDirectory;
     private boolean isPlayer = true;
-    Stage stage = new Stage();
+    private Stage stage = new Stage();
 
 
     private NetworkServerParser netParse;
@@ -226,19 +227,37 @@ public class CompanionController {
             netParse = new NetworkServerParser(2000);
             networkLabel.setText("Your IP Address is: "+ netParse.getLANAddress());
             new Thread(() -> {
-                while(true) {
+                while(Thread.currentThread().isAlive()) {
                     try {
                         netParse.server = netParse.serverSocket.accept();
                         System.out.printf("%s has connected%n", netParse.server.getInetAddress().toString());
                         System.out.println("CREATING NEW THREAD");
                         new Thread(() -> {
                             Thread.currentThread().setName(String.valueOf(System.nanoTime()));
-                            while (Thread.currentThread().isAlive()) {
-                                netParse.getMessageFromClient();
-                                netParse.writeToClient("Hey there," + Thread.currentThread().getName());
+                            Socket threadSocket = netParse.server;
+                            try {
+                                DataOutputStream toClient = new DataOutputStream(threadSocket.getOutputStream());
+                                DataInputStream fromClient = new DataInputStream(threadSocket.getInputStream());
+                                while (Thread.currentThread().isAlive()) {
+                                    try {
+                                        System.out.println(fromClient.readUTF());
+                                        toClient.writeUTF("Hey there," + Thread.currentThread().getName());
+                                    }catch(SocketException e){
+                                        System.err.printf("ERROR: %s has disconnected%n",Thread.currentThread().getName());
+                                        try {
+                                            Thread.currentThread().join();
+                                        }catch(InterruptedException ie){
+                                            ie.printStackTrace();
+                                        }
+                                    }
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
+
                         }).start();
                     } catch (IOException e) {
+                        System.out.println("WOT");
                         e.printStackTrace();
                     }
 
@@ -507,7 +526,6 @@ public class CompanionController {
     @FXML
     public void sendSelectedCharacter() {
         try {
-            connectToServer();
             for (Map.Entry<String, String> entry : getXMLFileList("assets/characters/").entrySet()) {
                 if (sendView.getSelectionModel().getSelectedItem().equals(entry.getValue())) {
                     try {

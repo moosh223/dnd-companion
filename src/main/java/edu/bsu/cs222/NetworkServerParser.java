@@ -11,12 +11,7 @@ public class NetworkServerParser {
 
     public NetworkServerParser(int port) throws IOException {
             serverSocket = new ServerSocket(port);
-
-        }
-
-        public void terminateConnection() throws IOException {
-            serverSocket.close();
-        }
+    }
 
     public InetAddress getLANAddress() throws UnknownHostException{
         try {
@@ -48,26 +43,6 @@ public class NetworkServerParser {
             UnknownHostException unknownHostException = new UnknownHostException("Failed to determine LAN address: " + e);
             unknownHostException.initCause(e);
             throw unknownHostException;
-        }
-    }
-
-    public void getMessageFromClient(){
-        try{
-            InputStream fromClient = server.getInputStream();
-            DataInputStream out = new DataInputStream(fromClient);
-            System.out.println(out.readUTF());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void writeToClient(String message){
-        try{
-            OutputStream toClient = server.getOutputStream();
-            DataOutputStream out = new DataOutputStream(toClient);
-            out.writeUTF(message);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }
