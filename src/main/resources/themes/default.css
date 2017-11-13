@@ -79,8 +79,6 @@
     -fx-font-size: 11pt;
     -fx-text-fill: -fx-main-text-fill;
     -fx-background-insets: 0 0 0 0, 0, 1, 2;
-    -fx-pref-width: 130;
-    -fx-pref-height: 40;
 }
 
 .button:hover {

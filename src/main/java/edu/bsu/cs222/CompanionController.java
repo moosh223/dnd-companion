@@ -322,7 +322,6 @@ public class CompanionController {
         newTabMenu.setDisable(false);
         newJournalMenuItem.setDisable(false);
         characterPane.setVisible(true);
-
         newCharacterSheetMenuItem.setDisable(false);
         loadCampaignPane.setVisible(false);
     }
