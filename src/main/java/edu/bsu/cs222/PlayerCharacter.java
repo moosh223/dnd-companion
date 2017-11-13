@@ -9,7 +9,7 @@ import javax.xml.transform.TransformerException;
 import java.io.IOException;
 
 public class PlayerCharacter {
-    private String filepath="assets/characters/";
+    private String filepath;
     private XMLParser parser = new XMLParser();
     private Document xmlDoc;
 
@@ -34,7 +34,7 @@ public class PlayerCharacter {
     }
 
     public PlayerCharacter(String filepath) {
-        this.filepath += filepath;
+        this.filepath = filepath;
         if(!filepath.contains(".xml")){
             this.filepath += ".xml";
         }

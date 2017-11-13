@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <character owner="Josh Mooshian">
     <name>Fido</name>
-    <race>Good Boi</race>
+    <race>Gud Boi</race>
     <classname>Pupper</classname>
     <stats>13,12,14,20,15,16</stats>
     <maxhp>20</maxhp>
     <currenthp>24</currenthp>
-    <exp>0</exp>
+    <exp>69</exp>
     <age>7</age>
-    <alignment>Good</alignment>
+    <alignment>bad boi</alignment>
     <size>Smol</size>
     <height>1'4"</height>
     <speed>30</speed>
