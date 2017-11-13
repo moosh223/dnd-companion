@@ -534,7 +534,7 @@ public class CompanionController {
             for (Map.Entry<String, String> entry : getXMLFileList("assets/characters/").entrySet()) {
                 if (sendView.getSelectionModel().getSelectedItem().equals(entry.getValue())) {
                     try {
-                        clientParser.writeToServer(String.format("assets/characters/%s", entry.getKey()));
+                        clientParser.writeToServer(String.format("assets/characters/%s/%s.xml", entry.getKey(),entry.getKey()));
                         clientParser.getMessageFromServer();
                     }catch(NullPointerException e){
                         System.err.println("You aren't connected to a client!");
