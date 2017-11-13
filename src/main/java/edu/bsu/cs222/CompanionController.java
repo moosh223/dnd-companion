@@ -521,6 +521,7 @@ public class CompanionController {
     @FXML
     public void sendSelectedCharacter() {
         try {
+            connectToServer();
             for (Map.Entry<String, String> entry : getXMLFileList("assets/characters/").entrySet()) {
                 if (sendView.getSelectionModel().getSelectedItem().equals(entry.getValue())) {
                     try {
