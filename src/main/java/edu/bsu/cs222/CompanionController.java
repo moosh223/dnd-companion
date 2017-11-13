@@ -237,17 +237,6 @@ public class CompanionController {
                             netParse.getMessageFromClient();
                             netParse.writeToClient("Hey there,"+Thread.currentThread().getName());
                         }
-                Thread.currentThread().setName("NetThread");
-                while(Thread.currentThread().isAlive()) {
-                    System.out.println("WHAT");
-                    try {
-                        netParse.server = netParse.serverSocket.accept();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    netParse.getMessageFromClient();
-                    netParse.writeToClient("hey there,"+netParse.server.getInetAddress());
-                }
             }).start();
         }catch(IOException e){
             e.printStackTrace();
@@ -311,11 +300,6 @@ public class CompanionController {
                         String displayName = doc.getDocumentElement().getElementsByTagName("name").item(0).getTextContent();
                         fileNames.put(file.getName().replace(".xml", ""), displayName);
                     }
-                    if (file.isFile() && file.getName().contains(".Xml")) {
-                        Document doc = parser.buildDocumentStream(file.getAbsolutePath());
-                        String displayName = doc.getDocumentElement().getElementsByTagName("title").item(0).getTextContent();
-                        fileNames.put(file.getName().replace(".Xml", ""), displayName);
-                    }
                 }
             }
         } catch (ParserConfigurationException | IOException | SAXException e) {
@@ -328,7 +312,6 @@ public class CompanionController {
     public void loadSelectedCampaign() {
         try {
             for (Map.Entry<String, String> entry : getXMLFileList("assets/campaigns/").entrySet()) {
-                System.out.println(entry.getValue());
                 if (campaignLoadList.getSelectionModel().getSelectedItem().equals(entry.getValue())) {
                     currentCampaignDirectory = entry.getKey();
                 }
@@ -354,7 +337,6 @@ public class CompanionController {
                 }
             }
         }catch(NullPointerException e){
-            System.out.println("EMPTY NEW CHAR");
             String charFile = makeNewCharacterFolder("assets/characters/");
             createCharacterSheetTab(new PlayerCharacter(
                     String.format("assets/characters/%s/%s",charFile,charFile)));
@@ -383,7 +365,6 @@ public class CompanionController {
         }catch(IOException e){
             e.printStackTrace();
         }
-        System.out.println(mkdir.getPath());
         return mkdir.getName();
     }
 
@@ -401,7 +382,6 @@ public class CompanionController {
 
     private List<File> getCharacterFiles(){
         List<File> characterList = new ArrayList<>();
-        System.out.println(dir.getPath());
         File[] fileList = dir.listFiles();
         assert fileList != null;
         for (File file : fileList)
@@ -565,7 +545,7 @@ public class CompanionController {
         String campaignDir = currentCampaignDirectory;
         CampaignCreation campaign = new CampaignCreation(String.format("assets/campaigns/%s/%s",campaignDir, campaignDir));
         System.out.print(String.format("assets/campaigns/%s/",campaignDir));
-        campaign.setCampaignTitle(campaignTitle.getText());
+        campaign.setCampaignName(campaignTitle.getText());
         campaign.setCampaignDescription(campaignSummary.getText());
     }
 

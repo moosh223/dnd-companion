@@ -18,14 +18,14 @@ public class CampaignCreation {
     }
 
     private enum TagType{
-        title,
+        name,
         description,
     }
 
     public CampaignCreation(String filepath) {
         this.filepath = filepath;
-        if(!filepath.contains(".Xml")){
-            this.filepath += ".Xml";
+        if(!filepath.contains(".xml")){
+            this.filepath += ".xml";
         }
         try{
             linkToDocument();
@@ -64,8 +64,8 @@ public class CampaignCreation {
         }
     }
 
-    public void setCampaignTitle(String title){
-        getRoot().getElementsByTagName("title").item(0).setTextContent(title);
+    public void setCampaignName(String name){
+        getRoot().getElementsByTagName("name").item(0).setTextContent(name);
         updateDoc();
     }
 
