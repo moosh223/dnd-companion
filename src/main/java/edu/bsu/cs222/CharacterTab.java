@@ -51,6 +51,23 @@ public class CharacterTab {
         addDisplayFocusListeners();
     }
 
+    private void addDisplayFocusListeners() {
+        for(TextField field: displayFields){
+            field.focusedProperty().addListener((obs, oldVal, newVal) -> {
+                if (!newVal) {
+                    updateCharacterXML();
+                }
+            });
+        }
+    }
+
+    private void createDisplayAction(){
+        for(TextField field: displayFields){
+            field.setOnAction((event) -> updateCharacterXML());
+        }
+
+    }
+
     private void buildDataFields() {
         buildDisplayFields();
         buildSkillFields();
@@ -117,22 +134,7 @@ public class CharacterTab {
         }
     }
 
-    private void addDisplayFocusListeners() {
-        for(TextField field: displayFields){
-            field.focusedProperty().addListener((obs, oldVal, newVal) -> {
-                if (!newVal) {
-                    updateCharacterXML();
-                }
-            });
-        }
-    }
 
-    private void createDisplayAction(){
-        for(TextField field: displayFields){
-            field.setOnAction((event) -> updateCharacterXML());
-        }
-
-    }
 
     private void loadPaneContent() {
         try{

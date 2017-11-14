@@ -29,6 +29,8 @@ import java.net.*;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.SynchronousQueue;
 
 public class CompanionController {
 
@@ -103,6 +105,8 @@ public class CompanionController {
     private String currentCampaignDirectory;
     private boolean isPlayer = true;
     private Stage stage = new Stage();
+    public SynchronousQueue<String> methodCalls = new SynchronousQueue<>();
+    private ArrayList<NetThread> netThreads = new ArrayList<>();
 
 
     private NetworkServerParser netParse;
@@ -245,24 +249,27 @@ public class CompanionController {
     }
 
     private void createNewNetThread() {
-        new Thread(() -> {
-            Thread.currentThread().setName(String.valueOf(System.nanoTime()));
+        NetThread thread = new NetThread(netParse.server);
+        netThreads.add(thread);
+        thread.setName("First Client");
+        thread.run();
+        /*new Thread(() -> {
             Socket threadSocket = netParse.server;
             try {
                 DataOutputStream toClient = new DataOutputStream(threadSocket.getOutputStream());
                 DataInputStream fromClient = new DataInputStream(threadSocket.getInputStream());
+                String threadName = fromClient.readUTF();
+                Thread.currentThread().setName(threadName);
                 while (Thread.currentThread().isAlive()) {
-                    try {
-                        System.out.println(fromClient.readUTF());
-                        toClient.writeUTF("Hey there," + Thread.currentThread().getName());
-                    }catch(SocketException e){
-                        closeNetworkThread();
-                    }
+                    String yes = methodCalls.take();
+                        toClient.writeUTF(yes);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        }).start();
+        }).start();*/
     }
 
     private void closeNetworkThread() {
@@ -273,6 +280,22 @@ public class CompanionController {
             ie.printStackTrace();
         }
     }
+
+    @FXML
+    public void sendServerMessage(){
+        System.out.println("tryna send message");
+        for(NetThread thread : netThreads){
+            if(thread.getName().equals("First Client")){
+                System.out.println("Client Found");
+                try {
+                    thread.getDos().writeUTF("you were found");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
 
     @FXML
     public void loadButtonAction() {
@@ -523,6 +546,17 @@ public class CompanionController {
         try {
             clientParser = new NetworkClientParser("10.244.114.144");
             networkLabel.setText("Connected to: " + clientParser.getSocket());
+            clientParser.writeToServer(clientParser.getSocket());
+            clientParser.getMessageFromServer();
+            new Thread(() -> {
+                while(Thread.currentThread().isAlive()){
+                    try{
+                        clientParser.getMessageFromServer();
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
         }catch(Exception e){
             System.err.println("Unable to establish a connection");
         }
