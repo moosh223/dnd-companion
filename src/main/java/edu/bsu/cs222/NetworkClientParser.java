@@ -2,6 +2,7 @@ package edu.bsu.cs222;
 
 import java.io.*;
 import java.net.ConnectException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class NetworkClientParser {
@@ -18,10 +19,11 @@ public class NetworkClientParser {
     private void connectToServer(int port){
         try {
             System.out.println("Connecting to " + serverName + " on port " + port);
-            socket = new Socket(serverName, port);
+            socket = new Socket();
+            socket.connect(new InetSocketAddress(serverName,port),1000);
             System.out.println("Just connected to " + socket.getRemoteSocketAddress());
         } catch (IOException e){
-            e.printStackTrace();
+            System.err.println("Server not found");
         }
     }
 
@@ -29,7 +31,16 @@ public class NetworkClientParser {
         try{
             InputStream outToServer = socket.getInputStream();
             DataInputStream out = new DataInputStream(outToServer);
-            System.out.println(out.readUTF());
+            try {
+                System.out.println(out.readUTF());
+            }catch(EOFException e){
+                try {
+                    System.err.printf("You have disconnected from %s%n",socket.getInetAddress());
+                    Thread.currentThread().join();
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

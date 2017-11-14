@@ -21,10 +21,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.*;
 import java.nio.file.Files;
 import java.util.*;
@@ -100,6 +97,7 @@ public class CompanionController {
     @FXML public MenuItem loadPrevCharacters;
     @FXML public MenuItem newJournalMenuItem;
     @FXML public Menu newTabMenu;
+    @FXML public TextField ipConnect;
     private XMLParser parser = new XMLParser();
     private File dir;
     private String currentCampaignDirectory;
@@ -542,9 +540,9 @@ public class CompanionController {
     }
 
     @FXML
-    public void connectToServer(){
+    public void connectToServer(String ip){
         try {
-            clientParser = new NetworkClientParser("10.244.114.144");
+            clientParser = new NetworkClientParser(ip);
             networkLabel.setText("Connected to: " + clientParser.getSocket());
             clientParser.writeToServer(clientParser.getSocket());
             clientParser.getMessageFromServer();
@@ -554,12 +552,19 @@ public class CompanionController {
                         clientParser.getMessageFromServer();
                     }catch(Exception e){
                         e.printStackTrace();
+                        Thread.currentThread().interrupt();
                     }
                 }
             }).start();
         }catch(Exception e){
             System.err.println("Unable to establish a connection");
         }
+    }
+
+    @FXML
+    public void connectToSpecificServer(){
+        String ip = ipConnect.getText();
+        connectToServer(ip);
     }
 
     @FXML
