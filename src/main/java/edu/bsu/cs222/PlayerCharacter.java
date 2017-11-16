@@ -12,6 +12,7 @@ public class PlayerCharacter {
     private String filepath;
     private XMLParser parser = new XMLParser();
     private Document xmlDoc;
+    private boolean uptodate = true;
 
     public Document getXML() {
         return xmlDoc;
@@ -179,5 +180,15 @@ public class PlayerCharacter {
         }catch(TransformerException te){
             te.printStackTrace();
         }
+    }
+
+
+
+    public boolean isUpdated(){
+        if(!uptodate){
+            uptodate = true;
+            return false;
+        }
+        return true;
     }
 }

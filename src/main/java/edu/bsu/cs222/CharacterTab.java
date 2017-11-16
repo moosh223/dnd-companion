@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CharacterTab {
+public class CharacterTab extends Tab{
     private FXMLLoader sheet;
     private PlayerCharacter character;
     private TabPane tabPane;

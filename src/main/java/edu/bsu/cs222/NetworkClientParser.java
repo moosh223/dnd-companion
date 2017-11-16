@@ -1,7 +1,6 @@
 package edu.bsu.cs222;
 
 import java.io.*;
-import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
@@ -46,6 +45,36 @@ public class NetworkClientParser {
         }
     }
 
+    public void sendCharacterXML(File file){
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream())
+        {
+            InputStream is = new FileInputStream(file);
+            byte[] buffer = new byte[0xFFFF];
+
+            for (int len; (len = is.read(buffer)) != -1;)
+                os.write(buffer, 0, len);
+            os.flush();
+            OutputStream dos = new DataOutputStream(socket.getOutputStream());
+            dos.write(os.toByteArray());
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void getObjectFromServer(){
+        try {
+            InputStream fromServer = socket.getInputStream();
+            ObjectInputStream in = new ObjectInputStream(fromServer);
+            try{
+                System.out.println(in.readObject());
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void writeToServer(String message){
         try{
             OutputStream outToServer = socket.getOutputStream();
@@ -56,7 +85,7 @@ public class NetworkClientParser {
         }
     }
 
-    public String getSocket(){
+    public String getSocketAddress(){
         return socket.getInetAddress().toString();
     }
 }
