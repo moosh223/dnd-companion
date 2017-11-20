@@ -45,8 +45,14 @@ public class NetThread extends Thread implements Runnable{
         try {
             dis.readUTF();
             dos.writeUTF("you connected,"+netSocket.getInetAddress()+"!");
-            receiver(getName());
             while (Thread.currentThread().isAlive()) {
+                String message = dis.readUTF();
+                if(message.equals("load")){
+                    receiver(getName());
+                    clientCharacter = new PlayerCharacter(String.format("assets/campaigns/temp/%s.xml",getName()));
+                }else{
+                    System.out.println("Message Received, no command");
+                }
             }
         }catch(IOException e){
             e.printStackTrace();
@@ -59,9 +65,10 @@ public class NetThread extends Thread implements Runnable{
             byte[] buffer = new byte[0xFFFF];
             for (int len; (len = dis.read(buffer)) != -1; ) {
                 os.write(buffer, 0, len);
+                os.flush();
+                os.close();
+                return;
             }
-            os.close();
-            clientCharacter = new PlayerCharacter(String.format("assets/campaigns/temp/%s.xml",getName()));
         }catch(IOException e){
             e.printStackTrace();
         }

@@ -258,12 +258,8 @@ public class CompanionController {
         for(NetThread thread : netThreads){
             System.out.println(thread.getCharacter().getCharacterName());
             try{
-                if(!thread.getCharacter().isUpdated()){
-                    thread.getDos().writeUTF("YOUR CHAR WAS UPDATE");
-                }else{
-                    thread.getDos().writeUTF("YOUR CHAR WAS NOT UPDATE");
-                }
-            }catch (IOException e){
+                createCharacterSheetTab(thread.getCharacter());
+            }catch (Exception e){
                 e.printStackTrace();
             }
         }
@@ -542,7 +538,7 @@ public class CompanionController {
             for (Map.Entry<String, String> entry : getXMLFileList(characterDir).entrySet()) {
                 if (sendView.getSelectionModel().getSelectedItem().equals(entry.getValue())) {
                     try {
-                        //clientParser.writeToServer(String.format("load %s%s/%s.xml",characterDir, entry.getKey(),entry.getKey()));
+                        clientParser.writeToServer("load");
                         clientParser.sendCharacterXML(new File(String.format("%s%s/%s.xml",characterDir, entry.getKey(),entry.getKey())));
                     }catch(NullPointerException e){
                         System.err.println("You aren't connected to a server!");

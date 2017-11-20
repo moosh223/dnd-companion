@@ -170,6 +170,7 @@ public class CharacterTab extends Tab{
         updateField("displayCha", String.valueOf(character.getStats()[5]));
         updateLabel("displayChaMod", getModifier(character.getStats()[5]));
         updateSkillModifiers();
+        character.uptodate = false;
     }
 
     private void updateCharacterXML(){
