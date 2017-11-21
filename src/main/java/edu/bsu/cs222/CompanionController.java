@@ -251,37 +251,10 @@ public class CompanionController {
         netThreads.add(thread);
         thread.setName("First Client");
         thread.run();
-        /*new Thread(() -> {
-            Socket threadSocket = netParse.server;
-            try {
-                DataOutputStream toClient = new DataOutputStream(threadSocket.getOutputStream());
-                DataInputStream fromClient = new DataInputStream(threadSocket.getInputStream());
-                String threadName = fromClient.readUTF();
-                Thread.currentThread().setName(threadName);
-                while (Thread.currentThread().isAlive()) {
-                    String yes = methodCalls.take();
-                        toClient.writeUTF(yes);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();*/
-    }
-
-    private void closeNetworkThread() {
-        System.err.printf("ERROR: %s has disconnected%n",Thread.currentThread().getName());
-        try {
-            Thread.currentThread().join();
-        }catch(InterruptedException ie){
-            ie.printStackTrace();
-        }
     }
 
     @FXML
     public void sendServerMessage(){
-        System.out.println("tryna send message");
         for(NetThread thread : netThreads){
             if(thread.getName().equals("First Client")){
                 System.out.println("Client Found");
