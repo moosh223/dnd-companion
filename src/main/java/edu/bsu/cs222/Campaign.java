@@ -8,7 +8,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
 
-public class CampaignCreation {
+public class Campaign {
     private String filepath;
     private XMLParser parser = new XMLParser();
     private Document xmlDoc;
@@ -22,7 +22,7 @@ public class CampaignCreation {
         description,
     }
 
-    public CampaignCreation(String filepath) {
+    public Campaign(String filepath) {
         this.filepath = filepath;
         if(!filepath.contains(".xml")){
             this.filepath += ".xml";

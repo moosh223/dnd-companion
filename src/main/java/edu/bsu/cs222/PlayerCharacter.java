@@ -12,7 +12,7 @@ public class PlayerCharacter {
     private String filepath;
     private XMLParser parser = new XMLParser();
     private Document xmlDoc;
-    public boolean uptodate = true;
+    public boolean updated = false;
 
     public Document getXML() {
         return xmlDoc;
@@ -182,9 +182,7 @@ public class PlayerCharacter {
         }
     }
 
-
-
     public boolean isUpdated(){
-        return uptodate;
+        return updated;
     }
 }

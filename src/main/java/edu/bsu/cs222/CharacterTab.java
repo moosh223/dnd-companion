@@ -32,10 +32,12 @@ public class CharacterTab extends Tab{
     private List<String> wisSkills = new ArrayList<>();
     private List<String> chaSkills = new ArrayList<>();
     private List<List<String>> skillLists = new ArrayList<>();
+    public boolean updateFlag = false;
 
     public CharacterTab(PlayerCharacter character) {
         sheet = new FXMLLoader(getClass().getClassLoader().getResource("fxml/CharacterTab.fxml"));
         this.character = character;
+        setText(this.character.getCharacterName());
         init();
         updateCharacterView();
     }
@@ -55,6 +57,7 @@ public class CharacterTab extends Tab{
         for(TextField field: displayFields){
             field.focusedProperty().addListener((obs, oldVal, newVal) -> {
                 if (!newVal) {
+                    updateFlag = true;
                     updateCharacterXML();
                 }
             });
@@ -170,7 +173,6 @@ public class CharacterTab extends Tab{
         updateField("displayCha", String.valueOf(character.getStats()[5]));
         updateLabel("displayChaMod", getModifier(character.getStats()[5]));
         updateSkillModifiers();
-        character.uptodate = false;
     }
 
     private void updateCharacterXML(){
@@ -243,5 +245,9 @@ public class CharacterTab extends Tab{
     }
     public Node getSheet() {
         return parent;
+    }
+
+    public PlayerCharacter getCharacter() {
+        return character;
     }
 }

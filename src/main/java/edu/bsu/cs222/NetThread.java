@@ -1,7 +1,10 @@
 package edu.bsu.cs222;
 
+import javafx.scene.control.Tab;
+
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 
 public class NetThread extends Thread implements Runnable{
 
@@ -9,6 +12,8 @@ public class NetThread extends Thread implements Runnable{
     private DataOutputStream dos;
     private DataInputStream dis;
     private PlayerCharacter clientCharacter;
+    private CharacterTab threadTab;
+    private String campaign = null;
 
     public NetThread(Socket netSocket){
         this.netSocket = netSocket;
@@ -47,11 +52,18 @@ public class NetThread extends Thread implements Runnable{
             dos.writeUTF("you connected,"+netSocket.getInetAddress()+"!");
             while (Thread.currentThread().isAlive()) {
                 String message = dis.readUTF();
-                if(message.equals("load")){
+                if(message.equals("load") && campaign != null){
                     receiver(getName());
-                    clientCharacter = new PlayerCharacter(String.format("assets/campaigns/temp/%s.xml",getName()));
-                }else{
+                    clientCharacter = new PlayerCharacter(String.format("assets/campaigns/%s/characters/%s.xml",campaign,getName()));
+                    System.out.println("Begin checking for player changes");
+                    checkPlayerUpdates();
+                }else {
                     System.out.println("Message Received, no command");
+                    try{
+                        dis.read(new byte[0xFFFF]);
+                    }catch(IOException e){
+                        e.printStackTrace();
+                    }
                 }
             }
         }catch(IOException e){
@@ -59,16 +71,23 @@ public class NetThread extends Thread implements Runnable{
         }
     }
 
+    public void checkPlayerUpdates() {
+        while(Thread.currentThread().isAlive()){
+            if(threadTab != null && threadTab.updateFlag){
+                System.out.println("flag raised");
+                threadTab.updateFlag = false;
+            }
+        }
+    }
+
     private void receiver(String filepath){
         try {
-            OutputStream os = new FileOutputStream(String.format("assets/campaigns/temp/%s.xml",filepath));
+            OutputStream os = new FileOutputStream(String.format("assets/campaigns/%s/characters/%s.xml",campaign,filepath));
             byte[] buffer = new byte[0xFFFF];
-            for (int len; (len = dis.read(buffer)) != -1; ) {
+            int len = dis.read(buffer);
                 os.write(buffer, 0, len);
                 os.flush();
                 os.close();
-                return;
-            }
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -76,5 +95,21 @@ public class NetThread extends Thread implements Runnable{
 
     public PlayerCharacter getCharacter() {
         return clientCharacter;
+    }
+
+    public void setCampaign(String campaign) {
+        this.campaign = campaign;
+    }
+
+    public String getCampaign() {
+        return campaign;
+    }
+
+    public void setTab(CharacterTab tab) {
+        threadTab = tab;
+    }
+
+    public CharacterTab getTab() {
+        return threadTab;
     }
 }
