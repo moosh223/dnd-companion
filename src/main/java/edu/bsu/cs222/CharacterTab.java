@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CharacterTab {
+public class CharacterTab extends Tab{
     private FXMLLoader sheet;
     private PlayerCharacter character;
     private TabPane tabPane;
@@ -170,6 +170,7 @@ public class CharacterTab {
         updateField("displayCha", String.valueOf(character.getStats()[5]));
         updateLabel("displayChaMod", getModifier(character.getStats()[5]));
         updateSkillModifiers();
+        character.uptodate = false;
     }
 
     private void updateCharacterXML(){
