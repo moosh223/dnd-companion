@@ -1,10 +1,7 @@
 package edu.bsu.cs222;
 
-import javafx.scene.control.Tab;
-
 import java.io.*;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 
 public class NetThread extends Thread implements Runnable{
 
@@ -53,8 +50,9 @@ public class NetThread extends Thread implements Runnable{
             while (Thread.currentThread().isAlive()) {
                 String message = dis.readUTF();
                 if(message.equals("load") && campaign != null){
-                    receiver(getName());
-                    clientCharacter = new PlayerCharacter(String.format("assets/campaigns/%s/characters/%s.xml",campaign,getName()));
+                    String name = dis.readUTF();
+                    receiveCharacter(name);
+                    clientCharacter = new PlayerCharacter(String.format("assets/campaigns/%s/characters/%s.xml",campaign,name));
                     System.out.println("Begin checking for player changes");
                     checkPlayerUpdates();
                 }else {
@@ -80,7 +78,7 @@ public class NetThread extends Thread implements Runnable{
         }
     }
 
-    private void receiver(String filepath){
+    private void receiveCharacter(String filepath){
         try {
             OutputStream os = new FileOutputStream(String.format("assets/campaigns/%s/characters/%s.xml",campaign,filepath));
             byte[] buffer = new byte[0xFFFF];

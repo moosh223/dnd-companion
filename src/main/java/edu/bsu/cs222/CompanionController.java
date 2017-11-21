@@ -262,7 +262,7 @@ public class CompanionController {
 
     @FXML
     public void sendServerMessage(){
-        characterPane.getTabs().removeAll();
+        characterPane.getTabs().clear();
         for(NetThread thread: netThreads){
             thread.setTab(makeCharacterTab(thread.getCharacter()));
             characterPane.getTabs().add(thread.getTab());
@@ -334,7 +334,6 @@ public class CompanionController {
                     for(NetThread thread: netThreads){
                         thread.setCampaign(currentCampaignDirectory);
                     }
-                    sendServerMessage();
                 }
             }
         }catch(NullPointerException e){
@@ -548,6 +547,7 @@ public class CompanionController {
                 if (sendView.getSelectionModel().getSelectedItem().equals(entry.getValue())) {
                     try {
                         clientParser.writeToServer("load");
+                        clientParser.writeToServer(entry.getValue());
                         clientParser.sendCharacterXML(new File(String.format("%s%s/%s.xml",characterDir, entry.getKey(),entry.getKey())));
                     }catch(NullPointerException e){
                         System.err.println("You aren't connected to a server!");
