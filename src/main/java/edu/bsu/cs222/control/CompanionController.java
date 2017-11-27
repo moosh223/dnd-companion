@@ -145,12 +145,11 @@ public class CompanionController {
      * @param character Character used to create the new character sheet
      * @see #createJournalTab(String) createJournalTab
      */
-    private CharacterTab createCharacterSheetTab(PlayerCharacter character) {
+    private void createCharacterSheetTab(PlayerCharacter character) {
         CharacterTab sheet = new CharacterTab(character);
         sheet.setContent(sheet.getSheet());
         sheet.setClosable(false);
         characterPane.getTabs().add(sheet);
-        return sheet;
     }
 
     private CharacterTab makeCharacterTab(PlayerCharacter character){
