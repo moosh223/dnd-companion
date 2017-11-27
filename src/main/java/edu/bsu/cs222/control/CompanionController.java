@@ -1,12 +1,8 @@
 package edu.bsu.cs222.control;
 
 import edu.bsu.cs222.*;
-import edu.bsu.cs222.net.NetThread;
-import edu.bsu.cs222.net.NetworkClientParser;
-import edu.bsu.cs222.net.NetworkServerParser;
-import edu.bsu.cs222.tab.CharacterTab;
-import edu.bsu.cs222.tab.JournalTab;
-import edu.bsu.cs222.tab.SpellTab;
+import edu.bsu.cs222.net.*;
+import edu.bsu.cs222.tab.*;
 import edu.bsu.cs222.util.XMLParser;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
@@ -26,7 +22,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.io.*;
@@ -100,7 +95,7 @@ public class CompanionController {
     @FXML public ListView<String> sendView;
     @FXML public CheckBox diceRollerButton;
     @FXML public MenuItem newCharacterSheetMenuItem;
-    @FXML public MenuItem loadPrevCharacters;
+    //@FXML public MenuItem loadPrevCharacters;
     @FXML public MenuItem newJournalMenuItem;
     @FXML public Menu newTabMenu;
     @FXML public TextField ipConnect;
