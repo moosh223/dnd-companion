@@ -9,9 +9,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
 
-public class Campaign {
+public class CampaignParser extends XMLParser{
     private String filepath;
-    private XMLParser parser = new XMLParser();
     private Document xmlDoc;
 
     public Document getXML() {
@@ -23,27 +22,19 @@ public class Campaign {
         description,
     }
 
-    public Campaign(String filepath) {
+    public CampaignParser(String filepath) {
         this.filepath = filepath;
         if(!filepath.contains(".xml")){
             this.filepath += ".xml";
         }
         try{
-            linkToDocument();
+            linkToDocument(filepath);
         }catch(Exception e){
             e.printStackTrace();
         }
     }
 
-    private void linkToDocument() throws IOException, SAXException, ParserConfigurationException{
-        try {
-            xmlDoc = parser.buildDocumentStream(filepath);
-        }catch(IOException e){
-            xmlDoc = parser.buildNewDocument();
-            createRootElement();
-            buildXML();
-        }
-    }
+
     private void buildXML() {
         for(TagType tag: TagType.values()) {
             getRoot().appendChild(xmlDoc.createElement(tag.toString()));
@@ -59,7 +50,7 @@ public class Campaign {
 
     private void updateDoc(){
         try{
-            parser.write(xmlDoc,filepath);
+            write(xmlDoc,filepath);
         }catch(TransformerException te){
             te.printStackTrace();
         }

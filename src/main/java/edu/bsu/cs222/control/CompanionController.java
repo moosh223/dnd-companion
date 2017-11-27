@@ -72,7 +72,7 @@ public class CompanionController {
     @FXML public TextField chaTextBox;
     private List<TextField> creatorTextFields = new ArrayList<>();
 
-    // Text Fields for New Campaign
+    // Text Fields for New CampaignParser
     @FXML public TextField campaignTitle;
     @FXML public TextField campaignSummary;
 
@@ -590,7 +590,7 @@ public class CompanionController {
 
     private void buildNewCampaign() {
         currentCampaignDirectory = makeNewCampaignFolder();
-        Campaign campaign = new Campaign(String.format("%s/%s/%s",campaignDir, currentCampaignDirectory, currentCampaignDirectory));
+        CampaignParser campaign = new CampaignParser(String.format("%s/%s/%s",campaignDir, currentCampaignDirectory, currentCampaignDirectory));
         campaign.setCampaignName(campaignTitle.getText());
         campaign.setCampaignDescription(campaignSummary.getText());
         for(NetThread thread: netThreads){
