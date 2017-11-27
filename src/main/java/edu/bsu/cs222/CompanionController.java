@@ -549,9 +549,9 @@ public class CompanionController {
                         clientParser.writeToServer("load");
                         clientParser.writeToServer(entry.getValue());
                         clientParser.sendCharacterXML(new File(String.format("%s%s/%s.xml",characterDir, entry.getKey(),entry.getKey())));
+                        new Thread(() -> clientParser.getObjectFromServer(String.format("%s%s/%s",characterDir,entry.getKey(),entry.getKey()))).start();
                     }catch(NullPointerException e){
                         System.err.println("You aren't connected to a server!");
-
                     }
                 }
             }

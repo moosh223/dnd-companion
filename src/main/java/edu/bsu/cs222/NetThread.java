@@ -11,6 +11,7 @@ public class NetThread extends Thread implements Runnable{
     private PlayerCharacter clientCharacter;
     private CharacterTab threadTab;
     private String campaign = null;
+    private String characterFile;
 
     public NetThread(Socket netSocket){
         this.netSocket = netSocket;
@@ -51,13 +52,14 @@ public class NetThread extends Thread implements Runnable{
                 String message = dis.readUTF();
                 if(message.equals("load") && campaign != null){
                     String name = dis.readUTF();
-                    receiveCharacter(name);
-                    clientCharacter = new PlayerCharacter(String.format("assets/campaigns/%s/characters/%s.xml",campaign,name));
-                    System.out.println("Begin checking for player changes");
+                    characterFile = String.format("assets/campaigns/%s/characters/%s",campaign,name);
+                    receiveCharacter(characterFile);
+                    clientCharacter = new PlayerCharacter(characterFile);
                     checkPlayerUpdates();
                 }else {
                     System.out.println("Message Received, no command");
                     try{
+                        dis.readUTF();
                         dis.read(new byte[0xFFFF]);
                     }catch(IOException e){
                         e.printStackTrace();
@@ -72,15 +74,31 @@ public class NetThread extends Thread implements Runnable{
     public void checkPlayerUpdates() {
         while(Thread.currentThread().isAlive()){
             if(threadTab != null && threadTab.updateFlag){
-                System.out.println("flag raised");
                 threadTab.updateFlag = false;
+                sendCharacterUpdate(characterFile);
             }
+        }
+    }
+
+    private void sendCharacterUpdate(String file) {
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream())
+        {
+            InputStream is = new FileInputStream(file+".xml");
+            byte[] buffer = new byte[0xFFFF];
+
+            for (int len; (len = is.read(buffer)) != -1;)
+                os.write(buffer, 0, len);
+            os.flush();
+            OutputStream dos = new DataOutputStream(netSocket.getOutputStream());
+            dos.write(os.toByteArray());
+        }catch(IOException e){
+            e.printStackTrace();
         }
     }
 
     private void receiveCharacter(String filepath){
         try {
-            OutputStream os = new FileOutputStream(String.format("assets/campaigns/%s/characters/%s.xml",campaign,filepath));
+            OutputStream os = new FileOutputStream(String.format("%s.xml",filepath));
             byte[] buffer = new byte[0xFFFF];
             int len = dis.read(buffer);
                 os.write(buffer, 0, len);
