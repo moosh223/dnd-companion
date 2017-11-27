@@ -1,4 +1,4 @@
-package edu.bsu.cs222;
+package edu.bsu.cs222.util;
 
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;

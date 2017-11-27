@@ -7,6 +7,7 @@ import edu.bsu.cs222.net.NetworkServerParser;
 import edu.bsu.cs222.tab.CharacterTab;
 import edu.bsu.cs222.tab.JournalTab;
 import edu.bsu.cs222.tab.SpellTab;
+import edu.bsu.cs222.util.XMLParser;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
