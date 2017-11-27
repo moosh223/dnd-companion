@@ -1,5 +1,6 @@
 package edu.bsu.cs222;
 
+import edu.bsu.cs222.control.DiceRollerController;
 import javafx.scene.layout.AnchorPane;
 import org.junit.Assert;
 import org.junit.Test;

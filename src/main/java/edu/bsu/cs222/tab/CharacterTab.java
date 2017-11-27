@@ -1,5 +1,6 @@
-package edu.bsu.cs222;
+package edu.bsu.cs222.tab;
 
+import edu.bsu.cs222.PlayerCharacter;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Label;

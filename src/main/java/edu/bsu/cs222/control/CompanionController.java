@@ -1,5 +1,12 @@
-package edu.bsu.cs222;
+package edu.bsu.cs222.control;
 
+import edu.bsu.cs222.*;
+import edu.bsu.cs222.net.NetThread;
+import edu.bsu.cs222.net.NetworkClientParser;
+import edu.bsu.cs222.net.NetworkServerParser;
+import edu.bsu.cs222.tab.CharacterTab;
+import edu.bsu.cs222.tab.JournalTab;
+import edu.bsu.cs222.tab.SpellTab;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
@@ -26,7 +33,6 @@ import java.net.*;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.SynchronousQueue;
 
 public class CompanionController {
 
@@ -154,6 +160,10 @@ public class CompanionController {
     }
 
 
+    /**Creates a new journal tab
+     * @author Josh Mooshian <jmmooshian@bsu.edu>
+     * @param filepath Path to the journal file
+     */
     private void createJournalTab(String filepath) {
         Tab newTab = new Tab("Journal");
         JournalTab journalTab = new JournalTab(filepath);

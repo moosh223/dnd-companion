@@ -1,4 +1,7 @@
-package edu.bsu.cs222;
+package edu.bsu.cs222.net;
+
+import edu.bsu.cs222.PlayerCharacter;
+import edu.bsu.cs222.tab.CharacterTab;
 
 import java.io.*;
 import java.net.Socket;
