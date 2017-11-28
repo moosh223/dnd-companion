@@ -16,10 +16,11 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
 
-public abstract class XMLParser {
+public class XMLParser {
     private Document buildDocumentStream(String filepath) throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = builderFactory.newDocumentBuilder();
+        System.err.println("Completed doc: "+builder.parse(new File(filepath)));
         return builder.parse(new File(filepath));
     }
 
@@ -43,33 +44,13 @@ public abstract class XMLParser {
         return builder.newDocument();
     }
 
-    public int[] parseStats(String stats) {
-        if (stats.equals("")) {
-            return new int[]{0, 0, 0, 0, 0, 0};
-        } else {
-            int[] statList = new int[6];
-            String[] statText = stats.split(",");
-            for (int i = 0; i < 6; i++) {
-                statList[i] = Integer.parseInt(statText[i]);
-            }
-            return statList;
-        }
-    }
-
-    public String writeStats(int[] stats) {
-        StringBuilder statString = new StringBuilder();
-        for (int i = 0; i < 5; i++) {
-            statString.append(stats[i]).append(",");
-        }
-        statString.append(stats[5]);
-        return statString.toString();
-    }
-
     public Document linkToDocument(String filepath, String rootName) throws IOException, SAXException, ParserConfigurationException{
         Document xmlDoc;
         try {
+            System.out.println("Build Path: "+filepath);
             xmlDoc = buildDocumentStream(filepath);
         }catch(IOException e){
+            System.err.println("building new");
             xmlDoc = buildNewDocument();
             createRootElement(xmlDoc, rootName);
         }

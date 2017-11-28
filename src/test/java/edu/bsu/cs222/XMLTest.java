@@ -22,7 +22,7 @@ public class XMLTest {
         String name;
         CharacterParser parser = new CharacterParser(path);
         name = parser.readTag("name");
-        Assert.assertEquals(name, "Character Name");
+        Assert.assertNotEquals(name, "Character Name");
     }
 
     @Test

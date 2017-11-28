@@ -15,10 +15,6 @@ public class CampaignParser extends XMLParser{
     private String filepath;
     private Document xmlDoc;
 
-    public Document getXML() {
-        return xmlDoc;
-    }
-
     public enum TagType{
         name(""),
         description("");
@@ -55,17 +51,26 @@ public class CampaignParser extends XMLParser{
             tag.value = getRoot(xmlDoc).getElementsByTagName(tag.toString()).item(0).getTextContent();
         }
     }
+
+    private void saveXML(){
+        for(TagType tag : TagType.values()){
+            getRoot(xmlDoc).getElementsByTagName(tag.toString()).item(0).setTextContent(tag.value);
+        }
+    }
+
     public String toString() {
         StringBuilder out = new StringBuilder();
-        for(TagType tag: TagType.values()) {
-            out.append(tag.value+",");
+        for(int i=0;i<TagType.values().length - 1;i++){
+            out.append(TagType.values()[i].value).append(",");
         }
+        out.append(TagType.values()[TagType.values().length-1].value);
         return out.toString();
     }
 
 
     private void updateDoc(){
         try{
+            saveXML();
             write(xmlDoc,filepath);
         }catch(TransformerException te){
             te.printStackTrace();
@@ -87,5 +92,6 @@ public class CampaignParser extends XMLParser{
                 tag.value = value;
             }
         }
+        updateDoc();
     }
 }

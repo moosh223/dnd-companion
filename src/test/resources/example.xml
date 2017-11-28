@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <character>
-    <name>Character Name</name>
+    <name>New Character Name</name>
     <race>Human</race>
     <height>5'0"</height>
     <weight>180lb</weight>
-    <maxhp>20</maxhp>
+    <maxhp>25</maxhp>
     <currenthp>20</currenthp>
     <classname>Fighter</classname>
     <level>1</level>
