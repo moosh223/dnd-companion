@@ -99,8 +99,8 @@ public class CompanionController {
 
     private final String characterDir = "assets/characters/";
     private final String campaignDir = "assets/campaigns/";
-    private File dir;
     private String currentCampaignDirectory;
+    private String currentCharacterDirectory;
     private boolean isPlayer = true;
     private Stage stage = new Stage();
     private ArrayList<NetThread> netThreads = new ArrayList<>();
@@ -177,7 +177,7 @@ public class CompanionController {
     @FXML
     public void newJournalMenuAction(){
         if(sheetPane.isVisible()) {
-            createJournalTab(String.format("%s/%d.jour",dir,System.nanoTime()));
+            createJournalTab(String.format("%s/%d.jour",currentCharacterDirectory,System.nanoTime()));
         }
     }
 
@@ -331,8 +331,9 @@ public class CompanionController {
     @FXML
     public void loadSelectedCharacter() {
         try {
+            currentCharacterDirectory = characterLoadList.getSelectionModel().getSelectedItem().getPath();
             createCharacterSheetTab(characterLoadList.getSelectionModel().getSelectedItem());
-            createCharacterJournals(characterLoadList.getSelectionModel().getSelectedItem().getPath());
+            createCharacterJournals(currentCharacterDirectory);
         }catch(NullPointerException e){
             String charFile = makeNewCharacterFolder(characterDir);
             createCharacterSheetTab(new CharacterParser(String.format("%s/%s/%s",characterDir,charFile,charFile)));
@@ -345,7 +346,7 @@ public class CompanionController {
     }
 
     private void createCharacterJournals(String directory) {
-        dir = new File(directory).getParentFile();
+        File dir = new File(directory).getParentFile();
         System.out.println(dir.getPath());
         File[] fileList = dir.listFiles();
         assert fileList != null;
@@ -375,16 +376,6 @@ public class CompanionController {
             e.printStackTrace();
         }
         return campaignFolder.getName();
-    }
-
-    private List<File> getCharacterFiles(){
-        List<File> characterList = new ArrayList<>();
-        File[] fileList = dir.listFiles();
-        assert fileList != null;
-        for (File file : fileList)
-            if (file.isDirectory())
-                characterList.add(file);
-        return characterList;
     }
 
     @FXML
@@ -585,18 +576,16 @@ public class CompanionController {
     private void buildNewCampaign() {
         currentCampaignDirectory = makeNewCampaignFolder();
         CampaignParser campaign = new CampaignParser(String.format("%s/%s/%s",campaignDir, currentCampaignDirectory, currentCampaignDirectory));
-        System.out.println(campaignTitle.getText());
         campaign.writeTag("name",campaignTitle.getText());
         campaign.writeTag("description",campaignSummary.getText());
-        System.out.println(campaign.toString());
         for(NetThread thread: netThreads){
             thread.setCampaign(currentCampaignDirectory);
         }
     }
 
     private void buildNewCharacter() {
-        String charFile = makeNewCharacterFolder(characterDir);
-        CharacterParser character = new CharacterParser(String.format("assets/characters/%s/%s",charFile,charFile));
+        currentCharacterDirectory = makeNewCharacterFolder(characterDir);
+        CharacterParser character = new CharacterParser(String.format("%s/%s/%s",characterDir,currentCharacterDirectory,currentCharacterDirectory));
         character.writeTag("name",characterNameTextBox.getText());
         character.writeTag("exp","0");
         character.writeTag("race",raceTextBox.getText());
