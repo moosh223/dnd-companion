@@ -140,14 +140,14 @@ public class CompanionController {
      * @param character Character used to create the new character sheet
      * @see #createJournalTab(String) createJournalTab
      */
-    private void createCharacterSheetTab(PlayerCharacter character) {
+    private void createCharacterSheetTab(CharacterParser character) {
         CharacterTab sheet = new CharacterTab(character);
         sheet.setContent(sheet.getSheet());
         sheet.setClosable(false);
         characterPane.getTabs().add(sheet);
     }
 
-    private CharacterTab makeCharacterTab(PlayerCharacter character){
+    private CharacterTab makeCharacterTab(CharacterParser character){
         CharacterTab sheet = new CharacterTab(character);
         sheet.setContent(sheet.getSheet());
         sheet.setClosable(false);
@@ -178,7 +178,7 @@ public class CompanionController {
     public void newCharacterSheetMenuAction(){
         if(characterPane.isVisible()&& !isPlayer) {
             String newChar = makeNewCharacterFolder(String.format("%s/%s/characters/",campaignDir,currentCampaignDirectory));
-            createCharacterSheetTab(new PlayerCharacter(String.format("%s/%s/characters/%s/%s",campaignDir,currentCampaignDirectory,newChar,newChar)));
+            createCharacterSheetTab(new CharacterParser(String.format("%s/%s/characters/%s/%s",campaignDir,currentCampaignDirectory,newChar,newChar)));
         }
     }
 
@@ -311,22 +311,18 @@ public class CompanionController {
 
     private Map<String, String> getXMLFileList(String searchPath) {
         Map<String,String> fileNames = new HashMap<>();
-        try {
             dir = new File(searchPath);
             for (File dir : getCharacterFiles()) {
                 File[] fileList = dir.listFiles();
                 assert fileList != null;
                 for (File file : fileList) {
                     if (file.isFile() && file.getName().contains(".xml")) {
-                        Document doc = parser.buildDocumentStream(file.getPath());
-                        String displayName = doc.getDocumentElement().getElementsByTagName("name").item(0).getTextContent();
+                        CharacterParser parser = new CharacterParser(file.getPath());
+                        String displayName = parser.readTag("name");
                         fileNames.put(file.getName().replace(".xml", ""), displayName);
                     }
                 }
             }
-        } catch (ParserConfigurationException | IOException | SAXException e) {
-            e.printStackTrace();
-        }
         return fileNames;
     }
 
@@ -357,13 +353,13 @@ public class CompanionController {
         try {
             for (Map.Entry<String, String> entry : getXMLFileList(characterDir).entrySet()) {
                 if (characterLoadList.getSelectionModel().getSelectedItem().equals(entry.getValue())) {
-                    createCharacterSheetTab(new PlayerCharacter(String.format("assets/characters/%s/%s.xml", entry.getKey(), entry.getKey())));
+                    createCharacterSheetTab(new CharacterParser(String.format("assets/characters/%s/%s.xml", entry.getKey(), entry.getKey())));
                     createCharacterJournals(entry.getKey());
                 }
             }
         }catch(NullPointerException e){
             String charFile = makeNewCharacterFolder(characterDir);
-            createCharacterSheetTab(new PlayerCharacter(
+            createCharacterSheetTab(new CharacterParser(
                     String.format("%s/%s/%s",characterDir,charFile,charFile)));
         }
         newTabMenu.setDisable(false);
@@ -591,8 +587,8 @@ public class CompanionController {
     private void buildNewCampaign() {
         currentCampaignDirectory = makeNewCampaignFolder();
         CampaignParser campaign = new CampaignParser(String.format("%s/%s/%s",campaignDir, currentCampaignDirectory, currentCampaignDirectory));
-        campaign.setCampaignName(campaignTitle.getText());
-        campaign.setCampaignDescription(campaignSummary.getText());
+        campaign.writeTag("name",campaignTitle.getText());
+        campaign.writeTag("description",campaignSummary.getText());
         for(NetThread thread: netThreads){
             thread.setCampaign(currentCampaignDirectory);
         }
@@ -600,24 +596,25 @@ public class CompanionController {
 
     private void buildNewCharacter() {
         String charFile = makeNewCharacterFolder(characterDir);
-        PlayerCharacter character = new PlayerCharacter(String.format("assets/characters/%s/%s",charFile,charFile));
-        character.setPlayerName(playerNameTextBox.getText());
-        character.setCharacterName(characterNameTextBox.getText());
-        character.setEXP("0");
-        character.setRace(raceTextBox.getText());
-        character.setAge(ageTextBox.getText());
-        character.setAlignment(alignmentBox.getValue());
-        character.setSize(sizeBox.getValue());
-        character.setHeight(heightTextBox.getText());
-        character.setSpeed(speedTextBox.getText());
-        character.setLanguages(parseLanguages());
-        character.setClassName(classTextBox.getText());
-        character.setMaxHp(hpTextBox.getText());
-        character.setCurrentHp(hpTextBox.getText());character.setStats(String.format("%s,%s,%s,%s,%s,%s",
-                strTextBox.getText(), dexTextBox.getText(), conTextBox.getText(),
-                intTextBox.getText(), wisTextBox.getText(), chaTextBox.getText()));
-        parseAbilityModifiers(character, firstAbilityModified.getValue(), firstModifiedScore.getValue());
-        parseAbilityModifiers(character, secondAbilityModified.getValue(), secondModifiedScore.getValue());
+        CharacterParser character = new CharacterParser(String.format("assets/characters/%s/%s",charFile,charFile));
+        character.writeTag("name",characterNameTextBox.getText());
+        character.writeTag("exp","0");
+        character.writeTag("race",raceTextBox.getText());
+        character.writeTag("age",ageTextBox.getText());
+        character.writeTag("alignment",alignmentBox.getValue());
+        character.writeTag("size",sizeBox.getValue());
+        character.writeTag("height",heightTextBox.getText());
+        character.writeTag("speed",speedTextBox.getText());
+        character.writeTag("languages",parseLanguages());
+        character.writeTag("class",classTextBox.getText());
+        character.writeTag("maxhp",hpTextBox.getText());
+        character.writeTag("currenthp",hpTextBox.getText());
+        int[] stats = new int[]{
+                Integer.parseInt(strTextBox.getText()), Integer.parseInt(dexTextBox.getText()), Integer.parseInt(conTextBox.getText()),
+                Integer.parseInt(intTextBox.getText()), Integer.parseInt(wisTextBox.getText()), Integer.parseInt(chaTextBox.getText())};
+        stats = parseAbilityModifiers(stats, firstAbilityModified.getValue(), firstModifiedScore.getValue());
+        stats = parseAbilityModifiers(stats, secondAbilityModified.getValue(), secondModifiedScore.getValue());
+        character.writeTag("stats",Arrays.toString(stats));
         createCharacterSheetTab(character);
     }
 
@@ -631,15 +628,15 @@ public class CompanionController {
         return languageTag.toString().replace("null", " ").trim();
     }
 
-    private void parseAbilityModifiers(PlayerCharacter character, String ability, String score) {
-        for (StatName statName : StatName.values()) {
-            if (ability.equals(statName.toString())) {
-                character.setStat(statName.getValue(), Integer.parseInt(score) +
-                        character.getStats()[statName.getValue()]);
-            } else if (ability.equals("None")) {
-                return;
+    private int[] parseAbilityModifiers(int[] stats, String ability, String score) {
+        if(!ability.equals("None")) {
+            for (StatName statName : StatName.values()) {
+                if (ability.equals(statName.toString())) {
+                    stats[statName.getValue()] += Integer.parseInt(score);
+                }
             }
         }
+        return stats;
     }
 
     @FXML

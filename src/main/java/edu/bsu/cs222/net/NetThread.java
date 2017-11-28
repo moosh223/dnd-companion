@@ -1,6 +1,6 @@
 package edu.bsu.cs222.net;
 
-import edu.bsu.cs222.PlayerCharacter;
+import edu.bsu.cs222.CharacterParser;
 import edu.bsu.cs222.tab.CharacterTab;
 
 import java.io.*;
@@ -11,7 +11,7 @@ public class NetThread extends Thread implements Runnable{
     private Socket netSocket;
     private DataOutputStream dos;
     private DataInputStream dis;
-    private PlayerCharacter clientCharacter;
+    private CharacterParser clientCharacter;
     private CharacterTab threadTab;
     private String campaign = null;
     private String characterFile;
@@ -38,7 +38,7 @@ public class NetThread extends Thread implements Runnable{
         }
     }
 
-    public void setClientCharacter(PlayerCharacter clientCharacter){
+    public void setClientCharacter(CharacterParser clientCharacter){
         this.clientCharacter = clientCharacter;
     }
 
@@ -57,7 +57,7 @@ public class NetThread extends Thread implements Runnable{
                     String name = dis.readUTF();
                     characterFile = String.format("assets/campaigns/%s/characters/%s",campaign,name);
                     receiveCharacter(characterFile);
-                    clientCharacter = new PlayerCharacter(characterFile);
+                    clientCharacter = new CharacterParser(characterFile);
                     checkPlayerUpdates();
                 }else {
                     System.out.println("Message Received, no command");
@@ -112,7 +112,7 @@ public class NetThread extends Thread implements Runnable{
         }
     }
 
-    public PlayerCharacter getCharacter() {
+    public CharacterParser getCharacter() {
         return clientCharacter;
     }
 

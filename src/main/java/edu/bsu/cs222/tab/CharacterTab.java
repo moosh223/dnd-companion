@@ -1,6 +1,6 @@
 package edu.bsu.cs222.tab;
 
-import edu.bsu.cs222.PlayerCharacter;
+import edu.bsu.cs222.CharacterParser;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -21,7 +21,7 @@ import java.util.List;
 
 public class CharacterTab extends Tab{
     private FXMLLoader sheet;
-    private PlayerCharacter character;
+    private CharacterParser character;
     private TabPane tabPane;
     private AnchorPane parent;
     private List<TextField> displayFields = new ArrayList<>();
@@ -35,10 +35,10 @@ public class CharacterTab extends Tab{
     private List<List<String>> skillLists = new ArrayList<>();
     public boolean updateFlag = false;
 
-    public CharacterTab(PlayerCharacter character) {
+    public CharacterTab(CharacterParser character) {
         sheet = new FXMLLoader(getClass().getClassLoader().getResource("fxml/CharacterTab.fxml"));
         this.character = character;
-        setText(this.character.getCharacterName());
+        setText(character.readTag("name"));
         init();
         updateCharacterView();
     }
@@ -80,6 +80,7 @@ public class CharacterTab extends Tab{
 
     private TextField searchFields(String searchQuery) {
         for (TextField field : displayFields) {
+            assert field != null;
             if (field.getId().equals(searchQuery)) {
                 return field;
             }
@@ -87,13 +88,13 @@ public class CharacterTab extends Tab{
         return null;
     }
 
-    private Label searchLabels(String searchQuery) {
+    private Label searchLabels(String searchQuery) throws NullPointerException{
         for(Label label: labels){
             if(label.getId().equals(searchQuery)){
                 return label;
             }
         }
-        return null;
+        throw new NullPointerException();
     }
 
     private void createSkillLists() {
@@ -103,14 +104,6 @@ public class CharacterTab extends Tab{
         wisSkills.addAll(Arrays.asList("displayAnimalHandlingMod", "displayInsightMod","displayMedicineMod","displayPerceptionMod","displaySurvivalMod"));
         chaSkills.addAll(Arrays.asList("displayDeceptionMod","displayIntimidationMod","displayPerformanceMod", "displayPersuasionMod"));
         skillLists.addAll(Arrays.asList(strSkills,dexSkills,conSkills,intSkills,wisSkills,chaSkills));
-    }
-    private Method searchCharacterMethods(String searchQuery){
-        for(Method method: PlayerCharacter.class.getMethods()){
-            if(method.getName().equals(searchQuery)){
-                return  method;
-            }
-        }
-        return null;
     }
 
     private void buildDisplayFields() {
@@ -138,8 +131,6 @@ public class CharacterTab extends Tab{
         }
     }
 
-
-
     private void loadPaneContent() {
         try{
             parent = sheet.load();
@@ -151,62 +142,52 @@ public class CharacterTab extends Tab{
     }
 
     private void updateCharacterView(){
-        updateField("displayCharName", character.getCharacterName());
-        updateField("displayRace", character.getRace());
-        updateField("displayClassName", character.getClassName());
-        updateField("displayAlignment", character.getAlignment());
-        updateField("displayExp", character.getEXP());
-        updateField("displayAge", character.getAge());
-        updateField("displaySize", character.getSize());
-        updateField("displayHeight", character.getHeight());
-        updateField("displayMaxHp", character.getMaxHP());
-        updateField("displayCurrentHp", character.getCurrentHp());
-        updateField("displayStr", String.valueOf(character.getStats()[0]));
-        updateLabel("displayStrMod", getModifier(character.getStats()[0]));
-        updateField("displayDex", String.valueOf(character.getStats()[1]));
-        updateLabel("displayDexMod", getModifier(character.getStats()[1]));
-        updateField("displayCon", String.valueOf(character.getStats()[2]));
-        updateLabel("displayConMod", getModifier(character.getStats()[2]));
-        updateField("displayInt", String.valueOf(character.getStats()[3]));
-        updateLabel("displayIntMod", getModifier(character.getStats()[3]));
-        updateField("displayWis", String.valueOf(character.getStats()[4]));
-        updateLabel("displayWisMod", getModifier(character.getStats()[4]));
-        updateField("displayCha", String.valueOf(character.getStats()[5]));
-        updateLabel("displayChaMod", getModifier(character.getStats()[5]));
+        updateField("displayCharName", character.readTag("name"));
+        updateField("displayRace", character.readTag("race"));
+        updateField("displayClassName", character.readTag("classname"));
+        updateField("displayAlignment", character.readTag("alignment"));
+        updateField("displayExp", character.readTag("exp"));
+        updateField("displayAge", character.readTag("age"));
+        updateField("displaySize", character.readTag("size"));
+        updateField("displayHeight", character.readTag("height"));
+        updateField("displayMaxHp", character.readTag("maxhp"));
+        updateField("displayCurrentHp", character.readTag("currenthp"));
+        updateField("displayStr", String.valueOf(character.readTag("stats").split(",")[0]));
+        updateLabel("displayStrMod", getModifier(character.readTag("stats").split(",")[0]));
+        updateField("displayDex", String.valueOf(character.readTag("stats").split(",")[1]));
+        updateLabel("displayDexMod", getModifier(character.readTag("stats").split(",")[1]));
+        updateField("displayCon", String.valueOf(character.readTag("stats").split(",")[2]));
+        updateLabel("displayConMod", getModifier(character.readTag("stats").split(",")[2]));
+        updateField("displayInt", String.valueOf(character.readTag("stats").split(",")[3]));
+        updateLabel("displayIntMod", getModifier(character.readTag("stats").split(",")[3]));
+        updateField("displayWis", String.valueOf(character.readTag("stats").split(",")[4]));
+        updateLabel("displayWisMod", getModifier(character.readTag("stats").split(",")[4]));
+        updateField("displayCha", String.valueOf(character.readTag("stats").split(",")[5]));
+        updateLabel("displayChaMod", getModifier(character.readTag("stats").split(",")[5]));
         updateSkillModifiers();
     }
 
-    private void updateCharacterXML(){
-        writeField("setCharacterName","displayCharName");
-        writeField("setRace","displayRace");
-        writeField("setClassName","displayClassName");
-        writeField("setAlignment","displayAlignment");
-        writeField("setEXP","displayExp");
-        writeField("setAge","displayAge");
-        writeField("setSize","displaySize");
-        writeField("setHeight","displayHeight");
-        writeField("setMaxHp","displayMaxHp");
-        writeField("setCurrentHp","displayCurrentHp");
-        writeStats(String.format("%s,%s,%s,%s,%s,%s",
-                searchFields("displayStr").getText(),searchFields("displayDex").getText(),
-                searchFields("displayCon").getText(),searchFields("displayInt").getText(),
-                searchFields("displayWis").getText(),searchFields("displayCha").getText()
+    private void updateCharacterXML() {
+        character.writeTag("name", searchFields("displayCharName").getText());
+        character.writeTag("race", searchFields("displayRace").getText());
+        character.writeTag("classname", searchFields("displayClassName").getText());
+        character.writeTag("alignment", searchFields("displayAlignment").getText());
+        character.writeTag("exp", searchFields("displayExp").getText());
+        character.writeTag("age", searchFields("displayAge").getText());
+        character.writeTag("size", searchFields("displaySize").getText());
+        character.writeTag("height", searchFields("displayHeight").getText());
+        character.writeTag("maxhp", searchFields("displayMaxHp").getText());
+        character.writeTag("currenthp", searchFields("displayCurrentHp").getText());
+        character.writeTag("stats", String.format("%s,%s,%s,%s,%s,%s",
+                searchFields("displayStr").getText(), searchFields("displayDex").getText(),
+                searchFields("displayCon").getText(), searchFields("displayInt").getText(),
+                searchFields("displayWis").getText(), searchFields("displayCha").getText()
         ));
         updateCharacterView();
     }
 
-    private void writeStats(String stats) {
-        try{
-            Method toEdit = searchCharacterMethods("setStats");
-            assert toEdit != null;
-            toEdit.invoke(character,stats);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private String getModifier(int stat){
-        return String.valueOf((int)Math.floor((stat-10)/2.0));
+    private String getModifier(String stat){
+        return String.valueOf((int)Math.floor((Integer.parseInt(stat)-10)/2.0));
     }
 
 
@@ -222,19 +203,9 @@ public class CharacterTab extends Tab{
         toEdit.setText(property);
     }
 
-    private void writeField(String field, String property) {
-        try{
-            Method toEdit = searchCharacterMethods(field);
-            assert toEdit != null;
-            toEdit.invoke(character,searchFields(property).getText());
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void updateSkillModifiers(){
         for(List<String> skill: skillLists){
-            setSkillModifiers(skill,Integer.parseInt(getModifier(character.getStats()[skillLists.indexOf(skill)])));
+            setSkillModifiers(skill,Integer.parseInt(getModifier(character.readTag("stats").split(",")[skillLists.indexOf(skill)])));
         }
     }
     private void setSkillModifiers(List<String> skillList, int stat){
@@ -248,7 +219,7 @@ public class CharacterTab extends Tab{
         return parent;
     }
 
-    public PlayerCharacter getCharacter() {
+    public CharacterParser getCharacter() {
         return character;
     }
 }

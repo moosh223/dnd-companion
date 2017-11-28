@@ -4,8 +4,15 @@
     <race>Human</race>
     <height>5'0"</height>
     <weight>180lb</weight>
-    <hp>20</hp>
-    <class>Fighter</class>
+    <maxhp>20</maxhp>
+    <currenthp>20</currenthp>
+    <classname>Fighter</classname>
     <level>1</level>
-    <stats>13,12,14,18,15,16</stats>
+    <stats>12,14,14,13,15,3</stats>
+    <exp/>
+    <age/>
+    <alignment/>
+    <size/>
+    <speed/>
+    <languages/>
 </character>

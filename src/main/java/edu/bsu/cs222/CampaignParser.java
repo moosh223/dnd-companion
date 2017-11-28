@@ -8,6 +8,8 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class CampaignParser extends XMLParser{
     private String filepath;
@@ -18,8 +20,13 @@ public class CampaignParser extends XMLParser{
     }
 
     public enum TagType{
-        name,
-        description,
+        name(""),
+        description("");
+
+        private String value;
+        TagType(String value){
+            this.value = value;
+        }
     }
 
     public CampaignParser(String filepath) {
@@ -28,25 +35,34 @@ public class CampaignParser extends XMLParser{
             this.filepath += ".xml";
         }
         try{
-            xmlDoc = linkToDocument(filepath);
-        }catch(Exception e){
+            xmlDoc = linkToDocument(this.filepath,"campaign");
+            readXML();
+        } catch (SAXException | ParserConfigurationException | IOException e) {
             e.printStackTrace();
+        } catch (NullPointerException npe){
+            buildXML();
         }
+        updateDoc();
     }
-
 
     private void buildXML() {
         for(TagType tag: TagType.values()) {
-            getRoot().appendChild(xmlDoc.createElement(tag.toString()));
+            getRoot(xmlDoc).appendChild(xmlDoc.createElement(tag.toString()));
         }
     }
-    private Element getRoot() {
-        return xmlDoc.getDocumentElement();
+    public void readXML() {
+        for(TagType tag: TagType.values()) {
+            tag.value = getRoot(xmlDoc).getElementsByTagName(tag.toString()).item(0).getTextContent();
+        }
+    }
+    public String toString() {
+        StringBuilder out = new StringBuilder();
+        for(TagType tag: TagType.values()) {
+            out.append(tag.value+",");
+        }
+        return out.toString();
     }
 
-    private void createRootElement() {
-        xmlDoc.appendChild(xmlDoc.createElement("campaign"));
-    }
 
     private void updateDoc(){
         try{
@@ -56,13 +72,20 @@ public class CampaignParser extends XMLParser{
         }
     }
 
-    public void setCampaignName(String name){
-        getRoot().getElementsByTagName("name").item(0).setTextContent(name);
-        updateDoc();
+    public String readTag(String tagName){
+        for(TagType tag : TagType.values()){
+            if(tag.toString().equals(tagName)){
+                return tag.value;
+            }
+        }
+        return null;
     }
 
-    public void setCampaignDescription(String description){
-        getRoot().getElementsByTagName("description").item(0).setTextContent(description);
-        updateDoc();
+    public void writeTag(String tagName, String value) {
+        for(TagType tag : TagType.values()){
+            if(tag.toString().equals(tagName)){
+                tag.value = value;
+            }
+        }
     }
 }
