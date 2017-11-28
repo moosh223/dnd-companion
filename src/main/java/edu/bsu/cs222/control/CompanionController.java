@@ -1,11 +1,10 @@
 package edu.bsu.cs222.control;
 
-import edu.bsu.cs222.*;
 import edu.bsu.cs222.net.*;
 import edu.bsu.cs222.tab.*;
-import edu.bsu.cs222.util.XMLParser;
+import edu.bsu.cs222.util.CampaignParser;
+import edu.bsu.cs222.util.CharacterParser;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -20,9 +19,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-import javax.xml.parsers.ParserConfigurationException;
+
 import java.awt.*;
 import java.io.*;
 import java.net.*;
@@ -34,7 +31,7 @@ public class CompanionController {
 
     //ViewPanes
     @FXML public BorderPane welcomePane;
-    @FXML public TabPane characterPane;
+    @FXML public TabPane sheetPane;
     @FXML public BorderPane charTypePane;
     @FXML public BorderPane charTypePaneDM;
     @FXML public BorderPane loadPane;
@@ -90,7 +87,7 @@ public class CompanionController {
     private List<ComboBox> creatorComboBoxes = new ArrayList<>();
 
     //Miscellaneous Elements
-    @FXML public ListView<String> campaignLoadList;
+    @FXML public ListView<CampaignParser> campaignLoadList;
     @FXML public ListView<CharacterParser> characterLoadList;
     @FXML public ListView<String> sendView;
     @FXML public CheckBox diceRollerButton;
@@ -140,16 +137,15 @@ public class CompanionController {
      */
     private void createCharacterSheetTab(CharacterParser character) {
         CharacterTab sheet = new CharacterTab(character);
-        sheet.setContent(sheet.getSheet());
         sheet.setClosable(false);
-        characterPane.getTabs().add(sheet);
+        sheetPane.getTabs().add(sheet);
     }
 
-    private CharacterTab makeCharacterTab(CharacterParser character){
-        CharacterTab sheet = new CharacterTab(character);
-        sheet.setContent(sheet.getSheet());
-        sheet.setClosable(false);
-        return sheet;
+    private void makeCharacterTab(CharacterParser character){
+        for(Tab tab: sheetPane.getTabs()){
+            CharacterTab characterTab = (CharacterTab)tab;
+            System.out.println(characterTab.getCharacter().equals(character));
+        }
     }
 
 
@@ -161,7 +157,7 @@ public class CompanionController {
         Tab newTab = new Tab("Journal");
         JournalTab journalTab = new JournalTab(filepath);
         newTab.setContent(journalTab.getSheet());
-        characterPane.getTabs().add(newTab);
+        sheetPane.getTabs().add(newTab);
     }
 
 
@@ -169,12 +165,12 @@ public class CompanionController {
         Tab newTab = new Tab("Spell Sheet");
         SpellTab spellTab = new SpellTab();
         newTab.setContent(spellTab.getSheet());
-        characterPane.getTabs().add(newTab);
+        sheetPane.getTabs().add(newTab);
     }
 
     @FXML
     public void newCharacterSheetMenuAction(){
-        if(characterPane.isVisible()&& !isPlayer) {
+        if(sheetPane.isVisible()&& !isPlayer) {
             String newChar = makeNewCharacterFolder(String.format("%s/%s/characters/",campaignDir,currentCampaignDirectory));
             createCharacterSheetTab(new CharacterParser(String.format("%s/%s/characters/%s/%s",campaignDir,currentCampaignDirectory,newChar,newChar)));
         }
@@ -182,14 +178,14 @@ public class CompanionController {
 
     @FXML
     public void newJournalMenuAction(){
-        if(characterPane.isVisible()) {
+        if(sheetPane.isVisible()) {
             createJournalTab(String.format("%s/%d.jour",dir,System.nanoTime()));
         }
     }
 
     @FXML
     public void newSpellSheetMenuAction(){
-        if(characterPane.isVisible()){
+        if(sheetPane.isVisible()){
             createSpellSheetTab();
         }
     }
@@ -265,10 +261,9 @@ public class CompanionController {
 
     @FXML
     public void sendServerMessage(){
-        characterPane.getTabs().clear();
+        sheetPane.getTabs().clear();
         for(NetThread thread: netThreads){
-            thread.setTab(makeCharacterTab(thread.getCharacter()));
-            characterPane.getTabs().add(thread.getTab());
+            makeCharacterTab(thread.getCharacter());
         }
     }
 
@@ -287,56 +282,33 @@ public class CompanionController {
     }
 
     private void populateLoadTable() {
-        characterLoadList.setItems(FXCollections.observableArrayList(getCharacters(characterDir)));
+        characterLoadList.setItems(FXCollections.observableArrayList(getCharacters()));
     }
 
     private void populateLoadTableDM() {
-        ObservableMap<String, String> fileList = FXCollections.observableMap(getXMLFileList(campaignDir));
-        for (String name : fileList.values()) {
-            campaignLoadList.getItems().add(name);
-        }
+        campaignLoadList.setItems(FXCollections.observableArrayList(getCampaigns()));
     }
 
     private void populateSendTable() {
-        ObservableMap<String, String> fileList = FXCollections.observableMap(getXMLFileList(characterDir));
-        for (String name : fileList.values()) {
-            sendView.getItems().add(name);
-        }
+        characterLoadList.setItems(FXCollections.observableArrayList(getCharacters()));
     }
 
-    private Map<String, String> getXMLFileList(String searchPath) {
-        Map<String,String> fileNames = new HashMap<>();
-            dir = new File(searchPath);
-            for (File dir : getCharacterFiles()) {
-                File[] fileList = dir.listFiles();
-                assert fileList != null;
-                for (File file : fileList) {
-                    if (file.isFile() && file.getName().contains(".xml")) {
-                        CharacterParser parser = new CharacterParser(file.getPath());
-                        String displayName = parser.readTag("name");
-                        fileNames.put(file.getName().replace(".xml", ""), displayName);
-                    }
-                }
-            }
+    private ArrayList<CharacterParser> getCharacters() {
+        ArrayList<CharacterParser> fileNames = new ArrayList<>();
+        File path = new File(campaignDir);
+        for(File file: getXMLFiles(path.listFiles())){
+            System.err.println(file.getPath());
+            fileNames.add(new CharacterParser(file.getPath()));
+        }
         return fileNames;
     }
 
-    private ArrayList<CharacterParser> getCharacters(String searchPath) {
-        ArrayList<CharacterParser> fileNames = new ArrayList<>();
-        File path = new File(searchPath);
-        for (File dir : path.listFiles()) {
-            if(dir.isDirectory()){
-                File[] fileList = dir.listFiles();
-                assert fileList != null;
-                for (File file : fileList) {
-                    if (file.isFile() && file.getName().contains(".xml")) {
-                        System.err.println(file.getPath());
-                        CharacterParser parser = new CharacterParser(file.getPath());
-                        fileNames.add(parser);
-                    }
-                }
-            }
-
+    private ArrayList<CampaignParser> getCampaigns() {
+        ArrayList<CampaignParser> fileNames = new ArrayList<>();
+        File path = new File(campaignDir);
+        for(File file: getXMLFiles(path.listFiles())){
+            System.err.println(file.getPath());
+            fileNames.add(new CampaignParser(file.getPath()));
         }
         return fileNames;
     }
@@ -345,21 +317,16 @@ public class CompanionController {
     @FXML
     public void loadSelectedCampaign() {
         try {
-            for (Map.Entry<String, String> entry : getXMLFileList(campaignDir).entrySet()) {
-                if (campaignLoadList.getSelectionModel().getSelectedItem().equals(entry.getValue())) {
-                    currentCampaignDirectory = entry.getKey();
-                    for(NetThread thread: netThreads){
-                        thread.setCampaign(currentCampaignDirectory);
-                    }
-                }
-            }
+            currentCampaignDirectory = campaignLoadList.getSelectionModel().getSelectedItem().getCampaignDirectory();
+            System.out.println(currentCampaignDirectory);
+            loadCampaign(currentCampaignDirectory);
         }catch(NullPointerException e){
             e.printStackTrace();
             buildNewCampaign();
         }
         newTabMenu.setDisable(false);
         newJournalMenuItem.setDisable(false);
-        characterPane.setVisible(true);
+        sheetPane.setVisible(true);
         newCharacterSheetMenuItem.setDisable(false);
         loadCampaignPane.setVisible(false);
     }
@@ -377,7 +344,7 @@ public class CompanionController {
         newJournalMenuItem.setDisable(false);
         newCharacterSheetMenuItem.setDisable(true);
         loadPane.setVisible(false);
-        characterPane.setVisible(true);
+        sheetPane.setVisible(true);
     }
 
     private void createCharacterJournals(String directory) {
@@ -492,7 +459,7 @@ public class CompanionController {
             newJournalMenuItem.setDisable(false);
             newCharacterSheetMenuItem.setDisable(true);
             statPane.setVisible(false);
-            characterPane.setVisible(true);
+            sheetPane.setVisible(true);
         }
     }
 
@@ -508,7 +475,7 @@ public class CompanionController {
             newTabMenu.setDisable(false);
             newJournalMenuItem.setDisable(false);
             newCharacterSheetMenuItem.setDisable(false);
-            characterPane.setVisible(true);
+            sheetPane.setVisible(true);
         }
     }
 
@@ -553,7 +520,7 @@ public class CompanionController {
 
     @FXML
     public void sendSelectedCharacter() {
-        try {
+        /*try {
             for (Map.Entry<String, String> entry : getXMLFileList(characterDir).entrySet()) {
                 if (sendView.getSelectionModel().getSelectedItem().equals(entry.getValue())) {
                     try {
@@ -568,7 +535,7 @@ public class CompanionController {
             }
         }catch(NullPointerException e){
             e.printStackTrace();
-        }
+        }*/
     }
 
 
@@ -592,6 +559,29 @@ public class CompanionController {
             }
         }
         return true;
+    }
+
+    private void loadCampaign(String campaign){
+        File[] characterFiles = new File(campaign+"/characters").listFiles();
+        for(File file: getXMLFiles(characterFiles)){
+            createCharacterSheetTab(new CharacterParser(file.getPath()));
+        }
+    }
+
+    private ArrayList<File> getXMLFiles(File[] directory){
+        ArrayList<File> xmlFiles = new ArrayList<>();
+        for(File file:directory){
+            if(file.isDirectory()){
+                File[] subDirectory = file.listFiles();
+                assert subDirectory != null;
+                for(File subFile: subDirectory){
+                    if (subFile.isFile() && subFile.getName().contains(".xml")) {
+                        xmlFiles.add(subFile);
+                    }
+                }
+            }
+        }
+        return xmlFiles;
     }
 
     private void buildNewCampaign() {

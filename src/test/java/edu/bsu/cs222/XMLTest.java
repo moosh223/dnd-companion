@@ -1,5 +1,6 @@
 package edu.bsu.cs222;
 
+import edu.bsu.cs222.util.CharacterParser;
 import org.junit.Assert;
 import org.junit.Test;
 import org.xml.sax.SAXException;

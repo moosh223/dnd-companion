@@ -1,6 +1,6 @@
 package edu.bsu.cs222.tab;
 
-import edu.bsu.cs222.CharacterParser;
+import edu.bsu.cs222.util.CharacterParser;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -13,8 +13,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,7 +34,7 @@ public class CharacterTab extends Tab{
     public boolean updateFlag = false;
 
     public CharacterTab(CharacterParser character) {
-        sheet = new FXMLLoader(getClass().getClassLoader().getResource("fxml/CharacterTab.fxml"));
+        setContent();
         this.character = character;
         setText(character.readTag("name"));
         init();
@@ -132,13 +130,9 @@ public class CharacterTab extends Tab{
     }
 
     private void loadPaneContent() {
-        try{
-            parent = sheet.load();
-            BorderPane borderPane =  (BorderPane)parent.getChildren().get(0);
-            tabPane = (TabPane) borderPane.getCenter();
-        }catch(IOException e){
-            e.printStackTrace();
-        }
+        parent = (AnchorPane) getContent();
+        BorderPane borderPane = (BorderPane) parent.getChildren().get(0);
+        tabPane = (TabPane) borderPane.getCenter();
     }
 
     private void updateCharacterView(){
@@ -216,8 +210,12 @@ public class CharacterTab extends Tab{
             label.setText(String.valueOf(stat));
         }
     }
-    public Node getSheet() {
-        return parent;
+    public void setContent(){
+        try{
+            setContent(new FXMLLoader(getClass().getClassLoader().getResource("fxml/CharacterTab.fxml")).load());
+        }catch(IOException e){
+            e.printStackTrace();
+        }
     }
 
     public CharacterParser getCharacter() {

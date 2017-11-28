@@ -147,7 +147,7 @@
                      </HBox>
                  </center>
               </BorderPane>
-              <TabPane fx:id="characterPane" prefHeight="590.0" prefWidth="543.0" styleClass="toptab" visible="false" />
+              <TabPane fx:id="sheetPane" prefHeight="590.0" prefWidth="543.0" styleClass="toptab" visible="false" />
               <BorderPane fx:id="loadPane" visible="false">
                  <top>
                      <Label text="Select character to load" textAlignment="CENTER" BorderPane.alignment="CENTER">

@@ -1,4 +1,4 @@
-package edu.bsu.cs222;
+package edu.bsu.cs222.util;
 
 import edu.bsu.cs222.util.XMLParser;
 import org.w3c.dom.Document;
@@ -7,6 +7,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +18,10 @@ public class CampaignParser extends XMLParser{
     private String filepath;
     private Document xmlDoc;
     private Map<String, String> tags = new TreeMap<>();
+
+    public String getCampaignDirectory() {
+        return new File(filepath).getParent();
+    }
 
     public enum TagType{
         name(""),

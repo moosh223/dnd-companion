@@ -1,6 +1,6 @@
 package edu.bsu.cs222.net;
 
-import edu.bsu.cs222.CharacterParser;
+import edu.bsu.cs222.util.CharacterParser;
 import edu.bsu.cs222.tab.CharacterTab;
 
 import java.io.*;
