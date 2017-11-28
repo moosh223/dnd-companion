@@ -1,4 +1,4 @@
-package edu.bsu.cs222;
+package edu.bsu.cs222.net;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -28,8 +28,8 @@ public class NetworkClientParser {
 
     public void getMessageFromServer(){
         try{
-            InputStream outToServer = socket.getInputStream();
-            DataInputStream out = new DataInputStream(outToServer);
+            InputStream fromServer = socket.getInputStream();
+            DataInputStream out = new DataInputStream(fromServer);
             try {
                 System.out.println(out.readUTF());
             }catch(EOFException e){
@@ -61,16 +61,17 @@ public class NetworkClientParser {
         }
     }
 
-    public void getObjectFromServer(){
+    public void getObjectFromServer(String filepath){
         try {
-            InputStream fromServer = socket.getInputStream();
-            ObjectInputStream in = new ObjectInputStream(fromServer);
-            try{
-                System.out.println(in.readObject());
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        } catch (IOException e) {
+            DataInputStream dis = new DataInputStream(socket.getInputStream());
+            OutputStream os = new FileOutputStream(String.format("%stemp.xml",filepath));
+            byte[] buffer = new byte[0xFFFF];
+            int len = dis.read(buffer);
+            System.out.println(len);
+            os.write(buffer, 0, len);
+            os.flush();
+            os.close();
+        }catch(IOException e){
             e.printStackTrace();
         }
     }

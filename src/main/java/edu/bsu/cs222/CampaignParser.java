@@ -1,5 +1,6 @@
 package edu.bsu.cs222;
 
+import edu.bsu.cs222.util.XMLParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -8,41 +9,32 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
 
-public class CampaignCreation {
+public class CampaignParser extends XMLParser{
     private String filepath;
-    private XMLParser parser = new XMLParser();
     private Document xmlDoc;
 
     public Document getXML() {
         return xmlDoc;
     }
 
-    private enum TagType{
+    public enum TagType{
         name,
         description,
     }
 
-    public CampaignCreation(String filepath) {
+    public CampaignParser(String filepath) {
         this.filepath = filepath;
         if(!filepath.contains(".xml")){
             this.filepath += ".xml";
         }
         try{
-            linkToDocument();
+            xmlDoc = linkToDocument(filepath);
         }catch(Exception e){
             e.printStackTrace();
         }
     }
 
-    private void linkToDocument() throws IOException, SAXException, ParserConfigurationException{
-        try {
-            xmlDoc = parser.buildDocumentStream(filepath);
-        }catch(IOException e){
-            xmlDoc = parser.buildNewDocument();
-            createRootElement();
-            buildXML();
-        }
-    }
+
     private void buildXML() {
         for(TagType tag: TagType.values()) {
             getRoot().appendChild(xmlDoc.createElement(tag.toString()));
@@ -58,7 +50,7 @@ public class CampaignCreation {
 
     private void updateDoc(){
         try{
-            parser.write(xmlDoc,filepath);
+            write(xmlDoc,filepath);
         }catch(TransformerException te){
             te.printStackTrace();
         }

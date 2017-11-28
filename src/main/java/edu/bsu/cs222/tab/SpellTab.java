@@ -1,4 +1,4 @@
-package edu.bsu.cs222;
+package edu.bsu.cs222.tab;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;

@@ -1,5 +1,6 @@
 package edu.bsu.cs222;
 
+import edu.bsu.cs222.util.XMLParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -12,7 +13,7 @@ public class PlayerCharacter {
     private String filepath;
     private XMLParser parser = new XMLParser();
     private Document xmlDoc;
-    public boolean uptodate = true;
+    public boolean updated = false;
 
     public Document getXML() {
         return xmlDoc;
@@ -182,9 +183,7 @@ public class PlayerCharacter {
         }
     }
 
-
-
     public boolean isUpdated(){
-        return uptodate;
+        return updated;
     }
 }

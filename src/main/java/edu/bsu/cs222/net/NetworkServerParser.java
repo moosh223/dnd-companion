@@ -1,4 +1,4 @@
-package edu.bsu.cs222;
+package edu.bsu.cs222.net;
 
 import java.io.*;
 import java.net.*;

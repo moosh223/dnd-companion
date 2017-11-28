@@ -1,4 +1,4 @@
-package edu.bsu.cs222;
+package edu.bsu.cs222.util;
 
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -62,5 +62,15 @@ public class XMLParser {
         }
         statString.append(stats[5]);
         return statString.toString();
+    }
+
+    public Document linkToDocument(String filepath) throws IOException, SAXException, ParserConfigurationException{
+        Document xmlDoc;
+        try {
+            xmlDoc = buildDocumentStream(filepath);
+        }catch(IOException e){
+            xmlDoc = buildNewDocument();
+        }
+        return xmlDoc;
     }
 }
