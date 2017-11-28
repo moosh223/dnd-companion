@@ -17,7 +17,7 @@ public class CampaignParser extends XMLParser{
         return xmlDoc;
     }
 
-    private enum TagType{
+    public enum TagType{
         name,
         description,
     }
@@ -28,7 +28,7 @@ public class CampaignParser extends XMLParser{
             this.filepath += ".xml";
         }
         try{
-            linkToDocument(filepath);
+            xmlDoc = linkToDocument(filepath);
         }catch(Exception e){
             e.printStackTrace();
         }
