@@ -2,21 +2,22 @@ package edu.bsu.cs222.tab;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 
 import java.io.*;
 
-public class JournalTab {
+public class JournalTab extends Tab {
 
-    private FXMLLoader sheet;
     private BorderPane parent;
     private TextArea journalSpace;
     private String filepath;
 
     public JournalTab(String filepath){
-        sheet = new FXMLLoader(getClass().getClassLoader().getResource("fxml/JournalTab.fxml"));
         this.filepath = filepath;
+        setText("Journal");
+        setContent();
         loadPaneContent();
         setTextListener();
         readJournal();
@@ -53,15 +54,16 @@ public class JournalTab {
     }
 
     private void loadPaneContent() {
+        parent = (BorderPane) getContent();
+    }
+
+    public void setContent(){
         try{
-            parent = sheet.load();
+            setContent(new FXMLLoader(getClass().getClassLoader().getResource("fxml/JournalTab.fxml")).load());
         }catch(IOException e){
             e.printStackTrace();
         }
     }
 
-    public Node getSheet() {
-        return parent;
-    }
 
 }

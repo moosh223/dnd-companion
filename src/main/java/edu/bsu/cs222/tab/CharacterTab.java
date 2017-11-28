@@ -18,10 +18,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CharacterTab extends Tab{
-    private FXMLLoader sheet;
     private CharacterParser character;
     private TabPane tabPane;
-    private AnchorPane parent;
     private List<TextField> displayFields = new ArrayList<>();
     private List<Label> labels = new ArrayList<>();
     private List<String> strSkills = new ArrayList<>();
@@ -130,7 +128,7 @@ public class CharacterTab extends Tab{
     }
 
     private void loadPaneContent() {
-        parent = (AnchorPane) getContent();
+        AnchorPane parent = (AnchorPane) getContent();
         BorderPane borderPane = (BorderPane) parent.getChildren().get(0);
         tabPane = (TabPane) borderPane.getCenter();
     }

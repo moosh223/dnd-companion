@@ -5,6 +5,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -13,7 +14,7 @@ import javafx.scene.text.Text;
 
 import java.io.*;
 
-public class SpellTab {
+public class SpellTab extends Tab {
     private FXMLLoader sheet;
     private AnchorPane parent;
     private Button newSpellButton;

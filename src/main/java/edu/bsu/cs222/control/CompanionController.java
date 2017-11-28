@@ -136,9 +136,9 @@ public class CompanionController {
      * @see #createJournalTab(String) createJournalTab
      */
     private void createCharacterSheetTab(CharacterParser character) {
-        CharacterTab sheet = new CharacterTab(character);
-        sheet.setClosable(false);
-        sheetPane.getTabs().add(sheet);
+        CharacterTab characterTab = new CharacterTab(character);
+        characterTab.setClosable(false);
+        sheetPane.getTabs().add(characterTab);
     }
 
     private void makeCharacterTab(CharacterParser character){
@@ -154,10 +154,8 @@ public class CompanionController {
      * @param filepath Path to the journal file
      */
     private void createJournalTab(String filepath) {
-        Tab newTab = new Tab("Journal");
         JournalTab journalTab = new JournalTab(filepath);
-        newTab.setContent(journalTab.getSheet());
-        sheetPane.getTabs().add(newTab);
+        sheetPane.getTabs().add(journalTab);
     }
 
 
@@ -261,7 +259,6 @@ public class CompanionController {
 
     @FXML
     public void sendServerMessage(){
-        sheetPane.getTabs().clear();
         for(NetThread thread: netThreads){
             makeCharacterTab(thread.getCharacter());
         }
@@ -295,7 +292,7 @@ public class CompanionController {
 
     private ArrayList<CharacterParser> getCharacters() {
         ArrayList<CharacterParser> fileNames = new ArrayList<>();
-        File path = new File(campaignDir);
+        File path = new File(characterDir);
         for(File file: getXMLFiles(path.listFiles())){
             System.err.println(file.getPath());
             fileNames.add(new CharacterParser(file.getPath()));
@@ -335,7 +332,7 @@ public class CompanionController {
     public void loadSelectedCharacter() {
         try {
             createCharacterSheetTab(characterLoadList.getSelectionModel().getSelectedItem());
-            createCharacterJournals(characterLoadList.getSelectionModel().getSelectedItem().getPath().replace(".xml",""));
+            createCharacterJournals(characterLoadList.getSelectionModel().getSelectedItem().getPath());
         }catch(NullPointerException e){
             String charFile = makeNewCharacterFolder(characterDir);
             createCharacterSheetTab(new CharacterParser(String.format("%s/%s/%s",characterDir,charFile,charFile)));
@@ -349,6 +346,7 @@ public class CompanionController {
 
     private void createCharacterJournals(String directory) {
         dir = new File(directory).getParentFile();
+        System.out.println(dir.getPath());
         File[] fileList = dir.listFiles();
         assert fileList != null;
         for (File file : fileList)
