@@ -78,7 +78,7 @@
                   <MenuItem mnemonicParsing="false" onAction="#sendServerMessage" text="Send Server Message" />
                   <CustomMenuItem fx:id="connectMenu" hideOnClick="false" mnemonicParsing="false" text="Unspecified Action">
                      <content>
-                        <TextField fx:id="ipConnect" onAction="#connectToSpecificServer" promptText="IP to connect to" />
+                        <TextField fx:id="ipConnect" onAction="#connectToServer" promptText="IP to connect to" />
                      </content>
                   </CustomMenuItem>
               </items>

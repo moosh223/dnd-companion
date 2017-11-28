@@ -4,15 +4,19 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-public class NetworkClientParser {
+public class ClientModel{
 
     private Socket socket;
     private String serverName;
-
-    public NetworkClientParser(String serverName){
-        int port = 2000;
+    private final static int SERVER_TIMEOUT_MILLIS = 1000;
+    public ClientModel(String serverName){
         this.serverName = serverName;
-        connectToServer(port);
+        connectToServer(2000);
+    }
+
+    public ClientModel(String address, int port) throws IOException{
+        socket = new Socket();
+        socket.connect(new InetSocketAddress(address,port),SERVER_TIMEOUT_MILLIS);
     }
 
     private void connectToServer(int port){

@@ -99,13 +99,12 @@ public class CompanionController {
 
     private final String characterDir = "assets/characters/";
     private final String campaignDir = "assets/campaigns/";
-    private String currentCampaignDirectory;
-    private String currentCharacterDirectory;
+    private String currentCampaignDir;
+    private String currentCharacterDir;
     private boolean isPlayer = true;
-    private Stage stage = new Stage();
-    private ArrayList<NetThread> netThreads = new ArrayList<>();
-    private NetworkServerParser netParse;
-    private NetworkClientParser clientParser;
+    private Stage diceRoller = new Stage();
+    private ArrayList<ClientNode> clients = new ArrayList<>();
+    private ClientModel clientParser;
 
     private enum StatName {
         Strength(0),
@@ -169,15 +168,15 @@ public class CompanionController {
     @FXML
     public void newCharacterSheetMenuAction(){
         if(sheetPane.isVisible()&& !isPlayer) {
-            String newChar = makeNewCharacterFolder(String.format("%s/%s/characters/",campaignDir,currentCampaignDirectory));
-            createCharacterSheetTab(new CharacterParser(String.format("%s/%s/characters/%s/%s",campaignDir,currentCampaignDirectory,newChar,newChar)));
+            String newChar = makeNewCharacterFolder(String.format("%s/%s/characters/",campaignDir, currentCampaignDir));
+            createCharacterSheetTab(new CharacterParser(String.format("%s/%s/characters/%s/%s",campaignDir, currentCampaignDir,newChar,newChar)));
         }
     }
 
     @FXML
     public void newJournalMenuAction(){
         if(sheetPane.isVisible()) {
-            createJournalTab(String.format("%s/%d.jour",currentCharacterDirectory,System.nanoTime()));
+            createJournalTab(String.format("%s/%d.jour", currentCharacterDir,System.nanoTime()));
         }
     }
 
@@ -200,17 +199,17 @@ public class CompanionController {
             assert loadDir != null;
             Parent parent = FXMLLoader.load(loadDir);
             Scene scene=new Scene(parent);
-            stage.setTitle("Dice Roller");
-            stage.getIcons().add(new Image("icons/DiceIcon.png"));
+            diceRoller.setTitle("Dice Roller");
+            diceRoller.getIcons().add(new Image("icons/DiceIcon.png"));
             parent.getStylesheets().clear();
             parent.getStylesheets().add("themes/default.css");
-            stage.setOnCloseRequest((e) -> diceRollerButton.selectedProperty().setValue(false));
-            stage.setResizable(false);
-            stage.setScene(scene);
-            stage.show();
+            diceRoller.setOnCloseRequest((e) -> diceRollerButton.selectedProperty().setValue(false));
+            diceRoller.setResizable(false);
+            diceRoller.setScene(scene);
+            diceRoller.show();
             return;
         }
-        stage.close();
+        diceRoller.close();
     }
 
     @FXML
@@ -228,39 +227,18 @@ public class CompanionController {
     @FXML
     private void startServer() {
         try {
-            netParse = new NetworkServerParser(2000);
-            networkLabel.setText("Your IP Address is: "+ netParse.getLANAddress());
-            new Thread(() -> {
-                while(Thread.currentThread().isAlive()) {
-                    try {
-                        netParse.server = netParse.serverSocket.accept();
-                        System.out.printf("%s has connected%n", netParse.server.getInetAddress().toString());
-                        System.out.println("CREATING NEW THREAD");
-                        createNewNetThread();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
+            Server server = new Server(clients);
+            networkLabel.setText(server.getLANAddress().toString());
+            server.start();
         }catch(IOException e){
             e.printStackTrace();
         }
     }
 
-    private void createNewNetThread() {
-        NetThread thread = new NetThread(netParse.server);
-        thread.setName(netParse.server.getInetAddress().toString());
-        if(!(currentCampaignDirectory == null)){
-            thread.setCampaign(currentCampaignDirectory);
-        }
-        netThreads.add(thread);
-        thread.start();
-    }
-
     @FXML
     public void sendServerMessage(){
-        for(NetThread thread: netThreads){
-            makeCharacterTab(thread.getCharacter());
+        for(ClientNode thread: clients){
+            System.out.println("Thread");
         }
     }
 
@@ -314,9 +292,9 @@ public class CompanionController {
     @FXML
     public void loadSelectedCampaign() {
         try {
-            currentCampaignDirectory = campaignLoadList.getSelectionModel().getSelectedItem().getCampaignDirectory();
-            System.out.println(currentCampaignDirectory);
-            loadCampaign(currentCampaignDirectory);
+            currentCampaignDir = campaignLoadList.getSelectionModel().getSelectedItem().getCampaignDirectory();
+            System.out.println(currentCampaignDir);
+            loadCampaign(currentCampaignDir);
         }catch(NullPointerException e){
             e.printStackTrace();
             buildNewCampaign();
@@ -331,9 +309,9 @@ public class CompanionController {
     @FXML
     public void loadSelectedCharacter() {
         try {
-            currentCharacterDirectory = characterLoadList.getSelectionModel().getSelectedItem().getPath();
+            currentCharacterDir = characterLoadList.getSelectionModel().getSelectedItem().getPath();
             createCharacterSheetTab(characterLoadList.getSelectionModel().getSelectedItem());
-            createCharacterJournals(currentCharacterDirectory);
+            createCharacterJournals(currentCharacterDir);
         }catch(NullPointerException e){
             String charFile = makeNewCharacterFolder(characterDir);
             createCharacterSheetTab(new CharacterParser(String.format("%s/%s/%s",characterDir,charFile,charFile)));
@@ -477,32 +455,16 @@ public class CompanionController {
 
     private void connectToServer(String ip){
         try {
-            clientParser = new NetworkClientParser(ip);
-            for(NetThread thread : netThreads){
-                if(clientParser.getSocketAddress().equals(thread.getName())){
-                    return;
-                }
-            }
+            clientParser = new ClientModel(ip,2000);
             networkLabel.setText("Connected to: " + clientParser.getSocketAddress());
-            clientParser.writeToServer(clientParser.getSocketAddress());
-            clientParser.getMessageFromServer();
-            new Thread(() -> {
-                while(Thread.currentThread().isAlive()){
-                    try{
-                        clientParser.getMessageFromServer();
-                    }catch(Exception e){
-                        e.printStackTrace();
-                        Thread.currentThread().interrupt();
-                    }
-                }
-            }).start();
-        }catch(Exception e){
+
+        }catch(IOException e){
             System.err.println("Unable to establish a connection");
         }
     }
 
     @FXML
-    public void connectToSpecificServer(){
+    public void connectToServer(){
         String ip = ipConnect.getText();
         connectToServer(ip);
     }
@@ -574,18 +536,18 @@ public class CompanionController {
     }
 
     private void buildNewCampaign() {
-        currentCampaignDirectory = makeNewCampaignFolder();
-        CampaignParser campaign = new CampaignParser(String.format("%s/%s/%s",campaignDir, currentCampaignDirectory, currentCampaignDirectory));
+        currentCampaignDir = makeNewCampaignFolder();
+        CampaignParser campaign = new CampaignParser(String.format("%s/%s/%s",campaignDir, currentCampaignDir, currentCampaignDir));
         campaign.writeTag("name",campaignTitle.getText());
         campaign.writeTag("description",campaignSummary.getText());
-        for(NetThread thread: netThreads){
-            thread.setCampaign(currentCampaignDirectory);
+        for(ClientNode thread: clients){
+            thread.setCampaign(currentCampaignDir);
         }
     }
 
     private void buildNewCharacter() {
-        currentCharacterDirectory = makeNewCharacterFolder(characterDir);
-        CharacterParser character = new CharacterParser(String.format("%s/%s/%s",characterDir,currentCharacterDirectory,currentCharacterDirectory));
+        currentCharacterDir = makeNewCharacterFolder(characterDir);
+        CharacterParser character = new CharacterParser(String.format("%s/%s/%s",characterDir, currentCharacterDir, currentCharacterDir));
         character.writeTag("name",characterNameTextBox.getText());
         character.writeTag("exp","0");
         character.writeTag("race",raceTextBox.getText());

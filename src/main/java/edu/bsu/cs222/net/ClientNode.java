@@ -6,9 +6,9 @@ import edu.bsu.cs222.tab.CharacterTab;
 import java.io.*;
 import java.net.Socket;
 
-public class NetThread extends Thread implements Runnable{
+public class ClientNode extends Thread implements Runnable{
 
-    private Socket netSocket;
+    private Socket connection;
     private DataOutputStream dos;
     private DataInputStream dis;
     private CharacterParser clientCharacter;
@@ -16,15 +16,15 @@ public class NetThread extends Thread implements Runnable{
     private String campaign = null;
     private String characterFile;
 
-    public NetThread(Socket netSocket){
-        this.netSocket = netSocket;
+    public ClientNode(Socket connection){
+        this.connection = connection;
         createDataOutputStream();
         createDataInputStream();
     }
 
     private void createDataInputStream(){
         try {
-            dis = new DataInputStream(netSocket.getInputStream());
+            dis = new DataInputStream(connection.getInputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -32,7 +32,7 @@ public class NetThread extends Thread implements Runnable{
 
     private void createDataOutputStream() {
         try {
-            dos = new DataOutputStream(netSocket.getOutputStream());
+            dos = new DataOutputStream(connection.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -45,12 +45,15 @@ public class NetThread extends Thread implements Runnable{
     public DataOutputStream getDos() {
         return dos;
     }
+    public DataInputStream getDis() {
+        return dis;
+    }
 
     @Override
     public void run() {
         try {
             dis.readUTF();
-            dos.writeUTF("you connected,"+netSocket.getInetAddress()+"!");
+            dos.writeUTF("you connected,"+ connection.getInetAddress()+"!");
             while (Thread.currentThread().isAlive()) {
                 String message = dis.readUTF();
                 if(message.equals("load") && campaign != null){
@@ -92,7 +95,7 @@ public class NetThread extends Thread implements Runnable{
             for (int len; (len = is.read(buffer)) != -1;)
                 os.write(buffer, 0, len);
             os.flush();
-            OutputStream dos = new DataOutputStream(netSocket.getOutputStream());
+            OutputStream dos = new DataOutputStream(connection.getOutputStream());
             dos.write(os.toByteArray());
         }catch(IOException e){
             e.printStackTrace();
