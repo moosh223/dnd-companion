@@ -54,10 +54,4 @@ public class XMLTest {
         CharacterParser newParse = new CharacterParser("src/test/resources/newTest.xml");
         Assert.assertNotNull(newParse.readTag("name"));
     }
-
-    @Test
-    public void testCampaignParser() throws IOException, ParserConfigurationException, TransformerException{
-        CampaignParser parser = new CampaignParser("src/test/resources/campaignTest");
-        parser.readXML();
-    }
 }

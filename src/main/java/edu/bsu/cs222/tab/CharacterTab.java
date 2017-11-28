@@ -165,6 +165,7 @@ public class CharacterTab extends Tab{
         updateField("displayCha", String.valueOf(character.readTag("stats").split(",")[5]));
         updateLabel("displayChaMod", getModifier(character.readTag("stats").split(",")[5]));
         updateSkillModifiers();
+        setText(character.readTag("name"));
     }
 
     private void updateCharacterXML() {

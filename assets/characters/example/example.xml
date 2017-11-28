@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <character owner="Josh Mooshian">
-    <name>Fia</name>
+    <name>Fido</name>
     <race>Gud Boi</race>
     <classname>Pupper</classname>
-    <stats>13,12,14,14,200,16</stats>
+    <stats>13,12,14,14,20,16</stats>
     <maxhp>20</maxhp>
-    <currenthp>24</currenthp>
+    <currenthp>20</currenthp>
     <exp>69</exp>
     <age>7</age>
     <alignment>bad boi</alignment>

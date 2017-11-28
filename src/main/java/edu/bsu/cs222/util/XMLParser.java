@@ -16,11 +16,10 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
 
-public class XMLParser {
+public abstract class XMLParser {
     private Document buildDocumentStream(String filepath) throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = builderFactory.newDocumentBuilder();
-        System.err.println("Completed doc: "+builder.parse(new File(filepath)));
         return builder.parse(new File(filepath));
     }
 
@@ -44,13 +43,11 @@ public class XMLParser {
         return builder.newDocument();
     }
 
-    public Document linkToDocument(String filepath, String rootName) throws IOException, SAXException, ParserConfigurationException{
+    protected Document linkToDocument(String filepath, String rootName) throws IOException, SAXException, ParserConfigurationException{
         Document xmlDoc;
         try {
-            System.out.println("Build Path: "+filepath);
             xmlDoc = buildDocumentStream(filepath);
         }catch(IOException e){
-            System.err.println("building new");
             xmlDoc = buildNewDocument();
             createRootElement(xmlDoc, rootName);
         }

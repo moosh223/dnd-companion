@@ -10,10 +10,13 @@ import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class CampaignParser extends XMLParser{
     private String filepath;
     private Document xmlDoc;
+    private Map<String, String> tags = new TreeMap<>();
 
     public enum TagType{
         name(""),
@@ -26,6 +29,7 @@ public class CampaignParser extends XMLParser{
     }
 
     public CampaignParser(String filepath) {
+        initMap();
         this.filepath = filepath;
         if(!filepath.contains(".xml")){
             this.filepath += ".xml";
@@ -41,32 +45,60 @@ public class CampaignParser extends XMLParser{
         updateDoc();
     }
 
+    private void initMap() {
+        tags.put("name","");
+        tags.put("description","");
+    }
+
     private void buildXML() {
-        for(TagType tag: TagType.values()) {
-            getRoot(xmlDoc).appendChild(xmlDoc.createElement(tag.toString()));
+        for (String tag : tags.keySet()) {
+            getRoot(xmlDoc).appendChild(xmlDoc.createElement(tag));
         }
     }
-    public void readXML() {
-        for(TagType tag: TagType.values()) {
-            tag.value = getRoot(xmlDoc).getElementsByTagName(tag.toString()).item(0).getTextContent();
+
+    private void readXML() {
+        for (String tag : tags.keySet()) {
+            tags.put(tag,getRoot(xmlDoc).getElementsByTagName(tag).item(0).getTextContent());
         }
     }
 
     private void saveXML(){
-        for(TagType tag : TagType.values()){
-            getRoot(xmlDoc).getElementsByTagName(tag.toString()).item(0).setTextContent(tag.value);
+        for(String tag : tags.keySet()){
+            getRoot(xmlDoc).getElementsByTagName(tag).item(0).setTextContent(tags.get(tag));
         }
     }
 
-    public String toString() {
+    public String getTagString() {
         StringBuilder out = new StringBuilder();
-        for(int i=0;i<TagType.values().length - 1;i++){
-            out.append(TagType.values()[i].value).append(",");
+        ArrayList<String> tagList = new ArrayList<>(tags.values());
+        for(int i=0;i<tagList.size() - 1;i++){
+            out.append(tagList.get(i)).append(",");
         }
-        out.append(TagType.values()[TagType.values().length-1].value);
+        out.append(tagList.get(tagList.size()-1));
         return out.toString();
     }
 
+    public String toString() {
+        return tags.get("name");
+    }
+
+    public String readTag(String tagName){
+        for(String tag : tags.keySet()){
+            if(tag.equals(tagName)){
+                return tags.get(tag);
+            }
+        }
+        return null;
+    }
+
+    public void writeTag(String tagName, String value) {
+        for(String tag : tags.keySet()){
+            if(tag.equals(tagName)){
+                tags.put(tag,value);
+            }
+        }
+        updateDoc();
+    }
 
     private void updateDoc(){
         try{
@@ -75,23 +107,5 @@ public class CampaignParser extends XMLParser{
         }catch(TransformerException te){
             te.printStackTrace();
         }
-    }
-
-    public String readTag(String tagName){
-        for(TagType tag : TagType.values()){
-            if(tag.toString().equals(tagName)){
-                return tag.value;
-            }
-        }
-        return null;
-    }
-
-    public void writeTag(String tagName, String value) {
-        for(TagType tag : TagType.values()){
-            if(tag.toString().equals(tagName)){
-                tag.value = value;
-            }
-        }
-        updateDoc();
     }
 }

@@ -323,7 +323,7 @@ public class CompanionController {
 
     private ArrayList<CharacterParser> getCharacters(String searchPath) {
         ArrayList<CharacterParser> fileNames = new ArrayList<>();
-        File path = new File(characterDir);
+        File path = new File(searchPath);
         for (File dir : path.listFiles()) {
             if(dir.isDirectory()){
                 File[] fileList = dir.listFiles();
@@ -368,13 +368,10 @@ public class CompanionController {
     public void loadSelectedCharacter() {
         try {
             createCharacterSheetTab(characterLoadList.getSelectionModel().getSelectedItem());
-            //createCharacterJournals(entry.getKey());
+            createCharacterJournals(characterLoadList.getSelectionModel().getSelectedItem().getPath().replace(".xml",""));
         }catch(NullPointerException e){
-            System.err.println("we nulled");
             String charFile = makeNewCharacterFolder(characterDir);
-            CharacterParser character = new CharacterParser(String.format("%s/%s/%s",characterDir,charFile,charFile));
-            System.out.println(character.toString());
-            //createCharacterSheetTab();
+            createCharacterSheetTab(new CharacterParser(String.format("%s/%s/%s",characterDir,charFile,charFile)));
         }
         newTabMenu.setDisable(false);
         newJournalMenuItem.setDisable(false);
@@ -384,7 +381,7 @@ public class CompanionController {
     }
 
     private void createCharacterJournals(String directory) {
-        dir = new File(characterDir + directory);
+        dir = new File(directory).getParentFile();
         File[] fileList = dir.listFiles();
         assert fileList != null;
         for (File file : fileList)
@@ -522,8 +519,7 @@ public class CompanionController {
         populateSendTable();
     }
 
-    @FXML
-    public void connectToServer(String ip){
+    private void connectToServer(String ip){
         try {
             clientParser = new NetworkClientParser(ip);
             for(NetThread thread : netThreads){
