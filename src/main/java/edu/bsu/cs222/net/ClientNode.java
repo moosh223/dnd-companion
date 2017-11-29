@@ -16,6 +16,7 @@ public class ClientNode extends Thread implements Runnable{
     private Socket connection;
     private DataOutputStream dos;
     private DataInputStream dis;
+    public String fileDir;
 
     public ClientNode(Socket connection) throws IOException{
         this.connection = connection;
@@ -73,7 +74,7 @@ public class ClientNode extends Thread implements Runnable{
 
     public void getObjectFromServer(){
         try {
-            OutputStream os = new FileOutputStream(String.format("assets/campaigns/remote%s.xml",connection.getInetAddress().toString()));
+            OutputStream os = new FileOutputStream(fileDir);
             byte[] buffer = new byte[0xFFFF];
             int len = dis.read(buffer);
             System.out.println(len);

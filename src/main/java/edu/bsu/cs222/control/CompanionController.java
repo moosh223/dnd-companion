@@ -321,7 +321,8 @@ public class CompanionController {
             character = characterLoadList.getSelectionModel().getSelectedItem();
         }catch(NullPointerException e){
             String charFile = makeNewCharacterFolder(characterDir);
-            character = new CharacterParser(String.format("%s/%s/%s",characterDir,charFile,charFile));
+            currentCharacterDir = String.format("%s/%s/%s",characterDir,charFile,charFile);
+            character = new CharacterParser(currentCharacterDir);
         }
         if(clientParser != null){
             createCharacterSheetTab(character,clientParser);

@@ -140,6 +140,7 @@ public class CharacterTab extends Tab{
 
     public void setNode(ClientNode node){
         this.node = node;
+        this.node.fileDir = character.getPath();
     }
 
     private void loadPaneContent() {
@@ -198,7 +199,7 @@ public class CharacterTab extends Tab{
     private void sendUpdateMessage() {
         try (ByteArrayOutputStream os = new ByteArrayOutputStream())
         {
-            node.getDos().writeUTF("UPDATE");InputStream is = new FileInputStream(character.getFile());
+            node.getDos().writeUTF("UPDATE");InputStream is = new FileInputStream(new File(character.getPath()));
             byte[] buffer = new byte[0xFFFF];
             for (int len; (len = is.read(buffer)) != -1;)
                 os.write(buffer, 0, len);

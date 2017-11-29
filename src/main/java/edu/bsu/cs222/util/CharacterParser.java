@@ -126,8 +126,4 @@ public class CharacterParser extends XMLParser {
     public String getPath() {
         return filepath;
     }
-
-    public File getFile() {
-        return new File(filepath);
-    }
 }
