@@ -73,7 +73,7 @@ public class ClientNode extends Thread implements Runnable{
 
     public void getObjectFromServer(){
         try {
-            OutputStream os = new FileOutputStream(connection.getInetAddress().toString());
+            OutputStream os = new FileOutputStream(String.format("assets/campaigns/remote%s.xml",connection.getInetAddress().toString()));
             byte[] buffer = new byte[0xFFFF];
             int len = dis.read(buffer);
             System.out.println(len);
