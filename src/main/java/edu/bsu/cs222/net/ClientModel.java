@@ -7,47 +7,9 @@ import java.net.Socket;
 public class ClientModel{
 
     private Socket socket;
-    private String serverName;
+    private DataOutputStream dos;
+    private DataInputStream dis;
     private final static int SERVER_TIMEOUT_MILLIS = 1000;
-    public ClientModel(String serverName){
-        this.serverName = serverName;
-        connectToServer(2000);
-    }
-
-    public ClientModel(String address, int port) throws IOException{
-        socket = new Socket();
-        socket.connect(new InetSocketAddress(address,port),SERVER_TIMEOUT_MILLIS);
-    }
-
-    private void connectToServer(int port){
-        try {
-            System.out.println("Connecting to " + serverName + " on port " + port);
-            socket = new Socket();
-            socket.connect(new InetSocketAddress(serverName,port),1000);
-            System.out.println("Just connected to " + socket.getRemoteSocketAddress());
-        } catch (IOException e){
-            System.err.println("Server not found");
-        }
-    }
-
-    public void getMessageFromServer(){
-        try{
-            InputStream fromServer = socket.getInputStream();
-            DataInputStream out = new DataInputStream(fromServer);
-            try {
-                System.out.println(out.readUTF());
-            }catch(EOFException e){
-                try {
-                    System.err.printf("You have disconnected from %s%n",socket.getInetAddress());
-                    Thread.currentThread().join();
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public void sendCharacterXML(File file){
         try (ByteArrayOutputStream os = new ByteArrayOutputStream())
@@ -76,16 +38,6 @@ public class ClientModel{
             os.flush();
             os.close();
         }catch(IOException e){
-            e.printStackTrace();
-        }
-    }
-
-    public void writeToServer(String message){
-        try{
-            OutputStream outToServer = socket.getOutputStream();
-            DataOutputStream out = new DataOutputStream(outToServer);
-            out.writeUTF(message);
-        } catch (IOException e) {
             e.printStackTrace();
         }
     }

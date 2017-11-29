@@ -1,47 +1,40 @@
 package edu.bsu.cs222.net;
 
+import edu.bsu.cs222.control.CompanionController;
 import edu.bsu.cs222.util.CharacterParser;
 import edu.bsu.cs222.tab.CharacterTab;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class ClientNode extends Thread implements Runnable{
 
+    private final static int SERVER_TIMEOUT_MILLIS = 1000;
     private Socket connection;
     private DataOutputStream dos;
     private DataInputStream dis;
-    private CharacterParser clientCharacter;
-    private CharacterTab threadTab;
-    private String campaign = null;
-    private String characterFile;
 
-    public ClientNode(Socket connection){
+    public ClientNode(Socket connection) throws IOException{
         this.connection = connection;
-        createDataOutputStream();
-        createDataInputStream();
+        System.out.println("Server Side Client Node Created");
+        dos = new DataOutputStream(connection.getOutputStream());
+        dis = new DataInputStream(connection.getInputStream());
     }
 
-    private void createDataInputStream(){
-        try {
-            dis = new DataInputStream(connection.getInputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public ClientNode(String address, int port) throws IOException{
+        connection = new Socket();
+        connection.connect(new InetSocketAddress(address,port),SERVER_TIMEOUT_MILLIS);
+        System.out.println("Client Side Client Node Created");
+        dos = new DataOutputStream(connection.getOutputStream());
+        dis = new DataInputStream(connection.getInputStream());
     }
 
-    private void createDataOutputStream() {
-        try {
-            dos = new DataOutputStream(connection.getOutputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public String getSocketAddress(){
+        return connection.getInetAddress().toString();
     }
-
-    public void setClientCharacter(CharacterParser clientCharacter){
-        this.clientCharacter = clientCharacter;
-    }
-
     public DataOutputStream getDos() {
         return dos;
     }
@@ -51,87 +44,10 @@ public class ClientNode extends Thread implements Runnable{
 
     @Override
     public void run() {
-        try {
-            dis.readUTF();
-            dos.writeUTF("you connected,"+ connection.getInetAddress()+"!");
-            while (Thread.currentThread().isAlive()) {
-                String message = dis.readUTF();
-                if(message.equals("load") && campaign != null){
-                    String name = dis.readUTF();
-                    characterFile = String.format("assets/campaigns/%s/characters/%s",campaign,name);
-                    receiveCharacter(characterFile);
-                    clientCharacter = new CharacterParser(characterFile);
-                    checkPlayerUpdates();
-                }else {
-                    System.out.println("Message Received, no command");
-                    try{
-                        dis.readUTF();
-                        dis.read(new byte[0xFFFF]);
-                    }catch(IOException e){
-                        e.printStackTrace();
-                    }
-                }
-            }
+        while (Thread.currentThread().isAlive()) try {
+            System.out.println(dis.readUTF());
         }catch(IOException e){
             e.printStackTrace();
         }
-    }
-
-    public void checkPlayerUpdates() {
-        while(Thread.currentThread().isAlive()){
-            if(threadTab != null && threadTab.updateFlag){
-                threadTab.updateFlag = false;
-                sendCharacterUpdate(characterFile);
-            }
-        }
-    }
-
-    private void sendCharacterUpdate(String file) {
-        try (ByteArrayOutputStream os = new ByteArrayOutputStream())
-        {
-            InputStream is = new FileInputStream(file+".xml");
-            byte[] buffer = new byte[0xFFFF];
-
-            for (int len; (len = is.read(buffer)) != -1;)
-                os.write(buffer, 0, len);
-            os.flush();
-            OutputStream dos = new DataOutputStream(connection.getOutputStream());
-            dos.write(os.toByteArray());
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-    }
-
-    private void receiveCharacter(String filepath){
-        try {
-            OutputStream os = new FileOutputStream(String.format("%s.xml",filepath));
-            byte[] buffer = new byte[0xFFFF];
-            int len = dis.read(buffer);
-                os.write(buffer, 0, len);
-                os.flush();
-                os.close();
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-    }
-
-    public CharacterParser getCharacter() {
-        return clientCharacter;
-    }
-
-    public void setCampaign(String campaign) {
-        this.campaign = campaign;
-    }
-
-    public String getCampaign() {
-        return campaign;
-    }
-
-    public void setTab(CharacterTab tab) {
-        threadTab = tab;
-    }
-
-    public CharacterTab getTab() {
-        return threadTab;
     }
 }

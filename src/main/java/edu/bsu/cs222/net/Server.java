@@ -24,14 +24,14 @@ public class Server extends Thread implements Runnable{
             InetAddress candidateAddress = null;
             for (Enumeration interfaces = NetworkInterface.getNetworkInterfaces(); interfaces.hasMoreElements();) {
                 NetworkInterface anInterface = (NetworkInterface) interfaces.nextElement();
-                for (Enumeration inetAddrs = anInterface.getInetAddresses(); inetAddrs.hasMoreElements();) {
-                    InetAddress inetAddr = (InetAddress) inetAddrs.nextElement();
-                    if (!inetAddr.isLoopbackAddress()) {
-                        if (inetAddr.isSiteLocalAddress()) {
-                            return inetAddr;
+                for (Enumeration addresses = anInterface.getInetAddresses(); addresses.hasMoreElements();) {
+                    InetAddress address = (InetAddress) addresses.nextElement();
+                    if (!address.isLoopbackAddress()) {
+                        if (address.isSiteLocalAddress()) {
+                            return address;
                         }
                         else if (candidateAddress == null) {
-                            candidateAddress = inetAddr;
+                            candidateAddress = address;
                         }
                     }
                 }
@@ -41,7 +41,7 @@ public class Server extends Thread implements Runnable{
             }
             InetAddress jdkSuppliedAddress = InetAddress.getLocalHost();
             if (jdkSuppliedAddress == null) {
-                throw new UnknownHostException("The JDK InetAddress.getLocalHost() method unexpectedly returned null.");
+                throw new UnknownHostException("The JDK INetAddress.getLocalHost() method unexpectedly returned null.");
             }
             return jdkSuppliedAddress;
         }
@@ -52,28 +52,27 @@ public class Server extends Thread implements Runnable{
         }
     }
 
-    @Override
-    public void start(){
-        System.out.println("Starting Server...");
-    }
 
     @Override
     public void run(){
-        while(Thread.currentThread().isAlive()) {
-            try {
-                createNewClient(clientListener.accept());
-                System.out.println("CREATING NEW THREAD");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        System.out.println("Starting Server...");
+        while(Thread.currentThread().isAlive()) try {
+            Socket socket = clientListener.accept();
+            createNewClient(socket);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     private void createNewClient(Socket socket) {
-        System.out.printf("%s has connected%n", socket.getInetAddress().toString());
-        ClientNode thread = new ClientNode(socket);
-        thread.setName(socket.getInetAddress().toString());
-        clientList.add(thread);
-        thread.start();
+        try {
+            System.out.printf("%s has connected%n", socket.getInetAddress().toString());
+            ClientNode thread = new ClientNode(socket);
+            thread.setName(socket.getInetAddress().toString());
+            clientList.add(thread);
+            thread.start();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 }

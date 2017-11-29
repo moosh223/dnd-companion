@@ -89,7 +89,7 @@ public class CompanionController {
     //Miscellaneous Elements
     @FXML public ListView<CampaignParser> campaignLoadList;
     @FXML public ListView<CharacterParser> characterLoadList;
-    @FXML public ListView<String> sendView;
+    @FXML public ListView<CharacterParser> sendView;
     @FXML public CheckBox diceRollerButton;
     @FXML public MenuItem newCharacterSheetMenuItem;
     //@FXML public MenuItem loadPrevCharacters;
@@ -101,10 +101,10 @@ public class CompanionController {
     private final String campaignDir = "assets/campaigns/";
     private String currentCampaignDir;
     private String currentCharacterDir;
+    private ClientNode clientParser;
     private boolean isPlayer = true;
     private Stage diceRoller = new Stage();
     private ArrayList<ClientNode> clients = new ArrayList<>();
-    private ClientModel clientParser;
 
     private enum StatName {
         Strength(0),
@@ -265,14 +265,13 @@ public class CompanionController {
     }
 
     private void populateSendTable() {
-        characterLoadList.setItems(FXCollections.observableArrayList(getCharacters()));
+        sendView.setItems(FXCollections.observableArrayList(getCharacters()));
     }
 
     private ArrayList<CharacterParser> getCharacters() {
         ArrayList<CharacterParser> fileNames = new ArrayList<>();
         File path = new File(characterDir);
         for(File file: getXMLFiles(path.listFiles())){
-            System.err.println(file.getPath());
             fileNames.add(new CharacterParser(file.getPath()));
         }
         return fileNames;
@@ -282,7 +281,6 @@ public class CompanionController {
         ArrayList<CampaignParser> fileNames = new ArrayList<>();
         File path = new File(campaignDir);
         for(File file: getXMLFiles(path.listFiles())){
-            System.err.println(file.getPath());
             fileNames.add(new CampaignParser(file.getPath()));
         }
         return fileNames;
@@ -325,7 +323,6 @@ public class CompanionController {
 
     private void createCharacterJournals(String directory) {
         File dir = new File(directory).getParentFile();
-        System.out.println(dir.getPath());
         File[] fileList = dir.listFiles();
         assert fileList != null;
         for (File file : fileList)
@@ -455,9 +452,9 @@ public class CompanionController {
 
     private void connectToServer(String ip){
         try {
-            clientParser = new ClientModel(ip,2000);
+            clientParser = new ClientNode(ip, 2000);
             networkLabel.setText("Connected to: " + clientParser.getSocketAddress());
-
+            clientParser.start();
         }catch(IOException e){
             System.err.println("Unable to establish a connection");
         }
@@ -471,24 +468,18 @@ public class CompanionController {
 
     @FXML
     public void sendSelectedCharacter() {
-        /*try {
-            for (Map.Entry<String, String> entry : getXMLFileList(characterDir).entrySet()) {
-                if (sendView.getSelectionModel().getSelectedItem().equals(entry.getValue())) {
-                    try {
-                        clientParser.writeToServer("load");
-                        clientParser.writeToServer(entry.getValue());
-                        clientParser.sendCharacterXML(new File(String.format("%s%s/%s.xml",characterDir, entry.getKey(),entry.getKey())));
-                        new Thread(() -> clientParser.getObjectFromServer(String.format("%s%s/%s",characterDir,entry.getKey(),entry.getKey()))).start();
-                    }catch(NullPointerException e){
-                        System.err.println("You aren't connected to a server!");
-                    }
-                }
-            }
-        }catch(NullPointerException e){
+        try {
+            clientParser.getDos().writeUTF(sendView.getSelectionModel().getSelectedItem().getTagString());
+        }catch (IOException e){
             e.printStackTrace();
-        }*/
+        }catch(NullPointerException npe){
+            if(clientParser==null){
+                System.err.println("Not connected to a DM");
+            }else{
+                System.err.println("Please select a character to send");
+            }
+        }
     }
-
 
     private boolean isPageFilled() {
         return isComboBoxFilled() && isTextFieldFilled();
@@ -540,9 +531,6 @@ public class CompanionController {
         CampaignParser campaign = new CampaignParser(String.format("%s/%s/%s",campaignDir, currentCampaignDir, currentCampaignDir));
         campaign.writeTag("name",campaignTitle.getText());
         campaign.writeTag("description",campaignSummary.getText());
-        for(ClientNode thread: clients){
-            thread.setCampaign(currentCampaignDir);
-        }
     }
 
     private void buildNewCharacter() {
