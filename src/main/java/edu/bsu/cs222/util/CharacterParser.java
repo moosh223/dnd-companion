@@ -58,7 +58,7 @@ public class CharacterParser extends XMLParser {
         }
     }
 
-    private void readXML() {
+    public void readXML() {
         for (String tag : tags.keySet()) {
             tags.put(tag,getRoot(xmlDoc).getElementsByTagName(tag).item(0).getTextContent());
         }

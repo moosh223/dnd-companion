@@ -1,5 +1,11 @@
 package edu.bsu.cs222.net;
 
+import edu.bsu.cs222.tab.CharacterTab;
+import edu.bsu.cs222.util.CharacterParser;
+import javafx.application.Platform;
+import javafx.scene.control.Label;
+import javafx.scene.control.TabPane;
+
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
@@ -9,9 +15,11 @@ public class Server extends Thread implements Runnable{
 
     private ArrayList<ClientNode> clientList;
     private ServerSocket clientListener;
+    private TabPane view;
 
-    public Server(ArrayList<ClientNode> clientList) throws IOException{
+    public Server(ArrayList<ClientNode> clientList, TabPane pane) throws IOException{
         this.clientList = clientList;
+        view = pane;
         clientListener = new ServerSocket(2000);
     }
 
@@ -67,7 +75,7 @@ public class Server extends Thread implements Runnable{
     private void createNewClient(Socket socket) {
         try {
             System.out.printf("%s has connected%n", socket.getInetAddress().toString());
-            ClientNode thread = new ClientNode(socket);
+            ClientNode thread = new ClientNode(socket,view);
             thread.setName(socket.getInetAddress().toString());
             clientList.add(thread);
             thread.start();

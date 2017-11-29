@@ -33,20 +33,12 @@ public class CharacterTab extends Tab{
     private ClientNode node;
     public boolean updateFlag = false;
 
-    public CharacterTab(CharacterParser character) {
-        setContent();
-        this.character = character;
-        setText(character.readTag("name"));
-        init();
-        updateCharacterView();
-    }
-
     public CharacterTab(CharacterParser character, ClientNode node) {
         setContent();
+        this.node = node;
         this.character = character;
         setText(character.readTag("name"));
         init();
-        this.node = node;
         updateCharacterView();
     }
 
@@ -74,7 +66,10 @@ public class CharacterTab extends Tab{
 
     private void createDisplayAction(){
         for(TextField field: displayFields){
-            field.setOnAction((event) -> updateCharacterXML());
+            field.setOnAction((event) -> {
+                updateCharacterXML();
+                updateCharacterView();
+            });
         }
 
     }
@@ -138,11 +133,6 @@ public class CharacterTab extends Tab{
         }
     }
 
-    public void setNode(ClientNode node){
-        this.node = node;
-        this.node.fileDir = character.getPath();
-    }
-
     private void loadPaneContent() {
         AnchorPane parent = (AnchorPane) getContent();
         BorderPane borderPane = (BorderPane) parent.getChildren().get(0);
@@ -150,6 +140,8 @@ public class CharacterTab extends Tab{
     }
 
     public void updateCharacterView(){
+        System.out.println("Updating view from "+character.getPath());
+        character.readXML();
         updateField("displayCharName", character.readTag("name"));
         updateField("displayRace", character.readTag("race"));
         updateField("displayClassName", character.readTag("classname"));
@@ -193,13 +185,13 @@ public class CharacterTab extends Tab{
                 searchFields("displayWis").getText(), searchFields("displayCha").getText()
         ));
         sendUpdateMessage();
-        updateCharacterView();
     }
 
     private void sendUpdateMessage() {
         try (ByteArrayOutputStream os = new ByteArrayOutputStream())
         {
-            node.getDos().writeUTF("UPDATE");InputStream is = new FileInputStream(new File(character.getPath()));
+            node.getDos().writeUTF("UPDATE TESTCHAR");
+            InputStream is = new FileInputStream(new File(character.getPath()));
             byte[] buffer = new byte[0xFFFF];
             for (int len; (len = is.read(buffer)) != -1;)
                 os.write(buffer, 0, len);
@@ -251,5 +243,9 @@ public class CharacterTab extends Tab{
 
     public CharacterParser getCharacter() {
         return character;
+    }
+
+    public ClientNode getNode() {
+        return node;
     }
 }
