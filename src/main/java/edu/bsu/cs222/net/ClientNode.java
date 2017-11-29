@@ -45,7 +45,41 @@ public class ClientNode extends Thread implements Runnable{
     @Override
     public void run() {
         while (Thread.currentThread().isAlive()) try {
-            System.out.println(dis.readUTF());
+            parse(dis.readUTF());
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    private void parse(String s) throws IOException{
+        String[] command = s.split(" ");
+        switch (command[0]) {
+            case "GET":
+                System.out.println("get request received from " + connection.getInetAddress());
+                dos.writeUTF("POST");
+                break;
+            case "POST":
+                System.out.println("post request received from " + connection.getInetAddress());
+                break;
+            case "UPDATE":
+                System.out.println("update asked for");
+                getObjectFromServer();
+                break;
+            default:
+                System.out.println(s);
+                break;
+        }
+    }
+
+    public void getObjectFromServer(){
+        try {
+            OutputStream os = new FileOutputStream(connection.getInetAddress().toString());
+            byte[] buffer = new byte[0xFFFF];
+            int len = dis.read(buffer);
+            System.out.println(len);
+            os.write(buffer, 0, len);
+            os.flush();
+            os.close();
         }catch(IOException e){
             e.printStackTrace();
         }

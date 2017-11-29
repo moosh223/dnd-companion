@@ -6,6 +6,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -124,5 +125,9 @@ public class CharacterParser extends XMLParser {
 
     public String getPath() {
         return filepath;
+    }
+
+    public File getFile() {
+        return new File(filepath);
     }
 }

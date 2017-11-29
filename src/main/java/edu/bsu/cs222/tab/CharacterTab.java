@@ -1,5 +1,6 @@
 package edu.bsu.cs222.tab;
 
+import edu.bsu.cs222.net.ClientNode;
 import edu.bsu.cs222.util.CharacterParser;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -12,7 +13,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +30,7 @@ public class CharacterTab extends Tab{
     private List<String> wisSkills = new ArrayList<>();
     private List<String> chaSkills = new ArrayList<>();
     private List<List<String>> skillLists = new ArrayList<>();
+    private ClientNode node;
     public boolean updateFlag = false;
 
     public CharacterTab(CharacterParser character) {
@@ -36,6 +38,15 @@ public class CharacterTab extends Tab{
         this.character = character;
         setText(character.readTag("name"));
         init();
+        updateCharacterView();
+    }
+
+    public CharacterTab(CharacterParser character, ClientNode node) {
+        setContent();
+        this.character = character;
+        setText(character.readTag("name"));
+        init();
+        this.node = node;
         updateCharacterView();
     }
 
@@ -127,13 +138,17 @@ public class CharacterTab extends Tab{
         }
     }
 
+    public void setNode(ClientNode node){
+        this.node = node;
+    }
+
     private void loadPaneContent() {
         AnchorPane parent = (AnchorPane) getContent();
         BorderPane borderPane = (BorderPane) parent.getChildren().get(0);
         tabPane = (TabPane) borderPane.getCenter();
     }
 
-    private void updateCharacterView(){
+    public void updateCharacterView(){
         updateField("displayCharName", character.readTag("name"));
         updateField("displayRace", character.readTag("race"));
         updateField("displayClassName", character.readTag("classname"));
@@ -176,7 +191,24 @@ public class CharacterTab extends Tab{
                 searchFields("displayCon").getText(), searchFields("displayInt").getText(),
                 searchFields("displayWis").getText(), searchFields("displayCha").getText()
         ));
+        sendUpdateMessage();
         updateCharacterView();
+    }
+
+    private void sendUpdateMessage() {
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream())
+        {
+            node.getDos().writeUTF("UPDATE");InputStream is = new FileInputStream(character.getFile());
+            byte[] buffer = new byte[0xFFFF];
+            for (int len; (len = is.read(buffer)) != -1;)
+                os.write(buffer, 0, len);
+            os.flush();
+            node.getDos().write(os.toByteArray());
+        }catch(IOException e){
+            e.printStackTrace();
+        }catch(NullPointerException npe){
+            System.err.println("No need to send message cuz you ain't connected");
+        }
     }
 
     private String getModifier(String stat){

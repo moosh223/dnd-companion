@@ -139,12 +139,21 @@ public class CompanionController {
         characterTab.setClosable(false);
         sheetPane.getTabs().add(characterTab);
     }
+    private void createCharacterSheetTab(CharacterParser character,ClientNode node) {
+        CharacterTab characterTab = new CharacterTab(character);
+        characterTab.setNode(node);
+        characterTab.setClosable(false);
+        sheetPane.getTabs().add(characterTab);
+    }
 
-    private void makeCharacterTab(CharacterParser character){
+    private CharacterTab makeCharacterTab(CharacterParser character){
         for(Tab tab: sheetPane.getTabs()){
             CharacterTab characterTab = (CharacterTab)tab;
-            System.out.println(characterTab.getCharacter().equals(character));
+            if(characterTab.getCharacter().equals(character)){
+                return characterTab;
+            }
         }
+        return null;
     }
 
 
@@ -237,8 +246,10 @@ public class CompanionController {
 
     @FXML
     public void sendServerMessage(){
-        for(ClientNode thread: clients){
-            System.out.println("Thread");
+        for(ClientNode node: clients){
+            CharacterParser parser = new CharacterParser(currentCampaignDir+"/characters/"+node.getName());
+            createCharacterSheetTab(parser,node);
+            makeCharacterTab(parser);
         }
     }
 
@@ -291,10 +302,8 @@ public class CompanionController {
     public void loadSelectedCampaign() {
         try {
             currentCampaignDir = campaignLoadList.getSelectionModel().getSelectedItem().getCampaignDirectory();
-            System.out.println(currentCampaignDir);
             loadCampaign(currentCampaignDir);
         }catch(NullPointerException e){
-            e.printStackTrace();
             buildNewCampaign();
         }
         newTabMenu.setDisable(false);
@@ -306,14 +315,20 @@ public class CompanionController {
 
     @FXML
     public void loadSelectedCharacter() {
+        CharacterParser character;
         try {
             currentCharacterDir = characterLoadList.getSelectionModel().getSelectedItem().getPath();
-            createCharacterSheetTab(characterLoadList.getSelectionModel().getSelectedItem());
-            createCharacterJournals(currentCharacterDir);
+            character = characterLoadList.getSelectionModel().getSelectedItem();
         }catch(NullPointerException e){
             String charFile = makeNewCharacterFolder(characterDir);
-            createCharacterSheetTab(new CharacterParser(String.format("%s/%s/%s",characterDir,charFile,charFile)));
+            character = new CharacterParser(String.format("%s/%s/%s",characterDir,charFile,charFile));
         }
+        if(clientParser != null){
+            createCharacterSheetTab(character,clientParser);
+        }else {
+            createCharacterSheetTab(character);
+        }
+        createCharacterJournals(currentCharacterDir);
         newTabMenu.setDisable(false);
         newJournalMenuItem.setDisable(false);
         newCharacterSheetMenuItem.setDisable(true);
@@ -450,20 +465,23 @@ public class CompanionController {
         populateSendTable();
     }
 
+    @FXML
+    public void connectToServer(){
+        String ip = ipConnect.getText();
+        connectToServer(ip);
+    }
     private void connectToServer(String ip){
         try {
             clientParser = new ClientNode(ip, 2000);
             networkLabel.setText("Connected to: " + clientParser.getSocketAddress());
             clientParser.start();
+            if(currentCharacterDir != null){
+                CharacterTab tab = (CharacterTab)sheetPane.getTabs().get(0);
+                tab.setNode(clientParser);
+            }
         }catch(IOException e){
             System.err.println("Unable to establish a connection");
         }
-    }
-
-    @FXML
-    public void connectToServer(){
-        String ip = ipConnect.getText();
-        connectToServer(ip);
     }
 
     @FXML
