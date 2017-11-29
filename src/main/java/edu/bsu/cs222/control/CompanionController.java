@@ -177,7 +177,7 @@ public class CompanionController {
     @FXML
     public void newCharacterSheetMenuAction(){
         if(sheetPane.isVisible()&& !isPlayer) {
-            String newChar = makeNewCharacterFolder(String.format("%s/%s/characters/",campaignDir, currentCampaignDir));
+            String newChar = makeNewCharacterFolder(String.format("%s/characters/", currentCampaignDir));
             createCharacterSheetTab(new CharacterParser(String.format("%s/%s/characters/%s/%s",campaignDir, currentCampaignDir,newChar,newChar)));
         }
     }
@@ -302,6 +302,7 @@ public class CompanionController {
     public void loadSelectedCampaign() {
         try {
             currentCampaignDir = campaignLoadList.getSelectionModel().getSelectedItem().getCampaignDirectory();
+            System.out.println(currentCampaignDir);
             loadCampaign(currentCampaignDir);
         }catch(NullPointerException e){
             buildNewCampaign();
