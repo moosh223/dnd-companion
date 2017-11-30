@@ -26,6 +26,7 @@ import java.net.*;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 public class CompanionController {
 
@@ -101,6 +102,7 @@ public class CompanionController {
     private final String campaignDir = "assets/campaigns/";
     private String currentCampaignDir;
     private String currentCharacterDir;
+    private Executor executor;
     private ClientNode clientParser;
     private boolean isPlayer = true;
     private Stage diceRoller = new Stage();
@@ -229,7 +231,7 @@ public class CompanionController {
         try {
             Server server = new Server(clients);
             networkLabel.setText(server.getLANAddress().toString());
-            server.start();
+            executor.execute(server);
         }catch(IOException e){
             e.printStackTrace();
         }
