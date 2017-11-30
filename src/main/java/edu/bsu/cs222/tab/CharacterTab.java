@@ -37,6 +37,7 @@ public class CharacterTab extends Tab{
         setContent();
         this.node = node;
         this.character = character;
+        setClosable(false);
         setText(character.readTag("name"));
         init();
         updateCharacterView();

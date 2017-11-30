@@ -228,15 +228,6 @@ public class CompanionController {
             Server server = new Server(clients,sheetPane);
             networkLabel.setText(server.getLANAddress().toString());
             server.start();
-            new Thread(new Task<Void>() {
-                @Override
-                protected Void call() throws Exception {
-                    Thread.currentThread().setDaemon(true);
-                    while(true){
-                        System.out.println("woo");
-                    }
-                }
-            }).start();
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -491,6 +482,7 @@ public class CompanionController {
     private void connectToServer(String ip){
         try {
             clientParser = new ClientNode(ip, 2000);
+            clientParser.setView(sheetPane);
             networkLabel.setText("Connected to: " + clientParser.getSocketAddress());
             clientParser.start();
         }catch(IOException e){

@@ -3,11 +3,15 @@ package edu.bsu.cs222.net;
 import edu.bsu.cs222.util.CharacterParser;
 import edu.bsu.cs222.tab.CharacterTab;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketException;
+import java.util.ArrayList;
 
 public class ClientNode extends Thread implements Runnable{
 
@@ -18,6 +22,7 @@ public class ClientNode extends Thread implements Runnable{
     private DataOutputStream dos;
     private DataInputStream dis;
     private CharacterParser character;
+    ArrayList<CharacterTab> cleanup = new ArrayList<>();
 
     public ClientNode(Socket connection, TabPane view) throws IOException{
         this.connection = connection;
@@ -48,13 +53,13 @@ public class ClientNode extends Thread implements Runnable{
     public void run() {
         while (Thread.currentThread().isAlive()) try {
             parse(dis.readUTF());
-        }catch (EOFException eof){
+        }catch (EOFException | SocketException e){
             System.err.println("Disconnected");
             try {
                 connection.close();
                 Thread.currentThread().join();
-            } catch (InterruptedException | IOException e) {
-                e.printStackTrace();
+            } catch (InterruptedException | IOException e1) {
+                e1.printStackTrace();
             }
         }catch(IOException e){
             e.printStackTrace();
@@ -95,9 +100,21 @@ public class ClientNode extends Thread implements Runnable{
             e.printStackTrace();
         }
         character = new CharacterParser(path);
+        for(Tab tab: view.getTabs()) {
+            try {
+                CharacterTab ctab = (CharacterTab) tab;
+                if (ctab.getCharacter().readTag("name").equals(character.readTag("name"))) {
+                    cleanup.add(ctab);
+                }
+            }catch (ClassCastException e){
+                System.err.println("Non-character tab found. Ignoring");
+            }
+        }
         Platform.runLater(() -> {
-            view.getTabs().clear();
-            view.getTabs().add(new CharacterTab(character,this));
+            view.getTabs().removeAll(FXCollections.observableArrayList(cleanup));
+            CharacterTab ctab = new CharacterTab(character,this);
+            view.getTabs().add(ctab);
+            view.getSelectionModel().select(ctab);
         });
     }
 
@@ -110,5 +127,9 @@ public class ClientNode extends Thread implements Runnable{
 
     public CharacterParser getCharacter() {
         return character;
+    }
+
+    public void setView(TabPane view) {
+        this.view = view;
     }
 }
