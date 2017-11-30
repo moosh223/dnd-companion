@@ -5,6 +5,7 @@ import edu.bsu.cs222.tab.*;
 import edu.bsu.cs222.util.CampaignParser;
 import edu.bsu.cs222.util.CharacterParser;
 import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -26,7 +27,6 @@ import java.net.*;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.Executor;
 
 public class CompanionController {
 
@@ -102,7 +102,6 @@ public class CompanionController {
     private final String campaignDir = "assets/campaigns/";
     private String currentCampaignDir;
     private String currentCharacterDir;
-    private Executor executor;
     private ClientNode clientParser;
     private boolean isPlayer = true;
     private Stage diceRoller = new Stage();
@@ -137,18 +136,15 @@ public class CompanionController {
      * @see #createJournalTab(String) createJournalTab
      */
     private void createCharacterSheetTab(CharacterParser character) {
-        CharacterTab characterTab = new CharacterTab(character);
+        CharacterTab characterTab = new CharacterTab(character,null);
         characterTab.setClosable(false);
         sheetPane.getTabs().add(characterTab);
     }
-
-    private void makeCharacterTab(CharacterParser character){
-        for(Tab tab: sheetPane.getTabs()){
-            CharacterTab characterTab = (CharacterTab)tab;
-            System.out.println(characterTab.getCharacter().equals(character));
-        }
+    private void createCharacterSheetTab(CharacterParser character,ClientNode node) {
+        CharacterTab characterTab = new CharacterTab(character,node);
+        characterTab.setClosable(false);
+        sheetPane.getTabs().add(characterTab);
     }
-
 
     /**Creates a new journal tab
      * @author Josh Mooshian <jmmooshian@bsu.edu>
@@ -170,8 +166,8 @@ public class CompanionController {
     @FXML
     public void newCharacterSheetMenuAction(){
         if(sheetPane.isVisible()&& !isPlayer) {
-            String newChar = makeNewCharacterFolder(String.format("%s/%s/characters/",campaignDir, currentCampaignDir));
-            createCharacterSheetTab(new CharacterParser(String.format("%s/%s/characters/%s/%s",campaignDir, currentCampaignDir,newChar,newChar)));
+            String newChar = makeNewCharacterFolder(String.format("%s/characters/", currentCampaignDir));
+            createCharacterSheetTab(new CharacterParser(String.format("%s/characters/%s/%s", currentCampaignDir,newChar,newChar)));
         }
     }
 
@@ -229,9 +225,18 @@ public class CompanionController {
     @FXML
     private void startServer() {
         try {
-            Server server = new Server(clients);
+            Server server = new Server(clients,sheetPane);
             networkLabel.setText(server.getLANAddress().toString());
-            executor.execute(server);
+            server.start();
+            new Thread(new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    Thread.currentThread().setDaemon(true);
+                    while(true){
+                        System.out.println("woo");
+                    }
+                }
+            }).start();
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -239,8 +244,9 @@ public class CompanionController {
 
     @FXML
     public void sendServerMessage(){
-        for(ClientNode thread: clients){
-            System.out.println("Thread");
+        for(ClientNode node: clients){
+            CharacterParser parser = new CharacterParser(currentCampaignDir+"/characters/"+node.getName());
+            createCharacterSheetTab(parser,node);
         }
     }
 
@@ -296,7 +302,6 @@ public class CompanionController {
             System.out.println(currentCampaignDir);
             loadCampaign(currentCampaignDir);
         }catch(NullPointerException e){
-            e.printStackTrace();
             buildNewCampaign();
         }
         newTabMenu.setDisable(false);
@@ -308,19 +313,45 @@ public class CompanionController {
 
     @FXML
     public void loadSelectedCharacter() {
+        CharacterParser character;
         try {
             currentCharacterDir = characterLoadList.getSelectionModel().getSelectedItem().getPath();
-            createCharacterSheetTab(characterLoadList.getSelectionModel().getSelectedItem());
-            createCharacterJournals(currentCharacterDir);
-        }catch(NullPointerException e){
+            character = characterLoadList.getSelectionModel().getSelectedItem();
+        } catch (NullPointerException e) {
             String charFile = makeNewCharacterFolder(characterDir);
-            createCharacterSheetTab(new CharacterParser(String.format("%s/%s/%s",characterDir,charFile,charFile)));
+            currentCharacterDir = String.format("%s/%s/%s", characterDir, charFile, charFile);
+            character = new CharacterParser(currentCharacterDir);
         }
+        if (clientParser != null) {
+            createCharacterSheetTab(character, clientParser); //Creates the CharacterView on the Clients side
+            sendUpdateMessage(character); //Tells the server to open a new Tab
+
+        } else {
+            createCharacterSheetTab(character);
+        }
+        createCharacterJournals(currentCharacterDir);
         newTabMenu.setDisable(false);
         newJournalMenuItem.setDisable(false);
         newCharacterSheetMenuItem.setDisable(true);
         loadPane.setVisible(false);
         sheetPane.setVisible(true);
+    }
+
+    private void sendUpdateMessage(CharacterParser character) {
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream())
+        {
+            clientParser.getDos().writeUTF("UPDATE TESTCHAR");
+            InputStream is = new FileInputStream(new File(character.getPath()));
+            byte[] buffer = new byte[0xFFFF];
+            for (int len; (len = is.read(buffer)) != -1;)
+                os.write(buffer, 0, len);
+            os.flush();
+            clientParser.getDos().write(os.toByteArray());
+        }catch(IOException e){
+            e.printStackTrace();
+        }catch(NullPointerException npe){
+            System.err.println("No need to send message cuz you ain't connected");
+        }
     }
 
     private void createCharacterJournals(String directory) {
@@ -452,6 +483,11 @@ public class CompanionController {
         populateSendTable();
     }
 
+    @FXML
+    public void connectToServer(){
+        String ip = ipConnect.getText();
+        connectToServer(ip);
+    }
     private void connectToServer(String ip){
         try {
             clientParser = new ClientNode(ip, 2000);
@@ -460,12 +496,6 @@ public class CompanionController {
         }catch(IOException e){
             System.err.println("Unable to establish a connection");
         }
-    }
-
-    @FXML
-    public void connectToServer(){
-        String ip = ipConnect.getText();
-        connectToServer(ip);
     }
 
     @FXML

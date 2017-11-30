@@ -6,6 +6,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,7 +58,7 @@ public class CharacterParser extends XMLParser {
         }
     }
 
-    private void readXML() {
+    public void readXML() {
         for (String tag : tags.keySet()) {
             tags.put(tag,getRoot(xmlDoc).getElementsByTagName(tag).item(0).getTextContent());
         }

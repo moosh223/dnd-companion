@@ -1,10 +1,9 @@
 package edu.bsu.cs222.net;
 
-import edu.bsu.cs222.control.CompanionController;
 import edu.bsu.cs222.util.CharacterParser;
 import edu.bsu.cs222.tab.CharacterTab;
 import javafx.application.Platform;
-import javafx.concurrent.Task;
+import javafx.scene.control.TabPane;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -13,13 +12,18 @@ import java.net.Socket;
 public class ClientNode extends Thread implements Runnable{
 
     private final static int SERVER_TIMEOUT_MILLIS = 1000;
+    private String side;
+    private TabPane view;
     private Socket connection;
     private DataOutputStream dos;
     private DataInputStream dis;
+    private CharacterParser character;
 
-    public ClientNode(Socket connection) throws IOException{
+    public ClientNode(Socket connection, TabPane view) throws IOException{
         this.connection = connection;
         System.out.println("Server Side Client Node Created");
+        this.view = view;
+        side = "server";
         dos = new DataOutputStream(connection.getOutputStream());
         dis = new DataInputStream(connection.getInputStream());
     }
@@ -27,6 +31,7 @@ public class ClientNode extends Thread implements Runnable{
     public ClientNode(String address, int port) throws IOException{
         connection = new Socket();
         connection.connect(new InetSocketAddress(address,port),SERVER_TIMEOUT_MILLIS);
+        side = "client";
         System.out.println("Client Side Client Node Created");
         dos = new DataOutputStream(connection.getOutputStream());
         dis = new DataInputStream(connection.getInputStream());
@@ -38,16 +43,72 @@ public class ClientNode extends Thread implements Runnable{
     public DataOutputStream getDos() {
         return dos;
     }
-    public DataInputStream getDis() {
-        return dis;
-    }
 
     @Override
     public void run() {
         while (Thread.currentThread().isAlive()) try {
-            System.out.println(dis.readUTF());
+            parse(dis.readUTF());
+        }catch (EOFException eof){
+            System.err.println("Disconnected");
+            try {
+                connection.close();
+                Thread.currentThread().join();
+            } catch (InterruptedException | IOException e) {
+                e.printStackTrace();
+            }
         }catch(IOException e){
             e.printStackTrace();
         }
+    }
+
+    private void parse(String s) throws IOException{
+        String[] command = s.split(" ");
+        switch (command[0]) {
+            case "GET":
+                System.out.println("get request received from " + connection.getInetAddress());
+                dos.writeUTF("POST");
+                break;
+            case "POST":
+                System.out.println("post request received from " + connection.getInetAddress());
+                break;
+            case "UPDATE":
+                System.out.println("update sent");
+                retrieveCharacterSheet(command[1]);
+                break;
+            case "CHAR":
+            default:
+                System.out.println(s);
+                break;
+        }
+    }
+
+    public void retrieveCharacterSheet(String path) {
+        try {
+            OutputStream os = new FileOutputStream(path+".xml");
+            byte[] buffer = new byte[0xFFFF];
+            int len = dis.read(buffer);
+            System.out.println(len);
+            os.write(buffer, 0, len);
+            os.flush();
+            os.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        character = new CharacterParser(path);
+        Platform.runLater(() -> {
+            view.getTabs().clear();
+            view.getTabs().add(new CharacterTab(character,this));
+        });
+    }
+
+    public void setCharacter(CharacterParser character) {
+        this.character = character;
+        Platform.runLater(() -> {
+
+        });
+    }
+
+    public CharacterParser getCharacter() {
+        return character;
     }
 }
