@@ -11,26 +11,27 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 
 public class ClientNode extends Thread implements Runnable{
 
     private final static int SERVER_TIMEOUT_MILLIS = 1000;
-    private String side;
+    public String side;
     private TabPane view;
     private Socket connection;
     private DataOutputStream dos;
     private DataInputStream dis;
     private CharacterParser character;
-    ArrayList<CharacterTab> cleanup = new ArrayList<>();
+    public String path;
+    private CharacterTab tab;
 
     public ClientNode(Socket connection, TabPane view) throws IOException{
         this.connection = connection;
         System.out.println("Server Side Client Node Created");
         this.view = view;
         side = "server";
-        dos = new DataOutputStream(connection.getOutputStream());
-        dis = new DataInputStream(connection.getInputStream());
+        initStreams();
     }
 
     public ClientNode(String address, int port) throws IOException{
@@ -38,6 +39,10 @@ public class ClientNode extends Thread implements Runnable{
         connection.connect(new InetSocketAddress(address,port),SERVER_TIMEOUT_MILLIS);
         side = "client";
         System.out.println("Client Side Client Node Created");
+        initStreams();
+    }
+
+    public void initStreams() throws IOException{
         dos = new DataOutputStream(connection.getOutputStream());
         dis = new DataInputStream(connection.getInputStream());
     }
@@ -56,6 +61,10 @@ public class ClientNode extends Thread implements Runnable{
         }catch (EOFException | SocketException e){
             System.err.println("Disconnected");
             try {
+                if(side.equals("server")) {
+                    Platform.runLater(() -> view.getTabs().remove(tab));
+                    Files.delete(new File(path + ".xml").toPath());
+                }
                 connection.close();
                 Thread.currentThread().join();
             } catch (InterruptedException | IOException e1) {
@@ -78,7 +87,7 @@ public class ClientNode extends Thread implements Runnable{
                 break;
             case "UPDATE":
                 System.out.println("update sent");
-                retrieveCharacterSheet(command[1]);
+                retrieveCharacterSheet();
                 break;
             case "CHAR":
             default:
@@ -87,7 +96,7 @@ public class ClientNode extends Thread implements Runnable{
         }
     }
 
-    public void retrieveCharacterSheet(String path) {
+    public void retrieveCharacterSheet() {
         try {
             OutputStream os = new FileOutputStream(path+".xml");
             byte[] buffer = new byte[0xFFFF];
@@ -100,22 +109,29 @@ public class ClientNode extends Thread implements Runnable{
             e.printStackTrace();
         }
         character = new CharacterParser(path);
+        tab = getMatchingTab();
+        Platform.runLater(() -> {
+            view.getTabs().remove(tab);
+            CharacterTab ctab = new CharacterTab(character,this);
+            ctab.setText(character.readTag("name"));
+            view.getTabs().add(ctab);
+            tab = ctab;
+            view.getSelectionModel().select(ctab);
+        });
+    }
+
+    private CharacterTab getMatchingTab() {
         for(Tab tab: view.getTabs()) {
             try {
                 CharacterTab ctab = (CharacterTab) tab;
-                if (ctab.getCharacter().readTag("name").equals(character.readTag("name"))) {
-                    cleanup.add(ctab);
+                if (ctab.getCharacter().getPath().equals(character.getPath())) {
+                    return ctab;
                 }
             }catch (ClassCastException e){
                 System.err.println("Non-character tab found. Ignoring");
             }
         }
-        Platform.runLater(() -> {
-            view.getTabs().removeAll(FXCollections.observableArrayList(cleanup));
-            CharacterTab ctab = new CharacterTab(character,this);
-            view.getTabs().add(ctab);
-            view.getSelectionModel().select(ctab);
-        });
+        return null;
     }
 
     public void setCharacter(CharacterParser character) {

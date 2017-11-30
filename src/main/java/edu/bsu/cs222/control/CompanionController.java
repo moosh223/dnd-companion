@@ -5,7 +5,6 @@ import edu.bsu.cs222.tab.*;
 import edu.bsu.cs222.util.CampaignParser;
 import edu.bsu.cs222.util.CharacterParser;
 import javafx.collections.FXCollections;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -106,6 +105,9 @@ public class CompanionController {
     private boolean isPlayer = true;
     private Stage diceRoller = new Stage();
     private ArrayList<ClientNode> clients = new ArrayList<>();
+    private Server server;
+    private CharacterParser clientChar;
+    private CharacterTab clientTab;
 
     private enum StatName {
         Strength(0),
@@ -130,20 +132,22 @@ public class CompanionController {
         newTabMenu.setDisable(true);
     }
 
-    /**Creates a new character sheet tab
+    /**Creates a new clientChar sheet tab
      * @author Josh Mooshian <jmmooshian@bsu.edu>
-     * @param character Character used to create the new character sheet
+     * @param character Character used to create the new clientChar sheet
      * @see #createJournalTab(String) createJournalTab
      */
-    private void createCharacterSheetTab(CharacterParser character) {
+    private CharacterTab createCharacterSheetTab(CharacterParser character) {
         CharacterTab characterTab = new CharacterTab(character,null);
         characterTab.setClosable(false);
         sheetPane.getTabs().add(characterTab);
+        return characterTab;
     }
-    private void createCharacterSheetTab(CharacterParser character,ClientNode node) {
+    private CharacterTab createCharacterSheetTab(CharacterParser character,ClientNode node) {
         CharacterTab characterTab = new CharacterTab(character,node);
         characterTab.setClosable(false);
         sheetPane.getTabs().add(characterTab);
+        return characterTab;
     }
 
     /**Creates a new journal tab
@@ -225,8 +229,11 @@ public class CompanionController {
     @FXML
     private void startServer() {
         try {
-            Server server = new Server(clients,sheetPane);
+            server = new Server(clients,sheetPane);
             networkLabel.setText(server.getLANAddress().toString());
+            if(currentCampaignDir != null){
+                server.setCampaignPath(currentCampaignDir);
+            }
             server.start();
         }catch(IOException e){
             e.printStackTrace();
@@ -236,8 +243,11 @@ public class CompanionController {
     @FXML
     public void sendServerMessage(){
         for(ClientNode node: clients){
-            CharacterParser parser = new CharacterParser(currentCampaignDir+"/characters/"+node.getName());
-            createCharacterSheetTab(parser,node);
+            try {
+                node.getDos().writeUTF("You are connected to a server?");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -295,6 +305,9 @@ public class CompanionController {
         }catch(NullPointerException e){
             buildNewCampaign();
         }
+        if(server != null){
+            server.setCampaignPath(currentCampaignDir);
+        }
         newTabMenu.setDisable(false);
         newJournalMenuItem.setDisable(false);
         sheetPane.setVisible(true);
@@ -304,21 +317,21 @@ public class CompanionController {
 
     @FXML
     public void loadSelectedCharacter() {
-        CharacterParser character;
         try {
             currentCharacterDir = characterLoadList.getSelectionModel().getSelectedItem().getPath();
-            character = characterLoadList.getSelectionModel().getSelectedItem();
+            clientChar = characterLoadList.getSelectionModel().getSelectedItem();
         } catch (NullPointerException e) {
             String charFile = makeNewCharacterFolder(characterDir);
             currentCharacterDir = String.format("%s/%s/%s", characterDir, charFile, charFile);
-            character = new CharacterParser(currentCharacterDir);
+            clientChar = new CharacterParser(currentCharacterDir);
         }
         if (clientParser != null) {
-            createCharacterSheetTab(character, clientParser); //Creates the CharacterView on the Clients side
-            sendUpdateMessage(character); //Tells the server to open a new Tab
+            clientParser.path = currentCharacterDir.replace(".xml","");
+            clientTab = createCharacterSheetTab(clientChar, clientParser); //Creates the CharacterView on the Clients side
+            sendUpdateMessage(clientChar); //Tells the server to open a new Tab
 
         } else {
-            createCharacterSheetTab(character);
+            clientTab = createCharacterSheetTab(clientChar);
         }
         createCharacterJournals(currentCharacterDir);
         newTabMenu.setDisable(false);
@@ -484,6 +497,10 @@ public class CompanionController {
             clientParser = new ClientNode(ip, 2000);
             clientParser.setView(sheetPane);
             networkLabel.setText("Connected to: " + clientParser.getSocketAddress());
+            if(currentCharacterDir != null){
+                clientParser.path = currentCharacterDir.replace(".xml","");
+                sendUpdateMessage(clientChar);
+            }
             clientParser.start();
         }catch(IOException e){
             System.err.println("Unable to establish a connection");
@@ -500,7 +517,7 @@ public class CompanionController {
             if(clientParser==null){
                 System.err.println("Not connected to a DM");
             }else{
-                System.err.println("Please select a character to send");
+                System.err.println("Please select a clientChar to send");
             }
         }
     }

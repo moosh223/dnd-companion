@@ -15,6 +15,7 @@ public class Server extends Thread implements Runnable{
 
     private ArrayList<ClientNode> clientList;
     private ServerSocket clientListener;
+    private String campaignPath;
     private TabPane view;
 
     public Server(ArrayList<ClientNode> clientList, TabPane pane) throws IOException{
@@ -75,12 +76,23 @@ public class Server extends Thread implements Runnable{
     private void createNewClient(Socket socket) {
         try {
             System.out.printf("%s has connected%n", socket.getInetAddress().toString());
-            ClientNode thread = new ClientNode(socket,view);
-            thread.setName(socket.getInetAddress().toString());
-            clientList.add(thread);
-            thread.start();
+            ClientNode client = new ClientNode(socket,view);
+            client.setName(socket.getInetAddress().toString());
+            if(campaignPath != null){
+                client.path = String.format("%s/characters%s",campaignPath,client.getName());
+            }
+            client.side = "server";
+            clientList.add(client);
+            client.start();
         }catch (IOException e){
             e.printStackTrace();
+        }
+    }
+
+    public void setCampaignPath(String campaignPath) {
+        this.campaignPath = campaignPath;
+        for(ClientNode client: clientList){
+            client.path = String.format("%s/characters%s",campaignPath,client.getName());
         }
     }
 }

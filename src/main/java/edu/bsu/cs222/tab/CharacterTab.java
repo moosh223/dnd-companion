@@ -14,6 +14,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 
 import java.io.*;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -69,7 +70,6 @@ public class CharacterTab extends Tab{
         for(TextField field: displayFields){
             field.setOnAction((event) -> {
                 updateCharacterXML();
-                updateCharacterView();
             });
         }
 
@@ -143,6 +143,7 @@ public class CharacterTab extends Tab{
     public void updateCharacterView(){
         System.out.println("Updating view from "+character.getPath());
         character.readXML();
+        setText(character.readTag("name"));
         updateField("displayCharName", character.readTag("name"));
         updateField("displayRace", character.readTag("race"));
         updateField("displayClassName", character.readTag("classname"));
@@ -166,7 +167,6 @@ public class CharacterTab extends Tab{
         updateField("displayCha", String.valueOf(character.readTag("stats").split(",")[5]));
         updateLabel("displayChaMod", getModifier(character.readTag("stats").split(",")[5]));
         updateSkillModifiers();
-        setText(character.readTag("name"));
     }
 
     private void updateCharacterXML() {
@@ -186,19 +186,26 @@ public class CharacterTab extends Tab{
                 searchFields("displayWis").getText(), searchFields("displayCha").getText()
         ));
         sendUpdateMessage();
+        updateCharacterView();
     }
 
     private void sendUpdateMessage() {
         try (ByteArrayOutputStream os = new ByteArrayOutputStream())
         {
-            node.getDos().writeUTF("UPDATE TESTCHAR");
+            node.getDos().writeUTF("UPDATE");
             InputStream is = new FileInputStream(new File(character.getPath()));
             byte[] buffer = new byte[0xFFFF];
             for (int len; (len = is.read(buffer)) != -1;)
                 os.write(buffer, 0, len);
             os.flush();
             node.getDos().write(os.toByteArray());
-        }catch(IOException e){
+        } catch(SocketException e){
+            try {
+                node.join();
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
+        } catch(IOException e){
             e.printStackTrace();
         }catch(NullPointerException npe){
             System.err.println("No need to send message cuz you ain't connected");
@@ -248,5 +255,9 @@ public class CharacterTab extends Tab{
 
     public ClientNode getNode() {
         return node;
+    }
+
+    public void setNode(ClientNode node) {
+        this.node = node;
     }
 }
