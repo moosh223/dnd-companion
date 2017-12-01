@@ -23,6 +23,7 @@ import javafx.stage.Stage;
 import java.awt.*;
 import java.io.*;
 import java.net.*;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
@@ -133,15 +134,17 @@ public class CompanionController {
             Files.createDirectory(new File("assets").toPath());
             Files.createDirectory(new File("assets/characters").toPath());
             Files.createDirectory(new File("assets/campaigns").toPath());
-        } catch (IOException e) {
+        } catch(FileAlreadyExistsException e){
+            System.err.println("Directories found");
+        }catch (IOException e) {
             e.printStackTrace();
         }
         newTabMenu.setDisable(true);
     }
 
-    /**Creates a new clientChar sheet tab
+    /**Creates a new Character sheet tab
      * @author Josh Mooshian <jmmooshian@bsu.edu>
-     * @param character Character used to create the new clientChar sheet
+     * @param character Character data bound to the sheet
      * @see #createJournalTab(String) createJournalTab
      */
     private CharacterTab createCharacterSheetTab(CharacterParser character) {
@@ -150,6 +153,13 @@ public class CompanionController {
         sheetPane.getTabs().add(characterTab);
         return characterTab;
     }
+
+    /**Creates a new Character sheet tab with an associated client node
+     * @author Josh Mooshian <jmmooshian@bsu.edu>
+     * @param character Character data bound to the sheet
+     * @param node Client node to listen for updates on
+     * @see #createJournalTab(String) createJournalTab
+     */
     private CharacterTab createCharacterSheetTab(CharacterParser character,ClientNode node) {
         CharacterTab characterTab = new CharacterTab(character,node);
         characterTab.setClosable(false);
@@ -157,9 +167,10 @@ public class CompanionController {
         return characterTab;
     }
 
-    /**Creates a new journal tab
+    /**Creates a new JournalTab object and adds it to the sheets list
      * @author Josh Mooshian <jmmooshian@bsu.edu>
      * @param filepath Path to the journal file
+     * @see JournalTab JournalTab
      */
     private void createJournalTab(String filepath) {
         JournalTab journalTab = new JournalTab(filepath);
@@ -333,7 +344,7 @@ public class CompanionController {
             clientChar = new CharacterParser(currentCharacterDir);
         }
         if (clientParser != null) {
-            clientParser.path = currentCharacterDir.replace(".xml","");
+            clientParser.setPath(currentCharacterDir.replace(".xml",""));
             clientTab = createCharacterSheetTab(clientChar, clientParser); //Creates the CharacterView on the Clients side
             sendUpdateMessage(clientChar); //Tells the server to open a new Tab
 
@@ -499,13 +510,19 @@ public class CompanionController {
         String ip = ipConnect.getText();
         connectToServer(ip);
     }
+
+    /**
+     * Creates a node on the client's side
+     * @author Josh Mooshian <jmmooshian@bsu.edu>
+     * @param ip IP address of the server to connect to
+     */
     private void connectToServer(String ip){
         try {
             clientParser = new ClientNode(ip, 2000);
             clientParser.setView(sheetPane);
             networkLabel.setText("Connected to: " + clientParser.getSocketAddress());
             if(currentCharacterDir != null){
-                clientParser.path = currentCharacterDir.replace(".xml","");
+                clientParser.setPath(currentCharacterDir.replace(".xml",""));
                 sendUpdateMessage(clientChar);
             }
             clientParser.start();

@@ -17,13 +17,13 @@ import java.util.ArrayList;
 public class ClientNode extends Thread implements Runnable{
 
     private final static int SERVER_TIMEOUT_MILLIS = 1000;
-    public String side;
+    private String side;
     private TabPane view;
     private Socket connection;
     private DataOutputStream dos;
     private DataInputStream dis;
     private CharacterParser character;
-    public String path;
+    private String path;
     private CharacterTab tab;
 
     public ClientNode(Socket connection, TabPane view) throws IOException{
@@ -100,6 +100,10 @@ public class ClientNode extends Thread implements Runnable{
         } catch (IOException e) {
             e.printStackTrace();
         }
+        updateCharacterSheet();
+    }
+
+    private void updateCharacterSheet() {
         character = new CharacterParser(path);
         tab = getMatchingTab();
         Platform.runLater(() -> {
@@ -128,9 +132,6 @@ public class ClientNode extends Thread implements Runnable{
 
     public void setCharacter(CharacterParser character) {
         this.character = character;
-        Platform.runLater(() -> {
-
-        });
     }
 
     public CharacterParser getCharacter() {
@@ -139,5 +140,13 @@ public class ClientNode extends Thread implements Runnable{
 
     public void setView(TabPane view) {
         this.view = view;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public void setSide(String side) {
+        this.side = side;
     }
 }

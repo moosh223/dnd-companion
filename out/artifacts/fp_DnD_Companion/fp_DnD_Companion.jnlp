@@ -8,9 +8,9 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="fp_DnD_Companion.jar" size="59509" download="eager" />
-    <jar href="hamcrest-core-1.3.jar" size="51033" download="eager" />
-    <jar href="junit-4.12.jar" size="346570" download="eager" />
+    <jar href="fp_DnD_Companion.jar" size="203477" download="eager" />
+    <jar href="hamcrest-core-1.3.jar" size="51034" download="eager" />
+    <jar href="junit-4.12.jar" size="346574" download="eager" />
   </resources>
 <security>
   <all-permissions/>

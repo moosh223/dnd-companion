@@ -1,9 +1,5 @@
 package edu.bsu.cs222.net;
 
-import edu.bsu.cs222.tab.CharacterTab;
-import edu.bsu.cs222.util.CharacterParser;
-import javafx.application.Platform;
-import javafx.scene.control.Label;
 import javafx.scene.control.TabPane;
 
 import java.io.IOException;
@@ -24,10 +20,16 @@ public class Server extends Thread implements Runnable{
         clientListener = new ServerSocket(2000);
     }
 
+    @Override
     public String toString(){
         return clientListener.getInetAddress().toString();
     }
 
+
+    /**Gets the LAN address of the server
+     * @return The internal IP address of the server used to connect
+     * @throws UnknownHostException Cannot find a host address
+     */
     public InetAddress getLANAddress() throws UnknownHostException {
         try {
             InetAddress candidateAddress = null;
@@ -79,9 +81,9 @@ public class Server extends Thread implements Runnable{
             ClientNode client = new ClientNode(socket,view);
             client.setName(socket.getInetAddress().toString());
             if(campaignPath != null){
-                client.path = String.format("%s/characters%s",campaignPath,client.getName());
+                client.setPath(String.format("%s/characters%s",campaignPath,client.getName()));
             }
-            client.side = "server";
+            client.setSide("server");
             clientList.add(client);
             client.start();
         }catch (IOException e){
@@ -89,10 +91,15 @@ public class Server extends Thread implements Runnable{
         }
     }
 
+    /**
+     * Sets the campaign path for the server and for any existing client nodes
+     * @author Josh Mooshian <jmmooshian@bsu.edu>
+     * @param campaignPath Path to the campaign loaded
+     */
     public void setCampaignPath(String campaignPath) {
         this.campaignPath = campaignPath;
         for(ClientNode client: clientList){
-            client.path = String.format("%s/characters%s",campaignPath,client.getName());
+            client.setPath(String.format("%s/characters%s",campaignPath,client.getName()));
         }
     }
 }
