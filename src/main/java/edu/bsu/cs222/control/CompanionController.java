@@ -414,7 +414,7 @@ public class CompanionController {
     }
     @FXML
     public void nameNextButtonPress() {
-        if (!isPageFilled()) {
+        if (isPageFilled()) {
             nameErrorLabel.setVisible(true);
         } else {
             creatorTextFields.addAll(
@@ -428,7 +428,7 @@ public class CompanionController {
     }
     @FXML
     public void raceNextButtonPress() {
-        if (!isPageFilled()) {
+        if (isPageFilled()) {
             raceErrorLabel.setVisible(true);
         } else {
             racePane.setVisible(false);
@@ -437,7 +437,7 @@ public class CompanionController {
     }
     @FXML
     public void languageNextButtonPress() {
-        if (!isPageFilled() || languageTextBox.getText().equals("")) {
+        if (isPageFilled() || languageTextBox.getText().equals("")) {
             languageErrorLabel.setVisible(true);
         } else {
             creatorTextFields.addAll(
@@ -450,7 +450,7 @@ public class CompanionController {
     }
     @FXML
     public void classNextButtonPress() {
-        if (!isPageFilled()) {
+        if (isPageFilled()) {
             classErrorLabel.setVisible(true);
         } else {
             creatorTextFields.addAll(
@@ -462,7 +462,7 @@ public class CompanionController {
     }
     @FXML
     public void statNextButtonPress() {
-        if (!isPageFilled()) {
+        if (isPageFilled()) {
             statErrorLabel.setVisible(true);
         } else {
             buildNewCharacter();
@@ -476,7 +476,7 @@ public class CompanionController {
 
     @FXML
     public void newCampaignNextButtonPress() {
-        if (!isPageFilled()) {
+        if (isPageFilled()) {
             nameErrorLabel.setVisible(true);
         } else {
             creatorTextFields.addAll(
@@ -539,7 +539,7 @@ public class CompanionController {
     }
 
     private boolean isPageFilled() {
-        return isComboBoxFilled() && isTextFieldFilled();
+        return !isComboBoxFilled() || !isTextFieldFilled();
     }
 
     private boolean isTextFieldFilled() {

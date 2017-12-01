@@ -19,19 +19,6 @@ public class CampaignParser extends XMLParser{
     private Document xmlDoc;
     private Map<String, String> tags = new TreeMap<>();
 
-    public String getCampaignDirectory() {
-        return new File(filepath).getParent();
-    }
-
-    public enum TagType{
-        name(""),
-        description("");
-
-        private String value;
-        TagType(String value){
-            this.value = value;
-        }
-    }
 
     public CampaignParser(String filepath) {
         initMap();
@@ -103,6 +90,10 @@ public class CampaignParser extends XMLParser{
             }
         }
         updateDoc();
+    }
+
+    public String getCampaignDirectory() {
+        return new File(filepath).getParent();
     }
 
     private void updateDoc(){
