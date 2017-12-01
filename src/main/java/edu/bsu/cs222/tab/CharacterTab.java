@@ -141,7 +141,6 @@ public class CharacterTab extends Tab{
     }
 
     public void updateCharacterView(){
-        System.out.println("Updating view from "+character.getPath());
         character.readXML();
         setText(character.readTag("name"));
         updateField("displayCharName", character.readTag("name"));

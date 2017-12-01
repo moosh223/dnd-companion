@@ -129,6 +129,13 @@ public class CompanionController {
     }
 
     public void initialize() {
+        try {
+            Files.createDirectory(new File("assets").toPath());
+            Files.createDirectory(new File("assets/characters").toPath());
+            Files.createDirectory(new File("assets/campaigns").toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         newTabMenu.setDisable(true);
     }
 

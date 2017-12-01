@@ -78,18 +78,10 @@ public class ClientNode extends Thread implements Runnable{
     private void parse(String s) throws IOException{
         String[] command = s.split(" ");
         switch (command[0]) {
-            case "GET":
-                System.out.println("get request received from " + connection.getInetAddress());
-                dos.writeUTF("POST");
-                break;
-            case "POST":
-                System.out.println("post request received from " + connection.getInetAddress());
-                break;
             case "UPDATE":
                 System.out.println("update sent");
                 retrieveCharacterSheet();
                 break;
-            case "CHAR":
             default:
                 System.out.println(s);
                 break;
