@@ -1,9 +1,8 @@
 package edu.bsu.cs222.net;
 
-import edu.bsu.cs222.util.CharacterParser;
 import edu.bsu.cs222.tab.CharacterTab;
+import edu.bsu.cs222.util.CharacterParser;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 
@@ -12,7 +11,6 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.nio.file.Files;
-import java.util.ArrayList;
 
 public class ClientNode extends Thread implements Runnable{
 
@@ -59,18 +57,22 @@ public class ClientNode extends Thread implements Runnable{
         while (Thread.currentThread().isAlive()) try {
             parse(dis.readUTF());
         }catch (EOFException | SocketException e){
-            System.err.println("Disconnected");
-            try {
-                if(side.equals("server")) {
-                    Platform.runLater(() -> view.getTabs().remove(tab));
-                    Files.delete(new File(path + ".xml").toPath());
-                }
-                connection.close();
-                Thread.currentThread().join();
-            } catch (InterruptedException | IOException e1) {
-                e1.printStackTrace();
-            }
+            handleDisconnectError();
         }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    private void handleDisconnectError() {
+        System.err.println("Disconnected");
+        try {
+            if(side.equals("server")) {
+                Platform.runLater(() -> view.getTabs().remove(tab));
+                Files.delete(new File(path + ".xml").toPath());
+            }
+            connection.close();
+            Thread.currentThread().join();
+        } catch (InterruptedException | IOException e) {
             e.printStackTrace();
         }
     }
