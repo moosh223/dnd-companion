@@ -75,7 +75,7 @@
               <items>
                 <MenuItem fx:id="networking" mnemonicParsing="false" onAction="#startServer" text="Start Server" />
                   <MenuItem fx:id="serverConnect" mnemonicParsing="false" text="Connect to Server" />
-                  <MenuItem mnemonicParsing="false" onAction="#sendServerMessage" text="Send Server Message" />
+                  <MenuItem mnemonicParsing="false" onAction="#sendServerMessage" text="Disconnect" />
                   <CustomMenuItem fx:id="connectMenu" hideOnClick="false" mnemonicParsing="false" text="Unspecified Action">
                      <content>
                         <TextField fx:id="ipConnect" onAction="#connectToServer" promptText="IP to connect to" />
@@ -140,7 +140,7 @@
                  <center>
                      <HBox alignment="CENTER" prefHeight="100.0" spacing="20.0" BorderPane.alignment="CENTER">
                         <children>
-                            <Button mnemonicParsing="false" onAction="#loadButtonAction" text="Load" />
+                            <Button mnemonicParsing="false" onAction="#loadCharacterButtonAction" text="Load" />
                             <Button mnemonicParsing="false" onAction="#newButtonPress" text="New" />
                             <Button mnemonicParsing="false" onAction="#rcvButtonPress" text="RCV" />
                         </children>
@@ -544,7 +544,7 @@
                <center>
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#loadButtonCampaign" snapToPixel="false" text="Load Campaign" HBox.hgrow="ALWAYS" />
+                        <Button mnemonicParsing="false" onAction="#loadCampaignButtonAction" snapToPixel="false" text="Load Campaign" HBox.hgrow="ALWAYS" />
                         <Button mnemonicParsing="false" onAction="#newButtonCampaign" snapToPixel="false" text="New Campaign" />
                      </children>
                   </HBox>

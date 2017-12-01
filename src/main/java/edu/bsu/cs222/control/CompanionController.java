@@ -32,7 +32,7 @@ public class CompanionController {
 
     //ViewPanes
     @FXML public BorderPane welcomePane;
-    @FXML public TabPane sheetPane;
+    @FXML public volatile TabPane sheetPane;
     @FXML public BorderPane charTypePane;
     @FXML public BorderPane charTypePaneDM;
     @FXML public BorderPane loadPane;
@@ -102,7 +102,7 @@ public class CompanionController {
     private final String campaignDir = "assets/campaigns/";
     private String currentCampaignDir;
     private String currentCharacterDir;
-    private ClientNode clientParser;
+    private ClientNode client;
     private boolean isPlayer = true;
     private Stage diceRoller = new Stage();
     private ArrayList<ClientNode> clients = new ArrayList<>();
@@ -253,6 +253,8 @@ public class CompanionController {
                 server.setCampaignPath(currentCampaignDir);
             }
             server.start();
+        }catch(BindException be){
+            System.err.println("Server already started");
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -260,39 +262,29 @@ public class CompanionController {
 
     @FXML
     public void sendServerMessage(){
-        for(ClientNode node: clients){
-            try {
-                node.getDos().writeUTF("You are connected to a server?");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        if(server.isAlive()){
+            System.out.println("Closing server...");
+            server.interrupt();
+            networkLabel.setText("Not connected");
+        }else if(client.isAlive()) {
+            System.out.println("Disconnecting from server...");
+            client.interrupt();
+            networkLabel.setText("Not connected");
         }
     }
 
     @FXML
-    public void loadButtonAction() {
+    public void loadCharacterButtonAction() {
         charTypePane.setVisible(false);
         loadPane.setVisible(true);
-        populateLoadTable();
-    }
-
-    @FXML
-    public void loadButtonCampaign() {
-        charTypePaneDM.setVisible(false);
-        loadCampaignPane.setVisible(true);
-        populateLoadTableDM();
-    }
-
-    private void populateLoadTable() {
         characterLoadList.setItems(FXCollections.observableArrayList(getCharacters()));
     }
 
-    private void populateLoadTableDM() {
+    @FXML
+    public void loadCampaignButtonAction() {
+        charTypePaneDM.setVisible(false);
+        loadCampaignPane.setVisible(true);
         campaignLoadList.setItems(FXCollections.observableArrayList(getCampaigns()));
-    }
-
-    private void populateSendTable() {
-        sendView.setItems(FXCollections.observableArrayList(getCharacters()));
     }
 
     private ArrayList<CharacterParser> getCharacters() {
@@ -343,9 +335,9 @@ public class CompanionController {
             currentCharacterDir = String.format("%s/%s/%s", characterDir, charFile, charFile);
             clientChar = new CharacterParser(currentCharacterDir);
         }
-        if (clientParser != null) {
-            clientParser.setPath(currentCharacterDir.replace(".xml",""));
-            clientTab = createCharacterSheetTab(clientChar, clientParser); //Creates the CharacterView on the Clients side
+        if (client != null) {
+            client.setPath(currentCharacterDir.replace(".xml",""));
+            clientTab = createCharacterSheetTab(clientChar, client); //Creates the CharacterView on the Clients side
             sendUpdateMessage(clientChar); //Tells the server to open a new Tab
 
         } else {
@@ -362,13 +354,13 @@ public class CompanionController {
     private void sendUpdateMessage(CharacterParser character) {
         try (ByteArrayOutputStream os = new ByteArrayOutputStream())
         {
-            clientParser.getDos().writeUTF("UPDATE TESTCHAR");
+            client.getDos().writeUTF("UPDATE");
             InputStream is = new FileInputStream(new File(character.getPath()));
             byte[] buffer = new byte[0xFFFF];
             for (int len; (len = is.read(buffer)) != -1;)
                 os.write(buffer, 0, len);
             os.flush();
-            clientParser.getDos().write(os.toByteArray());
+            client.getDos().write(os.toByteArray());
         }catch(IOException e){
             e.printStackTrace();
         }catch(NullPointerException npe){
@@ -502,7 +494,7 @@ public class CompanionController {
     public void rcvButtonPress() {
         charTypePane.setVisible(false);
         rcvPane.setVisible(true);
-        populateSendTable();
+        sendView.setItems(FXCollections.observableArrayList(getCharacters()));
     }
 
     @FXML
@@ -518,14 +510,14 @@ public class CompanionController {
      */
     private void connectToServer(String ip){
         try {
-            clientParser = new ClientNode(ip, 2000);
-            clientParser.setView(sheetPane);
-            networkLabel.setText("Connected to: " + clientParser.getSocketAddress());
+            client = new ClientNode(ip, 2000);
+            client.setView(sheetPane);
+            networkLabel.setText("Connected to: " + client.getSocketAddress());
             if(currentCharacterDir != null){
-                clientParser.setPath(currentCharacterDir.replace(".xml",""));
+                client.setPath(currentCharacterDir.replace(".xml",""));
                 sendUpdateMessage(clientChar);
             }
-            clientParser.start();
+            client.start();
         }catch(IOException e){
             System.err.println("Unable to establish a connection");
         }
@@ -534,11 +526,11 @@ public class CompanionController {
     @FXML
     public void sendSelectedCharacter() {
         try {
-            clientParser.getDos().writeUTF(sendView.getSelectionModel().getSelectedItem().getTagString());
+            client.getDos().writeUTF(sendView.getSelectionModel().getSelectedItem().getTagString());
         }catch (IOException e){
             e.printStackTrace();
         }catch(NullPointerException npe){
-            if(clientParser==null){
+            if(client ==null){
                 System.err.println("Not connected to a DM");
             }else{
                 System.err.println("Please select a clientChar to send");
