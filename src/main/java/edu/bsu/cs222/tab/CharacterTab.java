@@ -68,9 +68,7 @@ public class CharacterTab extends Tab{
 
     private void createDisplayAction(){
         for(TextField field: displayFields){
-            field.setOnAction((event) -> {
-                updateCharacterXML();
-            });
+            field.setOnAction((event) -> updateCharacterXML());
         }
 
     }

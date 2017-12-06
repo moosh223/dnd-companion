@@ -74,7 +74,6 @@
             <Menu mnemonicParsing="false" text="Network">
               <items>
                 <MenuItem fx:id="networking" mnemonicParsing="false" onAction="#startServer" text="Start Server" />
-                  <MenuItem fx:id="serverConnect" mnemonicParsing="false" text="Connect to Server" />
                   <MenuItem mnemonicParsing="false" onAction="#sendServerMessage" text="Disconnect" />
                   <CustomMenuItem fx:id="connectMenu" hideOnClick="false" mnemonicParsing="false" text="Unspecified Action">
                      <content>
