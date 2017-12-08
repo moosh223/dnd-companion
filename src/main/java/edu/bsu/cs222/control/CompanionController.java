@@ -401,8 +401,7 @@ public class CompanionController {
             if (file.getName().contains(".jour"))
                 createJournalTab(file.getPath());
     }
-
-
+    
     private String makeNewCharacterFolder(String stringPath) {
         final File charFolder = new File(stringPath+System.nanoTime());
         try {
