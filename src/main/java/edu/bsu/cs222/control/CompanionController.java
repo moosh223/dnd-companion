@@ -196,25 +196,22 @@ public class CompanionController {
 
     @FXML
     public void newJournalMenuAction(){
-        System.out.println(currentCampaignDir);
-        System.out.println(currentCharacterDir);
-        System.out.println(newCharacterCreated);
         if(currentCampaignDir == null) {
             if(sheetPane.isVisible() && isLoaded == true) {
-                System.out.println("character is loaded");
+                // character is loaded
                 createJournalTab(String.format("%s/%d.jour",newCharacterCreated,System.nanoTime()));
             }
             else if(isLoaded == false){
-                System.out.println("character is not loaded");
+                // character is not loaded"
                 createJournalTab(String.format("%s/%d.jour", newCharacterCreated,System.nanoTime()));
             }
         }
         else if(sheetPane.isVisible() && isLoaded == true) {
-            System.out.println("campaign is loaded");
+            // campaign is loaded
             createJournalTab(String.format("%s/journals/%d.jour", currentCampaignDir,System.nanoTime()));
         }
         else if(isLoaded == false){
-            System.out.println("campaign is not loaded");
+            // campaign is not loaded
             createJournalTab(String.format("%s/%s/journals/%d.jour", campaignDir, currentCampaignDir,System.nanoTime()));
         }
     }
@@ -351,7 +348,6 @@ public class CompanionController {
         isLoaded = true;
         try {
             currentCharacterDir = characterLoadList.getSelectionModel().getSelectedItem().getPath();
-
             clientChar = characterLoadList.getSelectionModel().getSelectedItem();
         } catch (NullPointerException e) {
             isLoaded = false;
@@ -401,7 +397,7 @@ public class CompanionController {
             if (file.getName().contains(".jour"))
                 createJournalTab(file.getPath());
     }
-    
+
     private String makeNewCharacterFolder(String stringPath) {
         final File charFolder = new File(stringPath+System.nanoTime());
         try {
