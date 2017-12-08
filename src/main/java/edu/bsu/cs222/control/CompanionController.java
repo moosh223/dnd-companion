@@ -108,7 +108,6 @@ public class CompanionController {
     private ArrayList<ClientNode> clients = new ArrayList<>();
     private Server server;
     private CharacterParser clientChar;
-    private CharacterTab clientTab;
 
     private enum StatName {
         Strength(0),
@@ -305,7 +304,6 @@ public class CompanionController {
         return fileNames;
     }
 
-
     @FXML
     public void loadSelectedCampaign() {
         try {
@@ -337,11 +335,7 @@ public class CompanionController {
         }
         if (client != null) {
             client.setPath(currentCharacterDir.replace(".xml",""));
-            clientTab = createCharacterSheetTab(clientChar, client); //Creates the CharacterView on the Clients side
             sendUpdateMessage(clientChar); //Tells the server to open a new Tab
-
-        } else {
-            clientTab = createCharacterSheetTab(clientChar);
         }
         createCharacterJournals(currentCharacterDir);
         newTabMenu.setDisable(false);
@@ -473,7 +467,6 @@ public class CompanionController {
             sheetPane.setVisible(true);
         }
     }
-
     @FXML
     public void newCampaignNextButtonPress() {
         if (isPageFilled()) {
@@ -489,20 +482,17 @@ public class CompanionController {
             sheetPane.setVisible(true);
         }
     }
-
     @FXML
     public void rcvButtonPress() {
         charTypePane.setVisible(false);
         rcvPane.setVisible(true);
         sendView.setItems(FXCollections.observableArrayList(getCharacters()));
     }
-
     @FXML
     public void connectToServer(){
         String ip = ipConnect.getText();
         connectToServer(ip);
     }
-
     /**
      * Creates a node on the client's side
      * @author Josh Mooshian <jmmooshian@bsu.edu>
@@ -522,7 +512,6 @@ public class CompanionController {
             System.err.println("Unable to establish a connection");
         }
     }
-
     @FXML
     public void sendSelectedCharacter() {
         try {
