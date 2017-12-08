@@ -346,7 +346,6 @@ public class CompanionController {
         try {
             currentCharacterDir = characterLoadList.getSelectionModel().getSelectedItem().getPath();
             clientChar = characterLoadList.getSelectionModel().getSelectedItem();
-            createCharacterSheetTab(clientChar);
         } catch (NullPointerException e) {
             isLoaded = false;
             String charFile = makeNewCharacterFolder(characterDir);
@@ -357,6 +356,9 @@ public class CompanionController {
         if (client != null) {
             client.setPath(currentCharacterDir.replace(".xml",""));
             sendUpdateMessage(clientChar); //Tells the server to open a new Tab
+            createCharacterSheetTab(clientChar,client);
+        }else{
+            createCharacterSheetTab(clientChar);
         }
         createCharacterJournals(currentCharacterDir);
         newTabMenu.setDisable(false);
