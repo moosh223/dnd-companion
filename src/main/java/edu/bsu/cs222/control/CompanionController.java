@@ -197,11 +197,11 @@ public class CompanionController {
         if(currentCampaignDir == null) {
             if(sheetPane.isVisible() && isLoaded == true) {
                 // character is loaded
-                createJournalTab(String.format("%s/%d.jour",newCharacterCreated,System.nanoTime()));
+                createJournalTab(String.format("%s/%d.jour",new File(currentCharacterDir).getParent(),System.nanoTime()));
             }
             else if(isLoaded == false){
                 // character is not loaded"
-                createJournalTab(String.format("%s/%d.jour", newCharacterCreated,System.nanoTime()));
+                createJournalTab(String.format("%s/%d.jour", new File(currentCharacterDir).getParent(),System.nanoTime()));
             }
         }
         else if(sheetPane.isVisible() && isLoaded == true) {
