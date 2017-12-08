@@ -33,7 +33,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="background" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.bsu.cs222.control.CompanionController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.bsu.cs222.control.CompanionController">
    <top>
        <MenuBar prefHeight="14.0" prefWidth="477.0" styleClass="menu" BorderPane.alignment="CENTER">
           <menus>
@@ -196,7 +196,7 @@
                             </Label>
                             <Label text="Character Name" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="TOP">
                                 <GridPane.margin>
-                                    <Insets left="100.0" top="65.0" />
+                                    <Insets left="100.0" top="52.0" />
                                 </GridPane.margin>
                             </Label>
                             <Label text="Help" textFill="#4800ff" underline="true" GridPane.columnIndex="1" GridPane.valignment="BOTTOM">
@@ -265,7 +265,7 @@
                              <Font size="12.0" />
                          </font>
                      </Label>
-                     <Button layoutX="397.0" layoutY="515.0" mnemonicParsing="false" onAction="#raceNextButtonPress" prefHeight="30.0" prefWidth="75.0" text="Next" AnchorPane.bottomAnchor="40.0" AnchorPane.rightAnchor="40.0" />
+                     <Button layoutX="397.0" layoutY="515.0" mnemonicParsing="false" onAction="#raceNextButtonPress" text="Next" AnchorPane.bottomAnchor="40.0" AnchorPane.rightAnchor="40.0" />
                      <ComboBox fx:id="firstAbilityModified" layoutX="24.0" layoutY="165.0" prefWidth="150.0">
                          <items>
                              <FXCollections fx:factory="observableArrayList">
@@ -403,9 +403,9 @@
               </AnchorPane>
               <AnchorPane fx:id="languagePane" focusTraversable="true" prefHeight="590.0" prefWidth="543.0" visible="false">
                  <children>
-                     <TextArea fx:id="languageTextBox" layoutX="41.0" layoutY="55.0" prefHeight="426.0" prefWidth="445.0" />
+                     <TextArea fx:id="languageTextBox" layoutX="41.0" layoutY="55.0" prefHeight="429.0" prefWidth="415.0" />
                      <Label layoutX="41.0" layoutY="34.0" text="List the languages your character speaks." />
-                     <Button layoutX="421.0" layoutY="534.0" mnemonicParsing="false" onAction="#languageNextButtonPress" prefHeight="30.0" prefWidth="70.0" text="Next" AnchorPane.bottomAnchor="40.0" AnchorPane.rightAnchor="40.0" />
+                     <Button layoutX="421.0" layoutY="534.0" mnemonicParsing="false" onAction="#languageNextButtonPress" text="Next" AnchorPane.bottomAnchor="40.0" AnchorPane.rightAnchor="40.0" />
                      <Label layoutX="324.0" layoutY="36.0" text="Help" textFill="#4800ff" underline="true">
                          <tooltip>
                              <Tooltip prefWidth="200.0" text="All character's speak common and their race's native language but you may be able to speak more if your DM allows it. Chapter 2 of the Player's Handbook will tell you what languages your race can speak." wrapText="true" />
@@ -509,7 +509,7 @@
                              <Font size="12.0" />
                          </font>
                      </Label>
-                     <Button layoutX="424.0" layoutY="516.0" mnemonicParsing="false" onAction="#classNextButtonPress" prefHeight="30.0" prefWidth="70.0" text="Next" AnchorPane.bottomAnchor="40.0" AnchorPane.rightAnchor="40.0" />
+                     <Button layoutX="424.0" layoutY="516.0" mnemonicParsing="false" onAction="#classNextButtonPress" text="Next" AnchorPane.bottomAnchor="40.0" AnchorPane.rightAnchor="40.0" />
                  </children>
               </AnchorPane>
               <AnchorPane fx:id="statPane" focusTraversable="true" prefHeight="200.0" prefWidth="200.0" visible="false">
@@ -527,7 +527,7 @@
                      <TextField fx:id="intTextBox" layoutX="178.0" layoutY="327.0" prefWidth="90.0" />
                      <TextField fx:id="wisTextBox" layoutX="178.0" layoutY="382.0" prefWidth="90.0" />
                      <TextField fx:id="chaTextBox" layoutX="178.0" layoutY="445.0" prefWidth="90.0" />
-                     <Button layoutX="430.0" layoutY="507.0" mnemonicParsing="false" onAction="#statNextButtonPress" prefHeight="30.0" prefWidth="70.0" text="Next" AnchorPane.bottomAnchor="40.0" AnchorPane.rightAnchor="40.0" />
+                     <Button layoutX="430.0" layoutY="507.0" mnemonicParsing="false" onAction="#statNextButtonPress" text="Next" AnchorPane.bottomAnchor="40.0" AnchorPane.rightAnchor="40.0" />
                      <Label fx:id="statErrorLabel" alignment="CENTER" layoutX="119.0" layoutY="24.0" text="ERROR: Please make sure all fields are filled in." textAlignment="CENTER" textFill="RED" visible="false" />
                      <Label layoutX="288.0" layoutY="101.0" text="Help" textFill="#4800ff" underline="true">
                          <tooltip>
@@ -596,7 +596,7 @@
                         </Label>
                         <Label text="Campaign Summary" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="TOP">
                            <GridPane.margin>
-                              <Insets left="100.0" top="65.0" />
+                              <Insets left="100.0" top="52.0" />
                            </GridPane.margin>
                         </Label>
                         <Label text="Help" textFill="#4800ff" underline="true" GridPane.columnIndex="1" GridPane.valignment="BOTTOM">
@@ -629,7 +629,7 @@
                               <Insets bottom="10.0" />
                            </GridPane.margin>
                         </Label>
-                        <Button mnemonicParsing="false" onAction="#newCampaignNextButtonPress" prefHeight="30.0" prefWidth="75.0" text="Next" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
+                        <Button mnemonicParsing="false" onAction="#newCampaignNextButtonPress" text="Next" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
                            <GridPane.margin>
                               <Insets bottom="40.0" right="40.0" />
                            </GridPane.margin>

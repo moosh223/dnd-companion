@@ -93,7 +93,6 @@ public class CompanionController {
     @FXML public ListView<CharacterParser> sendView;
     @FXML public CheckBox diceRollerButton;
     @FXML public MenuItem newCharacterSheetMenuItem;
-    //@FXML public MenuItem loadPrevCharacters;
     @FXML public MenuItem newJournalMenuItem;
     @FXML public Menu newTabMenu;
     @FXML public TextField ipConnect;
@@ -102,6 +101,7 @@ public class CompanionController {
     private final String campaignDir = "assets/campaigns/";
     private String currentCampaignDir;
     private String currentCharacterDir;
+    private boolean isLoaded = false;
     private ClientNode client;
     private boolean isPlayer = true;
     private Stage diceRoller = new Stage();
@@ -109,6 +109,7 @@ public class CompanionController {
     private Server server;
     private CharacterParser clientChar;
     private CharacterTab clientTab;
+    private String newCharacterCreated;
 
     private enum StatName {
         Strength(0),
@@ -177,7 +178,6 @@ public class CompanionController {
         sheetPane.getTabs().add(journalTab);
     }
 
-
     private void createSpellSheetTab(){
         Tab newTab = new Tab("Spell Sheet");
         SpellTab spellTab = new SpellTab();
@@ -188,15 +188,34 @@ public class CompanionController {
     @FXML
     public void newCharacterSheetMenuAction(){
         if(sheetPane.isVisible()&& !isPlayer) {
-            String newChar = makeNewCharacterFolder(String.format("%s/characters/", currentCampaignDir));
-            createCharacterSheetTab(new CharacterParser(String.format("%s/characters/%s/%s", currentCampaignDir,newChar,newChar)));
+            String newChar = makeNewCharacterFolder(String.format("%s/%s/characters/", campaignDir, currentCampaignDir));
+            System.out.println(newChar);
+            createCharacterSheetTab(new CharacterParser(String.format("%s/%s/characters/%s/%s", campaignDir, currentCampaignDir,newChar,newChar)));
         }
     }
 
     @FXML
     public void newJournalMenuAction(){
-        if(sheetPane.isVisible()) {
-            createJournalTab(String.format("%s/%d.jour", currentCharacterDir,System.nanoTime()));
+        System.out.println(currentCampaignDir);
+        System.out.println(currentCharacterDir);
+        System.out.println(newCharacterCreated);
+        if(currentCampaignDir == null) {
+            if(sheetPane.isVisible() && isLoaded == true) {
+                System.out.println("character is loaded");
+                createJournalTab(String.format("%s/%d.jour",newCharacterCreated,System.nanoTime()));
+            }
+            else if(isLoaded == false){
+                System.out.println("character is not loaded");
+                createJournalTab(String.format("%s/%d.jour", newCharacterCreated,System.nanoTime()));
+            }
+        }
+        else if(sheetPane.isVisible() && isLoaded == true) {
+            System.out.println("campaign is loaded");
+            createJournalTab(String.format("%s/journals/%d.jour", currentCampaignDir,System.nanoTime()));
+        }
+        else if(isLoaded == false){
+            System.out.println("campaign is not loaded");
+            createJournalTab(String.format("%s/%s/journals/%d.jour", campaignDir, currentCampaignDir,System.nanoTime()));
         }
     }
 
@@ -308,11 +327,13 @@ public class CompanionController {
 
     @FXML
     public void loadSelectedCampaign() {
+        isLoaded = true;
         try {
             currentCampaignDir = campaignLoadList.getSelectionModel().getSelectedItem().getCampaignDirectory();
             System.out.println(currentCampaignDir);
             loadCampaign(currentCampaignDir);
         }catch(NullPointerException e){
+            isLoaded = false;
             buildNewCampaign();
         }
         if(server != null){
@@ -327,11 +348,15 @@ public class CompanionController {
 
     @FXML
     public void loadSelectedCharacter() {
+        isLoaded = true;
         try {
             currentCharacterDir = characterLoadList.getSelectionModel().getSelectedItem().getPath();
+
             clientChar = characterLoadList.getSelectionModel().getSelectedItem();
         } catch (NullPointerException e) {
+            isLoaded = false;
             String charFile = makeNewCharacterFolder(characterDir);
+            newCharacterCreated = String.format("%s/%s", characterDir, charFile);
             currentCharacterDir = String.format("%s/%s/%s", characterDir, charFile, charFile);
             clientChar = new CharacterParser(currentCharacterDir);
         }
@@ -385,15 +410,18 @@ public class CompanionController {
         }catch(IOException e){
             e.printStackTrace();
         }
+        newCharacterCreated = charFolder.getName();
         return charFolder.getName();
     }
 
     private String makeNewCampaignFolder() {
         final File campaignFolder = new File(campaignDir+String.valueOf(System.nanoTime()));
         final File charFolder = new File(campaignFolder.getPath()+"/characters/");
+        final File charFolderJournal = new File(campaignFolder.getPath()+"/journals/");
         try {
             Files.createDirectory(campaignFolder.toPath());
             Files.createDirectory(charFolder.toPath());
+            Files.createDirectory(charFolderJournal.toPath());
         }catch(IOException e){
             e.printStackTrace();
         }
