@@ -630,7 +630,12 @@ public class CompanionController {
         }
         result.append(stats[stats.length - 1]);
         character.writeTag("stats",result.toString());
-        createCharacterSheetTab(character);
+        if(client != null){
+            createCharacterSheetTab(character,client);
+            sendUpdateMessage(character);
+        }else {
+            createCharacterSheetTab(character);
+        }
     }
 
     private String parseLanguages() {

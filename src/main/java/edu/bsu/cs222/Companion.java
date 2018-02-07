@@ -26,6 +26,7 @@ public class Companion extends Application {
         parent.getStylesheets().clear();
         parent.getStylesheets().add("themes/default.css");
         primaryStage.setResizable(true);
+        primaryStage.setFullScreen(true);
         primaryStage.setScene(scene);
         primaryStage.setOnCloseRequest((e) -> System.exit(0));
         primaryStage.show();
